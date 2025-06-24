@@ -34,13 +34,13 @@ export default function Footer() {
     ];
 
     return (
-        <footer className="p-10 bg-slate-900 text-slate-200">
-            <div className="footer footer-horizontal footer-center container mx-auto">
+        <footer className="p-10 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-slate-200 relative overflow-hidden">
+            <div className="absolute inset-0 opacity-5 bg-[radial-gradient(circle,#94a3b8_1px,transparent_1px)] bg-[length:40px_40px]"></div>
+            <div className="footer footer-horizontal footer-center container mx-auto relative z-10">
                 <nav className="grid grid-flow-row md:grid-flow-col gap-2 md:gap-4">
                     {items.map((item, index) => (
                         <div key={index} className="text-xs md:text-sm">
-                            <Link href={item.path} target={item.target ?? '_self'}
-                                  className="link link-hover">{item.name}</Link>
+                            <Link href={item.path} target={item.target ?? '_self'} className="link link-hover">{item.name}</Link>
                         </div>
                     ))}
                 </nav>
@@ -72,7 +72,7 @@ export default function Footer() {
                 </nav>
                 <aside className="text-slate-400 text-xs">
                     <p>Copyright © 2016 - {new Date().getFullYear()} Jagadhatri Online. All Rights Reserved.</p>
-                    <p>Handcrafted with ❤️ by Sayan Datta.</p>
+                    <p>Developed with ❤️ by <a href="https://sayandatta.co.in" target="_blank" rel="noopener">Sayan Datta</a>.</p>
                     <p>Unauthorized copying or representation of any content / photograph / illustration / artwork
                         from this website is strictly prohibited.</p>
                 </aside>

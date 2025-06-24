@@ -124,7 +124,7 @@ export default function Page() {
                         Jagadhatri Online is designed to capture the most popular Jagadhatri Puja’s of Chandannagar, Mankundu & Bhadreswar. Some of you, who are not in Chandannagar are unable to experience the pleasure of Jagadhatri Puja in Bengal with their own eyes. We have created this Website to share our pride Jagadhatri Puja with the whole world. A well organised team at their best. Know more about our Team.
                     </p>
                     <div className="flex flex-col items-center gap-5 w-full">
-                        <h2 className="text-xl font-bold">Founders</h2>
+                        <h2 className="text-xl font-bold">The Visionaries</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                             {admins.map((item, index) => (
                                 <div key={index} className="flex flex-col md:flex-row p-10 bg-base-100 gap-4 items-center md:gap-10 md:items-start shadow-sm rounded-md">
@@ -154,7 +154,7 @@ export default function Page() {
                         </div>
                     </div>
                     <div className="flex flex-col items-center gap-5 w-full">
-                        <h2 className="text-xl font-bold">Team</h2>
+                        <h2 className="text-xl font-bold">The Powerhouse Team</h2>
                         <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-4 w-full">
                             {arrayShuffle(members).map((item: Person, index: number) => (
                                 <div key={index} className="flex flex-col p-6 bg-base-100 gap-4 items-center w-full shadow-sm rounded-md">
