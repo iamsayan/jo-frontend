@@ -4,7 +4,7 @@ import React, { useState, useEffect, ReactNode } from 'react';
 import TransformedImage from '@/components/transformed-image';
 
 const images = [
-    { src: 'static/20241107-042519.jpg', alt: 'Mankundu' },
+    //{ src: 'static/20241107-042519.jpg', alt: 'Mankundu' },
     { src: 'static/20241107-040207.jpg', alt: 'Boro' },
     { src: 'static/20241107-034735.jpg', alt: 'Kundughat Dalan' },
     { src: 'static/20241107-034843.jpg', alt: 'Lalbagan Padripara' },
