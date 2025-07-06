@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link';
 import MainLayout from '@/components/main-layout';
 import Section from '@/components/section';
 import schema from "@/utils/schema";
@@ -6,8 +7,8 @@ import { LuCircleCheck, LuX, LuCheck } from "react-icons/lu";
 import { metadata as metadataSchema } from "@/app/layout";
 
 export const metadata: Metadata = {
-    title: 'Digital Media Partnership Programme',
-    description: 'Digital Media Partnership Programme is a collaboration program for Jagadhatri Puja Commitees across Chandannagar Mankundu and Bhadreswar.',
+    title: 'JO Cinematics Programme',
+    description: 'JO Cinematics Programme is a collaboration program for Jagadhatri Puja Commitees across Chandannagar Mankundu and Bhadreswar.',
     openGraph: {
         ...metadataSchema.openGraph,
         url: '/digital-media-partnership',
@@ -25,7 +26,7 @@ interface Feature {
 export default function Page() {
     const jsonLd = schema({
         path: 'digital-media-partnership',
-        title: 'Digital Media Partnership Programme',
+        title: 'JO Cinematics Programme',
     });
 
     const features: Feature[] = [
@@ -56,10 +57,10 @@ export default function Page() {
     ];
 
     return (
-        <MainLayout title="Digital Media Partnership" jsonLd={jsonLd}>
-            <Section title="Know More About Digital" description="Media Partnership">
+        <MainLayout title="JO Cinematics Programme" jsonLd={jsonLd}>
+            <Section title="Know More About" description="JO Cinematics">
                 <div className="flex flex-col gap-6 text-justify">
-                    <p>Digital Media Partnership Programme is a collaboration program for Jagadhatri Puja Commitees
+                    <p>JO Cinematics Programme is a collaboration program for Jagadhatri Puja Commitees
                         across Chandannagar Mankundu and Bhadreswar. In this partnership program, we promote the
                         registered puja committee according to their plans. We will also provide high quality content
                         for them. More than 25+ pujo committees had registered with us earlier. Already pujo committees
@@ -90,41 +91,36 @@ export default function Page() {
                             <tbody>
                                 <tr>
                                     <th className="bg-gray-100">Online Promotion</th>
-                                    <td><LuCheck className="size-6 text-green-500 inline" /><br /><small>(High quality content should be provided by the Puja Committee)</small></td>
-                                    <td className="bg-yellow-50"><LuCheck className="size-6 text-green-500 inline" /> <br /><small>(We visit the Puja Committee and create our own content)</small></td>
+                                    <td><LuCheck className="size-6 text-green-500 inline" /></td>
+                                    <td className="bg-yellow-50"><LuCheck className="size-6 text-green-500 inline" /></td>
                                 </tr>
                                 <tr>
                                     <th className="bg-gray-100">Reels Videos</th>
-                                    <td>1 <br /><small>(Up to 30 seconds)</small></td>
-                                    <td className="bg-yellow-50">4 <br /><small>(Any duration)</small></td>
+                                    <td>1 cinematic reel (Puja + Procession)</td>
+                                    <td className="bg-yellow-50">3 cinematic reels (Pre-Puja, Puja Days, Post-Puja)</td>
                                 </tr>
                                 <tr>
                                     <th className="bg-gray-100">Audio & Video Content</th>
                                     <td><LuX className="size-6 text-red-500 inline" /></td>
-                                    <td className="bg-yellow-50"><LuCheck className="size-6 text-green-500 inline" /><br /><small>(We will provide edited high quality content)</small></td>
-                                </tr>
-                                <tr>
-                                    <th className="bg-gray-100">Live Videos (During Puja)</th>
-                                    <td>1</td>
-                                    <td className="bg-yellow-50">2</td>
+                                    <td className="bg-yellow-50"><LuCheck className="size-6 text-green-500 inline" /><br />Edited high-quality content provided</td>
                                 </tr>
                                 <tr>
                                     <th className="bg-gray-100">Drone Shoot</th>
-                                    <td><LuX className="size-6 text-red-500 inline" /></td>
-                                    <td className="bg-yellow-50"><LuCheck className="size-6 text-green-500 inline" /></td>
+                                    <td><LuX className="size-6 text-red-500 inline" /><br />Available as add-on</td>
+                                    <td className="bg-yellow-50"><LuCheck className="size-6 text-green-500 inline" /><br />Add-ons available, e.g. Idol lifting drone ₹3000</td>
                                 </tr>
                                 <tr>
                                     <th className="bg-gray-100">Package Price</th>
-                                    <td><del>₹799</del><span className="text-xl ml-2 font-bold">₹499</span></td>
-                                    <td className="bg-yellow-50"><del>₹10499</del><span className="text-xl ml-2 font-bold">₹5999</span><br /><small>(You save ₹4500)</small></td>
+                                    <td><span className="text-xl ml-2 font-bold">₹999</span></td>
+                                    <td className="bg-yellow-50"><del>₹20,999</del><span className="text-xl ml-2 font-bold">₹11,999</span><br /><small>(You save ₹9,000)</small></td>
                                 </tr>
                                 <tr>
                                     <th className="bg-gray-100">Click to Register</th>
                                     <td>
-                                        <a data-disable-progress={true} href="https://razorpay.com/payment-button/pl_Ony68U6SyoZEI6/view" className="btn bg-yellow-500 border-2 border-yellow-500 py-2 px-4 h-auto shadow-none rounded-md hover:bg-transparent hover:border-yellow-500 hover:text-yellow-500">Register</a>
+                                      <Link href="/digital-media-partnership/register?plan=basic" className="btn bg-yellow-500 border-2 border-yellow-500 py-2 px-4 h-auto shadow-none rounded-md hover:bg-transparent hover:border-yellow-500 hover:text-yellow-500">Register</Link>
                                     </td>
                                     <td className="bg-yellow-50">
-                                        <a data-disable-progress={true} href="https://razorpay.com/payment-button/pl_Oo0wht5ntXU1gr/view" className="btn bg-yellow-500 border-2 border-yellow-500 py-2 px-4 h-auto shadow-none rounded-md hover:bg-transparent hover:border-yellow-500 hover:text-yellow-500">Register</a>
+                                        <Link href="/digital-media-partnership/register?plan=premium" className="btn bg-yellow-500 border-2 border-yellow-500 py-2 px-4 h-auto shadow-none rounded-md hover:bg-transparent hover:border-yellow-500 hover:text-yellow-500">Register</Link>
                                     </td>
                                 </tr>
                             </tbody>

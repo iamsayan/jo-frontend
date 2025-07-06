@@ -6,6 +6,8 @@ const nextConfig = {
         WEBHOOK_SECRET: process.env.WEBHOOK_SECRET,
         WEB3_FORM_API_KEY: process.env.WEB3_FORM_ACCESS_KEY,
         GOOGLE_MAP_API_KEY: process.env.GOOGLE_MAP_API_KEY,
+        RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID,
+        RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET,
     },
     images: {
         formats: ['image/webp'],
