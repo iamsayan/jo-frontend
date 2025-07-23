@@ -1,40 +1,20 @@
-import { generateUrlSearchParams } from "@/utils/functions";
+import qs from 'qs';
 
 interface ApiResponse {
     [key: string]: any;
 }
 
-export async function getModel(model: string, params: Record<string, any> = {}): Promise<ApiResponse> {
-    const type = params.type ?? 'items';
-    delete params.type;
-    
-    const response = await fetch(`${process.env.API_URL}/content/${type}/${generateUrlSearchParams(model, params)}`, {
-        method: "GET",
-        headers: {
-            "api-key": process.env.API_KEY!,
-        },
-        next: {
-            tags: [`model-${model}`],
-            revalidate: process.env.NODE_ENV === 'development' ? 0 : 604800,
-        },
+export async function getCollection(collection: string, params: Record<string, any> = {}): Promise<ApiResponse> {
+    const query = qs.stringify(params, {
+        encodeValuesOnly: true,
     });
-
-    if (response.ok) {
-        return response.json();
-    } else {
-        return Promise.reject(response);
-    }
-}
-
-export async function getModels(models: Record<string, any>, populate: -1 | 0 | 1 = 0): Promise<ApiResponse> {
-    const route = generateUrlSearchParams('items', { models, populate });
-    const response = await fetch(`${process.env.API_URL}/content/${route}`, {
+    const response = await fetch(`${process.env.API_URL}/${collection}?${query}`, {
         method: "GET",
         headers: {
-            "api-key": process.env.API_KEY!,
+            "Authorization": `Bearer ${process.env.API_KEY!}`,
         },
         next: {
-            tags: Object.keys(models).map((key) => `model-${key}`),
+            tags: [`collection-${collection}`],
             revalidate: process.env.NODE_ENV === 'development' ? 0 : 604800,
         },
     });

@@ -27,7 +27,9 @@ export default function Page() {
         <MainLayout title="Contact Us" jsonLd={jsonLd}>
             <Section title="Need any help?" description="Contact Us">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-                    <div><Contact /></div>
+                    <div className="relative">
+                        <Contact />
+                    </div>
                     <GoogleMapsEmbed
                         apiKey={process.env.GOOGLE_MAP_API_KEY!}
                         height={400}

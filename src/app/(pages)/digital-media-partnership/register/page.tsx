@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import CinematicsPlans from '@/components/cinematics-plans';
-import { getModel } from '@/utils/fetch';
+import { getCollection } from '@/utils/fetch';
 
 export const metadata: Metadata = {
     title: 'JO Cinematics Registration',
@@ -20,11 +20,15 @@ export default async function Page({ searchParams }: { searchParams: Promise<{
     plan: string;
 }> }) {
     const { plan } = await searchParams;
-    const pujaData = await getModel('pujas', {
-        sort: { _o: 1 }
+    const pujaData = await getCollection('pujas', {
+        pagination: {
+            page: 1,
+            pageSize: 200
+        },
+        sort: ['order:asc']
     });
 
-    const data = pujaData ?? [];
+    const data = pujaData?.data ?? [];
     
     return (
         <div className="pt-1 flex items-center flex-col">

@@ -24,7 +24,7 @@ import {
 } from "react-icons/fa";
 import { cn, formatDate, getDateByIndex } from "@/utils/functions";
 import { paytoneOne } from "@/fonts";
-import { getModel } from "@/utils/fetch";
+import { getCollection } from "@/utils/fetch";
 import { PiConfettiThin } from "react-icons/pi";
 
 const imagesPath = [
@@ -67,9 +67,9 @@ interface ShopItem {
 }
 
 export default async function Home() {
-    const siteData = await getModel('information', { type: 'item' });
-    const data = siteData ?? null;
-    const year = getDateByIndex(data, 0).getFullYear();
+    const siteData = await getCollection('global', { populate: '*' });
+    const data = siteData.data ?? null;
+    const year = getDateByIndex(data.schedules, 0).getFullYear();
     const curYear = new Date().getFullYear();
     const btnYear = curYear > year ? curYear : year;
 
@@ -127,34 +127,34 @@ export default async function Home() {
     const stats: StatsItem[] = [
         {
             title: 'Followers',
-            stat: data?.stats?.followers ?? '60.5K',
+            stat: '60.5K',
             icon: <FaFacebook className="inline-block size-8 stroke-current" />,
             description: '1K+ new followers in last 30 days'
         },
         {
             title: 'Post Reach',
-            stat: data?.stats?.reach ?? '1.6M',
+            stat: '1.6M',
             icon: <LuHistory className="inline-block size-8 stroke-current" />,
             description: '85% more than last month',
             class: 'text-secondary'
         },
         {
             title: 'Post Engagement',
-            stat: data?.stats?.engagement ?? '47.8K',
+            stat: '47.8K',
             icon: <LuVideo className="inline-block size-8 stroke-current" />,
             description: '38% more than last month',
             class: 'text-blue-500'
         },
         {
             title: 'Subscribers',
-            stat: data?.stats?.subscribers ?? '4.04K',
+            stat: '4.04K',
             icon: <FaYoutube className="inline-block size-8 stroke-current" />,
             description: '500+ new followers in last 1 year',
             class: 'text-green-600'
         },
         {
             title: 'Visitors',
-            stat: data?.stats?.visitors ?? '98.5K',
+            stat: '98.5K',
             icon: <LuGlobe className="inline-block size-8 stroke-current" />,
             description: '14% more than last month',
             class: 'text-pink-500'
@@ -293,7 +293,7 @@ export default async function Home() {
                     </div>
                     <div className="stats stats-vertical lg:stats-horizontal text-left shadow-sm container">
                         {stats?.map((item, index) => (
-                            <div className="stat bg-white" key={index}>
+                            <div className="stat bg-white !border-gray-200" key={index}>
                                 <div className={`${cn('stat-figure text-primary', item?.class)}`}>{item?.icon}</div>
                                 <div className="stat-title">{item?.title}</div>
                                 <div className={`${cn('stat-value text-primary', item?.class)}`}>{item?.stat}</div>
@@ -402,9 +402,9 @@ export default async function Home() {
                 description={`Countdown ${year}`}
             >
                 <div className="flex flex-col gap-8 text-center">
-                    <CountdownTimer className="mt-3" targetDate={data?.dates[0]?.date} />
+                    <CountdownTimer className="mt-3" targetDate={data?.schedules[0]?.date} />
                     <div className="grid gap-6 grid-cols-2 md:grid-cols-6">
-                        {data?.dates?.slice(-5)?.map((item: any, index: number) => (
+                        {data?.schedules?.slice(-5)?.map((item: any, index: number) => (
                             <div
                                 key={index}
                                 className={`flex gap-4 col-span-2 ${index === 3 ? ' md:col-start-2' : ''}`}
@@ -419,7 +419,7 @@ export default async function Home() {
                                     className="h-fit"
                                 />
                                 <div className="flex flex-col gap-2 text-left">
-                                    <span className="font-bold">{item?.information}</span>
+                                    <span className="font-bold">{item?.description}</span>
                                     <span className="">{item?.event}: {formatDate(item?.date)}</span>
                                 </div>
                             </div>

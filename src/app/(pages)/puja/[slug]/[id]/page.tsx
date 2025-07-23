@@ -1,6 +1,6 @@
 import { notFound, permanentRedirect } from 'next/navigation';
-import { getModel, getModels } from "@/utils/fetch";
-import { cn, getDateByIndex, getDescription, stripHtmlAndLimit, timestampToDate } from "@/utils/functions";
+import { getCollection } from "@/utils/fetch";
+import { cn, getDateByIndex, stripHtmlAndLimit } from "@/utils/functions";
 import {
     LuArrowLeft,
     LuArrowRight,
@@ -23,7 +23,6 @@ import {
     getYear,
     getCelebrating,
     formatDate,
-    getUrlSlug,
 } from "@/utils/functions";
 import schema from "@/utils/schema";
 import Link from "next/link";
@@ -32,26 +31,32 @@ import type { Metadata } from 'next'
 import Main from '@/components/main';
 import Breadcrumbs from '@/components/breadcrumbs';
 import GallerySlider from '@/components/gallery-slider';
+import Markdown from '@/components/markdown';
 import { assetImageLoader } from '@/utils/transform';
 
 interface PujaData {
-    reference_id: string;
-    puja_name: string;
-    puja_zone: string;
+    referenceId: string;
+    name: string;
+    slug: string;
+    zone: string;
     estd: string;
     location?: {
         address?: string;
-        lat?: number;
-        lng?: number;
+        coordinates?: {
+            lat?: number;
+            lng?: number;
+        };
+        geohash?: string;
     };
-    current_theme?: string;
-    idol_artist?: {
-        display?: string;
+    theme?: string;
+    artists?: {
+        type: string;
+        name: string;
+        contact?: string;
+        email?: string;
+        businessName?: string;
     };
-    decoration_artist?: {
-        display?: string;
-    };
-    puja_info?: string;
+    info?: string;
     tags?: string[];
 }
 
@@ -62,51 +67,49 @@ interface PageProps {
     }>;
 }
 
-export const dynamicParams = false
-
 export async function generateStaticParams() {
-    const pujasData = await getModel('pujas', {
-        sort: { _o: 1 }
+    const pujaData = await getCollection('pujas', {
+        pagination: {
+            page: 1,
+            pageSize: 200
+        },
+        sort: ['order:asc']
     });
-    const data = pujasData ?? []
+    const data = pujaData?.data ?? []
 
     return data.map((item: any) => ({
-        slug: getUrlSlug(item?.puja_name),
-        id: item?.reference_id,
+        slug: item?.slug,
+        id: item?.referenceId,
     }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { slug, id } = await params
 
-    const dataRes = await getModels({
-        pujas: {
-            filter: { reference_id: id },
-        },
-        images: {
-            filter: { reference_id: id },
-            limit: 3
-        },
-        pujadescriptions: {}
+    const pujaData = await getCollection('pujas', {
+        populate: ['images'],
+        filters: {
+            referenceId: {
+                $eq: id
+            }
+        }
     });
-    const { pujas, images, pujadescriptions } = dataRes ?? {};
-
-    const currentPuja = pujas?.[0];
-    const description = getDescription(currentPuja, pujadescriptions, 'famous')
+    const data = pujaData?.data ?? []
+    const currentPuja = data?.[0] ?? null;
 
     return {
-        title: `${currentPuja?.puja_name} Sarbajanin, ${currentPuja?.puja_zone === 'bhr' ? 'Bhadreswar' : 'Chandannagar'}`,
-        description: stripHtmlAndLimit(description),
+        title: `${currentPuja?.name} Sarbajanin, ${currentPuja?.zone === 'bhadreswar' ? 'Bhadreswar' : 'Chandannagar'}`,
+        description: stripHtmlAndLimit(currentPuja?.info),
         openGraph: {
             ...metadataSchema.openGraph,
             url: `/puja/${slug}/${id}`,
-            images: images?.map((item: any) => {
+            images: currentPuja?.images?.slice(0, 3).map((item: any) => {
                 return {
                     url: assetImageLoader({
-                        src: `${item?.year}/${item?.reference_id}/${item?.image_name}`,
+                        src: `${item?.year}/${currentPuja?.referenceId}/${item?.name}`,
                         quality: 70
                     }),
-                    alt: currentPuja?.puja_name
+                    alt: currentPuja?.name
                 }
             })
         },
@@ -120,46 +123,45 @@ export default async function Page({ params }: PageProps) {
     const { slug, id } = await params
     const queryYear = new Date().getFullYear()
 
-    const dataRes = await getModels({
-        pujas: {
-            sort: { _o: 1 },
-            populate: 1
+    const pujasReq = getCollection('pujas', {
+        populate: '*',
+        pagination: {
+            page: 1,
+            pageSize: 200
         },
-        images: {
-            sort: { _modified: -1 },
-            filter: { reference_id: id },
-            limit: 10
-        },
-        processionlist: {
-            populate: 1
-        },
-        pujadescriptions: {},
-        information: {}
-    });
-    const { pujas, images, pujadescriptions, information, processionlist } = dataRes ?? {};
+        sort: ['order:asc']
+    })
+    const siteDataReq = getCollection('global', { populate: '*' });
 
-    const currentPuja = pujas?.find((data: any) => data?.reference_id === id);
-    const pujaImages = images.map((item: any) => {
+    const [pujasRes, siteDataRes] = await Promise.allSettled([pujasReq, siteDataReq]).then(results => [
+        results[0].status === "fulfilled" ? results[0].value : { data: [] },
+        results[1].status === "fulfilled" ? results[1].value : { data: {} },
+    ]);
+    const pujas = pujasRes.data;
+    const siteData = siteDataRes.data;
+
+    const currentPuja = pujas.find((item: any) => item?.referenceId === id) ?? null;
+
+    if (!currentPuja) {
+        notFound();
+    }
+
+    if (slug !== currentPuja?.slug) {
+        permanentRedirect(`/puja/${currentPuja?.slug}/${currentPuja?.referenceId}`);
+    }
+
+    const pujaImages = currentPuja?.images?.map((item: any) => {
         return {
-            src: `${item?.year}/${item?.reference_id}/${item?.image_name}`,
-            thumb: `${item?.year}/${item?.reference_id}/${item?.image_name}`,
-            alt: currentPuja?.puja_name,
-            subHtml: `<p>By: ${item?.uploaded_by.trim().split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')}</p>`,
+            src: `${item?.year}/${currentPuja?.referenceId}/${item?.name}`,
+            thumb: `${item?.year}/${currentPuja?.referenceId}/${item?.name}`,
+            alt: currentPuja?.name,
+            subHtml: `<p>By: ${item?.uploadedBy.trim().split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')}</p>`,
         }
     });
 
-    if (!currentPuja || currentPuja?.length < 1) {
-        notFound()
-    }
-
-    const pujaName = currentPuja?.puja_name;
-    if (slug !== getUrlSlug(pujaName)) {
-        permanentRedirect(`/puja/${getUrlSlug(pujaName)}/${currentPuja?.reference_id}`);
-    }
-
     let array: PujaData[] = [];
     pujas?.forEach((item: PujaData, index: number) => {
-        if (item?.reference_id === id) {
+        if (item?.referenceId === id) {
             array.push(pujas?.[0 < index ? index - 1 : pujas?.length - 1])
             array.push(pujas?.[pujas?.length - 1 > index ? index + 1 : 0])
         }
@@ -169,36 +171,37 @@ export default async function Page({ params }: PageProps) {
     const cel = getCelebrating(y);
     const adi = currentPuja?.tags?.includes('adi') ?? false;
     const popular = currentPuja?.tags?.includes('popular') ?? false;
-    const processions = processionlist?.find((item: any) => item?.puja?._id === currentPuja?._id)
-    const gMapLink = currentPuja?.location?.lat && currentPuja?.location?.lng ? `https://www.google.com/maps/search/?api=1&query=${currentPuja?.location?.lat},${currentPuja?.location?.lng}(${currentPuja?.puja_name}+Jagadhatri+Puja+${currentPuja?.puja_zone === 'bhr' ? 'Bhadreswar' : 'Chandannagar'})` : `https://www.google.com/maps/search/?api=1&query=${currentPuja?.puja_name}+Jagadhatri+Puja+${currentPuja?.puja_zone === 'bhr' ? 'Bhadreswar' : 'Chandannagar'},+Hooghly,+West+Bengal`
+    const zone = currentPuja?.zone === 'bhr' ? 'Bhadreswar' : 'Chandannagar';
+    const gMapLink = currentPuja?.location?.coordinates?.lat && currentPuja?.location?.coordinates?.lng ? `https://www.google.com/maps/search/?api=1&query=${currentPuja?.location?.coordinates?.lat},${currentPuja?.location?.coordinates?.lng}(${currentPuja?.name}+Jagadhatri+Puja+${zone})` : `https://www.google.com/maps/search/?api=1&query=${currentPuja?.name}+Jagadhatri+Puja+${zone},+Hooghly,+West+Bengal`
+    const truckCount = currentPuja?.procession?.truckCount ?? null;
+    
+    const artistTypes = [
+        { type: 'idol', icon: <LuBrush className="text-xl text-purple-600" />, title: 'Idol Artist' },
+        { type: 'decoration', icon: <LuPalette className="text-xl text-purple-600" />, title: 'Decoration Artist' },
+        { type: 'light', icon: <LuLightbulb className="text-xl text-purple-600" />, title: 'Lighting Artist' },
+        { type: 'theme', icon: <LuBrush className="text-xl text-purple-600" />, title: 'Theme Artist' },
+    ];
+
+    const artistsByType = (currentPuja?.artists || []).reduce((acc: Record<string, string[]>, artist: any) => {
+        if (artist?.type && artist?.name) {
+            acc[artist.type] = acc[artist.type] || [];
+            acc[artist.type].push(artist.name);
+        }
+        return acc;
+    }, {});
 
     const info = [
         {
             icon: <LuPencil className="text-xl text-purple-600" />,
-            title: `Puja Theme`,
-            value: currentPuja?.current_theme
+            title: 'Puja Theme',
+            value: currentPuja?.theme
         },
-        {
-            icon: <LuBrush className="text-xl text-purple-600" />,
-            title: `Idol Artist`,
-            value: currentPuja?.idol_artist?.artist_name
-        },
-        {
-            icon: <LuPalette className="text-xl text-purple-600" />,
-            title: `Decoration Artist`,
-            value: currentPuja?.decoration_artist?.artist_name
-        },
-        {
-            icon: <LuLightbulb className="text-xl text-purple-600" />,
-            title: `Lighting Artist`,
-            value: currentPuja?.lighting_artist?.artist_name
-        },
-        {
-            icon: <LuBrush className="text-xl text-purple-600" />,
-            title: `Theme Artist`,
-            value: currentPuja?.theme_artist?.artist_name
-        },
-    ].filter((item: any) => item.value);
+        ...artistTypes.map(({ type, icon, title }) => ({
+            icon,
+            title,
+            value: (artistsByType[type] || []).join(', ')
+        }))
+    ].filter(item => item.value);
 
     const socialLinks = [
         {
@@ -221,13 +224,13 @@ export default async function Page({ params }: PageProps) {
     ].map((item: any) => {
         return {
             ...item,
-            link: currentPuja?.links?.find((link: any) => link.type === item.type)?.link ?? '#'
+            link: currentPuja?.links?.find((link: any) => link.title === item.type)?.url ?? '#'
         }
     });
 
     const schemaData = {
-        path: `puja/${getUrlSlug(pujaName)}/${currentPuja?.reference_id}`,
-        title: `Details of ${pujaName} Sarbajanin`,
+        path: `puja/${currentPuja?.slug}/${currentPuja?.referenceId}`,
+        title: `Details of ${currentPuja?.name} Sarbajanin`,
         parents: [
             {
                 title: 'Jagadhatri Puja Committee List',
@@ -235,35 +238,35 @@ export default async function Page({ params }: PageProps) {
             }
         ],
         dates: {
-            published: timestampToDate(currentPuja?._created),
-            modified: timestampToDate(currentPuja?._modified),
+            published: currentPuja?.createdAt,
+            modified: currentPuja?.updatedAt,
         }
     }
     const jsonLd = schema(schemaData);
     jsonLd["@graph"].push({
-        "name": `${cel != '--' ? cel : y === 'Not Known' ? 'Jagadhatri Puja' : `${y} Years`} Celebration of ${pujaName} Sarbajanin`,
-        "description": `Jagadhatri Puja ${queryYear} celebration by ${pujaName} Sarbajanin, ${currentPuja?.puja_zone === 'bhr' ? 'Bhadreswar' : 'Chandannagar'}`,
+        "name": `${cel != '--' ? cel : y === 'Not Known' ? 'Jagadhatri Puja' : `${y} Years`} Celebration of ${currentPuja?.name} Sarbajanin`,
+        "description": `Jagadhatri Puja ${queryYear} celebration by ${currentPuja?.name} Sarbajanin, ${zone}`,
         "@type": "Event",
         "eventStatus": "https://schema.org/EventScheduled",
         "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
         "location": [
             {
                 "@type": "Place",
-                "name": currentPuja?.puja_zone === 'bhr' ? 'Bhadreswar' : 'Chandannagar',
-                "url": `https://en.wikipedia.org/wiki/${currentPuja?.puja_zone === 'bhr' ? 'Bhadreswar,_Hooghly' : 'Chandannagar'}`,
+                "name": zone,
+                "url": `https://en.wikipedia.org/wiki/${currentPuja?.zone === 'bhadreswar' ? 'Bhadreswar,_Hooghly' : 'Chandannagar'}`,
                 "address": {
                     "@type": "PostalAddress",
-                    "name": `${currentPuja?.puja_name} Puja Premises`,
-                    "streetAddress": `${currentPuja?.location?.address || `${currentPuja?.puja_zone === 'bhr' ? 'Bhadreswar' : 'Chandannagar'}, Hooghly, West Bengal`}`,
-                    "addressLocality": currentPuja?.puja_zone === 'bhr' ? 'Bhadreswar' : 'Chandannagar',
+                    "name": `${currentPuja?.name} Puja Premises`,
+                    "streetAddress": `${currentPuja?.location?.address || `${zone}, Hooghly, West Bengal`}`,
+                    "addressLocality": zone,
                     "addressRegion": "West Bengal",
                     "addressCountry": "IN"
                 },
-                ...(currentPuja?.location?.lat && currentPuja?.location?.lng ? {
+                ...(currentPuja?.location?.coordinates?.lat && currentPuja?.location?.coordinates?.lng ? {
                     "geo": {
                         "@type": "GeoCoordinates",
-                        "latitude": currentPuja?.location?.lat,
-                        "longitude": currentPuja?.location?.lng
+                        "latitude": currentPuja?.location?.coordinates?.lat,
+                        "longitude": currentPuja?.location?.coordinates?.lng
                     },
                 } : {}),
                 "hasMap": gMapLink
@@ -271,19 +274,19 @@ export default async function Page({ params }: PageProps) {
         ],
         "organizer": {
             "@type": "Organization",
-            "name": currentPuja?.puja_name || 'Jagadhatri Puja',
+            "name": currentPuja?.name || 'Jagadhatri Puja',
             "url": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}`
         },
         "image": pujaImages.map((item: any) => item.src),
-        "startDate": `${getDateByIndex(information, 0)}T00:00:00+05:30`,
-        "endDate": `${getDateByIndex(information, 4)}T21:59:59+05:30`,
-        "subEvent": information?.dates?.map((item: any) => {
+        "startDate": `${getDateByIndex(siteData?.schedules, 0)}T00:00:00+05:30`,
+        "endDate": `${getDateByIndex(siteData?.schedules, 4)}T21:59:59+05:30`,
+        "subEvent": siteData?.schedules?.map((item: any) => {
             const date = new Date(item?.date);
             date.setDate(date.getDate() + 1);
             return {
                 "@type": "Event",
                 "name": item?.event,
-                "description": `Jagadhatri Puja ${queryYear} ${item?.event} celebration by ${pujaName} Sarbajanin, ${currentPuja?.puja_zone === 'bhr' ? 'Bhadreswar' : 'Chandannagar'}`,
+                "description": `Jagadhatri Puja ${queryYear} ${item?.event} celebration by ${currentPuja?.name} Sarbajanin, ${zone}`,
                 "eventStatus": "https://schema.org/EventScheduled",
                 "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
                 "startDate": item?.event === 'Procession' ? `${item?.date}T18:00:00+05:30` : `${item?.date}T00:00:00+05:30`,
@@ -293,27 +296,25 @@ export default async function Page({ params }: PageProps) {
                     "name": "Haridradanga Puja Premises",
                     "address": {
                         "@type": "PostalAddress",
-                        "streetAddress": `${currentPuja?.location?.address || `${currentPuja?.puja_zone === 'bhr' ? 'Bhadreswar' : 'Chandannagar'}, Hooghly, West Bengal`}`,
-                        "addressLocality": currentPuja?.puja_zone === 'bhr' ? 'Bhadreswar' : 'Chandannagar',
+                        "streetAddress": `${currentPuja?.location?.address || `${zone}, Hooghly, West Bengal`}`,
+                        "addressLocality": zone,
                         "addressRegion": "West Bengal",
                         "addressCountry": "IN"
                     },
                 },
                 "organizer": {
                     "@type": "Organization",
-                    "name": currentPuja?.puja_name || 'Jagadhatri Puja',
+                    "name": currentPuja?.name || 'Jagadhatri Puja',
                     "url": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}`
                 },
             }
         }),
-        "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}#schema-${currentPuja?._o+1}`, // ensure unique ID
+        "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}#schema-${currentPuja?.order+1}`, // ensure unique ID
         "inLanguage": "en-IN",
         "mainEntityOfPage": {
             "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}#webpage`
         }
     });
-    
-    const description = getDescription(currentPuja, pujadescriptions, pujas?.length)
 
     return (
         <Main jsonLd={jsonLd}>
@@ -386,7 +387,7 @@ export default async function Page({ params }: PageProps) {
                         {/* Badge */}
                         <div className="inline-block mb-10">
                             <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20">
-                                <Breadcrumbs breadcrumbTitle={pujaName} className="text-white/90 capitalize p-0" end={-1} />
+                                <Breadcrumbs breadcrumbTitle={currentPuja?.name} className="text-white/90 capitalize p-0" end={-1} />
                             </div>
                         </div>
 
@@ -394,7 +395,7 @@ export default async function Page({ params }: PageProps) {
                         <div className="relative">
                             <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight text-center">
                                 <span className="text-shadow-lg text-shadow-grey-900 flex flex-col md:flex-row items-center gap-2">
-                                    {pujaName}
+                                    {currentPuja?.name}
                                     {popular && (
                                         <div className="relative inline-flex items-center tracking-normal">
                                             {/* <span className="absolute -inset-2">
@@ -419,7 +420,7 @@ export default async function Page({ params }: PageProps) {
                             <div className="flex items-center justify-center gap-3 px-6 py-3 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
                                 <LuMapPin className="text-purple-400" />
                                 <a href={gMapLink} target="_blank" className="text-sm md:text-base text-white/90">
-                                    {currentPuja?.location?.address || `${currentPuja?.puja_zone === 'bhr' ? 'Bhadreswar' : 'Chandannagar'}, Hooghly, West Bengal`}
+                                    {currentPuja?.location?.address || `${zone}, Hooghly, West Bengal`}
                                 </a>
                             </div>
                             {/* Decorative dots */}
@@ -450,7 +451,7 @@ export default async function Page({ params }: PageProps) {
                                     description: 'Puja Category'
                                 },
                                 {
-                                    text: String(currentPuja?._o + 1).padStart(2, '0'),
+                                    text: String(currentPuja?.order + 1).padStart(2, '0'),
                                     description: 'Serial Number'
                                 }
                             ].map((item, index) => (
@@ -514,7 +515,7 @@ export default async function Page({ params }: PageProps) {
                                         <LuMapPin className="text-2xl text-purple-600" />
                                     </div>
                                     <div>
-                                        <div className="text-xl md:text-2xl font-bold text-gray-800 mb-1">{currentPuja?.puja_zone === 'bhr' ? 'Bhadreswar' : 'Chandannagar'}</div>
+                                        <div className="text-xl md:text-2xl font-bold text-gray-800 mb-1">{currentPuja?.zone === 'bhr' ? 'Bhadreswar' : 'Chandannagar'}</div>
                                         <div className="text-xs md:text-sm text-gray-600">Police Station Zone</div>
                                     </div>
                                 </div>
@@ -525,8 +526,8 @@ export default async function Page({ params }: PageProps) {
                                         <LuPalette className="text-2xl text-purple-600" />
                                     </div>
                                     <div>
-                                        <div className="text-xl md:text-2xl font-bold text-gray-800 mb-1">{processions?.vehicles ? 'Participating' : 'Not Participating'}</div>
-                                        <div className="text-xs md:text-sm text-gray-600">{processions?.vehicles ? `With ${processions.vehicles} Vehicle${processions.vehicles > 1 ? 's' : ''} in Procession` : `In Procession ${queryYear}`}</div>
+                                        <div className="text-xl md:text-2xl font-bold text-gray-800 mb-1">{parseInt(currentPuja?.procession?.year) === queryYear ? 'Participating' : 'Not Participating'}</div>
+                                        <div className="text-xs md:text-sm text-gray-600">{parseInt(currentPuja?.procession?.year) === queryYear && truckCount ? `With ${truckCount} Vehicle${truckCount > 1 ? 's' : ''} in Procession` : `In Procession ${queryYear}`}</div>
                                     </div>
                                 </div>
                             </div>
@@ -551,17 +552,7 @@ export default async function Page({ params }: PageProps) {
                                 <div className="absolute bottom-0 left-0 w-32 h-32 bg-purple-100/50 rounded-full blur-3xl -ml-16 -mb-16" />
                                 <div className="relative">
                                     <div className="prose prose-lg prose-purple max-w-none space-y-2 text-justify">
-                                        {description ? (
-                                            <div className="space-y-2" 
-                                                dangerouslySetInnerHTML={{ __html: description }} 
-                                            />
-                                        ) : (
-                                            <p className="text-gray-600 mb-8">
-                                                Experience the grandeur of one of Chandannagar and Bhadreswar's most cherished Jagadhatri Puja celebrations. Our puja embodies the perfect blend of tradition and cultural heritage that has been preserved through generations.
-                                            </p>
-                                        )}
-                                        
-                                        {currentPuja?.puja_info && <div className="space-y-2" dangerouslySetInnerHTML={{ __html: currentPuja?.puja_info }} />}
+                                        {currentPuja?.info && <Markdown content={currentPuja?.info} className="space-y-2" />}
                                         {cel != '--' && (
                                             <div className="my-8 p-6 rounded-2xl bg-gradient-to-r from-purple-50 to-amber-50 border border-amber-100 relative overflow-hidden">
                                                 <div className="absolute top-0 right-0 w-40 h-40 bg-yellow-100/70 rounded-full blur-3xl -mr-20 -mt-20 opacity-70" />
@@ -593,7 +584,7 @@ export default async function Page({ params }: PageProps) {
                                     </div>
                                     {info.length > 0 && <div className="flex flex-wrap justify-center gap-4 md:gap-6 mt-8 border-t border-purple-100 pt-8">
                                         {
-                                            info.filter((item: any) => item.value).map((item: any, index: number) => (
+                                            info.map((item: any, index: number) => (
                                                 <div key={index} className="flex items-start gap-4 basis-64">
                                                     <div className="p-3 rounded-xl bg-purple-100">
                                                         {item.icon}
@@ -627,7 +618,7 @@ export default async function Page({ params }: PageProps) {
                     </div>
                 </div>
           
-                {images?.length > 0 && (
+                {currentPuja?.images?.length > 0 && (
                     <div id="gallery" className="py-24 bg-gray-50">
                         <div className="">
                             <div className="text-center mb-16">
@@ -685,7 +676,7 @@ export default async function Page({ params }: PageProps) {
                             <p className="text-gray-600 max-w-2xl mx-auto">Mark your calendar for these auspicious occasions</p>
                         </div>
                         <div className="grid md:grid-cols-3 gap-6">
-                            {information?.dates?.map((item: any, index: number) => (
+                            {siteData?.schedules?.map((item: any, index: number) => (
                                 <div key={index} 
                                         className="group relative bg-white/90 backdrop-blur-sm p-8 rounded-2xl shadow-lg shadow-purple-100/50 hover:shadow-xl hover:shadow-purple-200/60 transition-all duration-300 overflow-hidden border border-purple-100/30">
                                     {/* Decorative elements */}
@@ -708,10 +699,10 @@ export default async function Page({ params }: PageProps) {
                                         </div>
                                         
                                         {/* Event details */}
-                                        {item?.information && (
+                                        {item?.description && (
                                             <div className="pt-4 border-t border-purple-100">
                                                 <p className="text-sm text-gray-600 leading-relaxed">
-                                                    {item.information}
+                                                    {item.description}
                                                 </p>
                                             </div>
                                         )}
@@ -786,7 +777,7 @@ export default async function Page({ params }: PageProps) {
                         <div className="flex flex-col sm:flex-row justify-between gap-6">
                             <Link
                                 rel="prev"
-                                href={`/puja/${getUrlSlug(array?.[0]?.puja_name)}/${array?.[0]?.reference_id}`}
+                                href={`/puja/${array?.[0]?.slug}/${array?.[0]?.referenceId}`}
                                 className="flex items-center gap-4 px-6 py-5 bg-gradient-to-r from-white to-purple-50 border border-purple-100 rounded-xl hover:border-purple-200 transition-all group relative overflow-hidden flex-1"
                             >
                                 <div className="absolute top-0 left-0 w-1 h-full bg-purple-400"></div>
@@ -798,7 +789,7 @@ export default async function Page({ params }: PageProps) {
                                         <span className="inline-block w-2 h-2 rounded-full bg-purple-300 animate-pulse"></span>
                                         Previous Puja
                                     </div>
-                                    <div className="font-medium truncate">{array?.[0]?.puja_name}</div>
+                                    <div className="font-medium truncate">{array?.[0]?.name}</div>
                                     {array?.[0]?.tags?.includes('popular') && (
                                         <span className="inline-block text-xs px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full mt-1">Popular</span>
                                     )}
@@ -806,7 +797,7 @@ export default async function Page({ params }: PageProps) {
                             </Link>
                             <Link
                                 rel="next"
-                                href={`/puja/${getUrlSlug(array?.[1]?.puja_name)}/${array?.[1]?.reference_id}`}
+                                href={`/puja/${array?.[1]?.slug}/${array?.[1]?.referenceId}`}
                                 className="flex items-center justify-end gap-4 px-6 py-5 bg-gradient-to-l from-white to-purple-50 border border-purple-100 rounded-xl hover:border-purple-200 transition-all group text-right relative overflow-hidden flex-1"
                             >
                                 <div className="absolute top-0 right-0 w-1 h-full bg-purple-400"></div>
@@ -815,7 +806,7 @@ export default async function Page({ params }: PageProps) {
                                         Next Puja
                                         <span className="inline-block w-2 h-2 rounded-full bg-purple-300 animate-pulse"></span>
                                     </div>
-                                    <div className="font-medium truncate">{array?.[1]?.puja_name}</div>
+                                    <div className="font-medium truncate">{array?.[1]?.name}</div>
                                     {array?.[1]?.tags?.includes('popular') && (
                                         <span className="inline-block text-xs px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full mt-1">Popular</span>
                                     )}

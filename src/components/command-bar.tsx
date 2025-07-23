@@ -15,7 +15,7 @@ import {
 import { useEffect, useState, useMemo } from "react";
 import { useRouter } from '@bprogress/next/app'
 import { useDebouncedCallback } from "use-debounce";
-import { getUrlSlug, getYear, sanitizeSearchQuery } from '@/utils/functions';
+import { getYear, sanitizeSearchQuery } from '@/utils/functions';
 import { LuSearch, LuList, LuImage, LuZap, LuShoppingCart, LuTrophy, LuInfo, LuMapPin } from "react-icons/lu";
 import { MdOutline360 } from 'react-icons/md';
 import { useSearchParams } from "next/navigation";
@@ -151,13 +151,13 @@ function DynamicActionsLoader({ onInput, onSearch }: DynamicActionsLoaderProps) 
                 const y = getYear(item?.estd);
                 return ({
                     id: `puja-${item._o+1}`,
-                    name: `${item.puja_name}${y === 'Not Known' ? '' : ` - ${y} Years`}`,
+                    name: `${item.name}${y === 'Not Known' ? '' : ` - ${y} Years`}`,
                     section: "Search Results",
-                    keywords: getUrlSlug(item?.puja_name),
+                    keywords: item?.slug,
                     parent: "pujas",
                     icon: <LuZap />,
-                    subtitle: `${item?.location?.address || `${item?.puja_zone === 'bhr' ? 'Bhadreswar' : 'Chandannagar'}, Hooghly, West Bengal`}`,
-                    perform: () => router.push(`/puja/${getUrlSlug(item?.puja_name)}/${item?.reference_id}`),
+                    subtitle: `${item?.location?.address || `${item?.zone === 'bhadreswar' ? 'Bhadreswar' : 'Chandannagar'}, Hooghly, West Bengal`}`,
+                    perform: () => router.push(`/puja/${item?.slug}/${item?.referenceId}`),
                 })
             }) : [];
 

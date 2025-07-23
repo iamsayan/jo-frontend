@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
 import MainLayout from '@/components/main-layout';
+import Markdown from '@/components/markdown';
 import Section from '@/components/section';
 import schema from "@/utils/schema";
-import { getModel } from "@/utils/fetch";
+import { getCollection } from "@/utils/fetch";
 import { metadata as metadataSchema } from "@/app/layout";
+
 export const metadata: Metadata = {
     title: 'Achievements',
     description: 'Celebrating a decade of digital service—view our milestones, media features, and honors as Chandannagar’s official online puja archive.',
@@ -17,8 +19,8 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-    const siteData = await getModel('achievements', { type: 'item' });
-    const data = siteData ?? null
+    const siteData = await getCollection('global', { populate: 'achievements' });
+    const data = siteData?.data ?? null
 
     const jsonLd = schema({
         path: 'achievements',
@@ -33,7 +35,7 @@ export default async function Page() {
                     <p>Through tireless efforts and the support of our vibrant community, we’ve achieved remarkable milestones—from pioneering virtual puja experiences and launching mobile apps to organizing prestigious award ceremonies and expanding our digital reach beyond borders. Each accomplishment represents a step toward preserving our rich cultural heritage while embracing the possibilities of the digital age. Here’s a snapshot of some of our proudest and most impactful achievements along this incredible journey:</p>
                 </div>
                 <ul className="timeline timeline-snap-icon max-md:timeline-compact timeline-vertical">
-                    {data && data?.data?.map((item: any, index: number) => (
+                    {data && data?.achievements?.map((item: any, index: number) => (
                         <li key={index}>
                             <div className="timeline-middle">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
@@ -46,9 +48,9 @@ export default async function Page() {
                             <div className={`flex flex-col gap-2 timeline-box ${index % 2 !== 0 ? 'timeline-start md:text-end' : 'timeline-end md:text-start'}`}>
                                 <time className="font-mono italic">{item?.year}</time>
                                 <div className="text-lg font-bold text-green-600">{item?.title}</div>
-                                <div className="text-sm leading-6" dangerouslySetInnerHTML={{__html: item?.details}}></div>
+                                <Markdown className="text-sm leading-6" content={item?.details} />
                             </div>
-                            {index !== data?.data?.length-1 && <hr className="bg-success"/>}
+                            {index !== data?.achievements?.length-1 && <hr className="bg-success"/>}
                         </li>
                     ))}
                 </ul>

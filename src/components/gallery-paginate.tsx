@@ -17,13 +17,14 @@ interface GalleryPaginateProps {
 }
 
 function GalleryPaginate({ className, images, itemsPerPage }: GalleryPaginateProps) {
+
     const router = useRouter();
     const params = useParams();
     const searchParams = useSearchParams();
     const lightGallery = useRef<any>(null);
 
     const classes = cn('gallery-filter mt-4', className);
-    const pageCount = Math.ceil(images.meta.total / itemsPerPage);
+    const pageCount = Math.ceil(images?.meta?.pagination.total / itemsPerPage);
     const currentPage = Number(searchParams.get('page') ?? 1);
     const currentYear = params.year ?? new Date().getFullYear();
 
@@ -40,14 +41,14 @@ function GalleryPaginate({ className, images, itemsPerPage }: GalleryPaginatePro
     const paginatedImages = images.data;
     const dynamicEl = paginatedImages.map((item: any, index: number) => {
         const imagePath = assetImageLoader({
-            src: `${item?.year}/${item?.reference_id}/${item?.image_name}`,
+            src: `${item?.year}/${item?.puja?.referenceId}/${item?.name}`,
         });
         return {
-            key: item?._id + index,
+            key: item?.documentId + index,
             src: imagePath,
             thumb: imagePath,
-            alt: item?.puja_entry_id?.puja_name,
-            subHtml: `<h4>${item?.puja_entry_id?.puja_name}</h4><p>By: ${item?.uploaded_by.trim().split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')}</p>`,
+            alt: item?.puja?.name,
+            subHtml: `<h4>${item?.puja?.name}</h4><p>By: ${item?.uploadedBy.trim().split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')}</p>`,
         }
     });
 
@@ -55,22 +56,22 @@ function GalleryPaginate({ className, images, itemsPerPage }: GalleryPaginatePro
         <div className={classes}>
             <Gallery elementClassNames="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-2 md:gap-3 lg:gap-4 mt-2" speed={500} thumbnail={true} slideShowAutoplay={true} onInit={onInit} fullScreen={true} dynamicEl={dynamicEl} dynamic={true}>
                 {paginatedImages.map((item: any, index: number) => (
-                    <div key={item?._id + index} className="relative aspect-[4/5] overflow-hidden rounded-2xl group cursor-pointer" onClick={() => lightGallery.current.openGallery(index)}>
+                    <div key={item?.documentId + index} className="relative aspect-[4/5] overflow-hidden rounded-2xl group cursor-pointer" onClick={() => lightGallery.current.openGallery(index)}>
                         <TransformedImage
-                            key={item?._id + index}
-                            src={`${item?.year}/${item?.reference_id}/${item?.image_name}`}
+                            key={item?.documentId + index}
+                            src={`${item?.year}/${item?.puja?.referenceId}/${item?.name}`}
                             fill={true} 
                             sizes="(max-width: 768px) 50vw, (max-width: 1280px) 25vw, 16vw" 
                             className="object-cover w-full h-full pointer-events-none text-transparent transform transition-all duration-700 group-hover:scale-110"
                             priority={true}
                             quality={70}
-                            alt={item?.puja_entry_id?.puja_name}
+                            alt={item?.puja?.name}
                         />
                         {/* <span className="absolute bottom-0 left-0 right-0 text-center bg-yellow-500 p-1.5 text-xs">{item?.puja_entry_id?.puja_name}</span> */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                         <div className="absolute inset-0 flex items-end left-0 right-0 text-center bottom-0">
                             <div className="text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 w-full group-hover:mb-3">
-                                <div className="font-medium mb-2 max-w-50 mx-auto text-xs md:text-sm">{item?.puja_entry_id?.puja_name}</div>
+                                <div className="font-medium mb-2 max-w-50 mx-auto text-xs md:text-sm">{item?.puja?.name}</div>
                                 {/* <div className="text-sm text-white/80">Click to expand</div> */}
                             </div>
                         </div>

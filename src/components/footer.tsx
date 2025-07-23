@@ -65,9 +65,9 @@ export default function Footer() {
                         <a href="https://www.pinterest.com/jagadhatrionline/" aria-label="Pinterest" target="_blank" rel="noopener">
                             <FaPinterestP className="size-4 sm:size-5 md:size-6" />
                         </a>
-                        <a href="https://github.com/iamsayan/jo-website" aria-label="GitHub" target="_blank" rel="noopener">
+                        {/* <a href="https://github.com/iamsayan/jo-website" aria-label="GitHub" target="_blank" rel="noopener">
                             <FaGithub className="size-4 sm:size-5 md:size-6" />
-                        </a>
+                        </a> */}
                     </div>
                 </nav>
                 <aside className="text-slate-400 text-xs">

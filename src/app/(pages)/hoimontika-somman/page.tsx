@@ -12,12 +12,11 @@ import {
     LuAward, 
     LuMedal 
 } from 'react-icons/lu';
-import { getModel } from '@/utils/fetch';
+import { getCollection } from '@/utils/fetch';
 import { metadata as metadataSchema } from "@/app/layout";
 import Tabs, { TabProps } from '@/components/tabs';
 import Link from 'next/link';
 import { createElement } from 'react';
-import { getUrlSlug } from '@/utils/functions';
 
 export const metadata: Metadata = {
     title: 'Amie Srestho Hoimantika Somman',
@@ -47,11 +46,23 @@ const getPositionStyle = (position: string) => {
 };
 
 export default async function Page() {
-    const awardsData = await getModel('awards', {
-        sort: { year: -1 },
-        populate: -1
+    const awardsData = await getCollection('awards', {
+        sort: ['year:desc'],
+        populate: {
+            categories: {
+                populate: {
+                    positions: {
+                        populate: {
+                            pujas: {
+                                fields: ['name', 'slug', 'referenceId']
+                            }
+                        }
+                    }
+                }
+            }
+        }
     })
-    let awards = awardsData ?? null
+    let awards = awardsData?.data ?? null
 
     let tabs: TabProps[] = []
 
@@ -81,8 +92,8 @@ export default async function Page() {
                                             </div>
                                             {position?.pujas?.map((puja: any, pujaIdx: any) => (
                                                 <div key={pujaIdx} className="text-gray-700 pl-6">
-                                                    &bull; <Link href={`/puja/${getUrlSlug(puja?.puja_name)}/${puja?.reference_id}`}>
-                                                        {puja.puja_name}
+                                                    &bull; <Link href={`/puja/${puja?.slug}/${puja?.referenceId}`}>
+                                                        {puja.name}
                                                     </Link>
                                                 </div>
                                             ))}
@@ -107,7 +118,7 @@ export default async function Page() {
         }, 0) || 0;
 
         tabs.push({
-            title: <span className="flex items-center gap-2">{award.year} <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-300/10 text-blue-500">{totalAwards}</span></span>,
+            title: <span key={award.year} className="flex items-center gap-2">{award.year} <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-300/10 text-blue-500">{totalAwards}</span></span>,
             icon: <LuTrophy />,
             content: tabContent(award)
         })

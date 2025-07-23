@@ -1,11 +1,15 @@
 import type { MetadataRoute } from 'next'
-
-import { getModel } from "@/utils/fetch";
-import { getUrlSlug } from "@/utils/functions";
+import { getCollection } from "@/utils/fetch";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const pujaData = await getModel('pujas', { type: 'tree' });
-    const data = pujaData ?? null
+    const pujaData = await getCollection('pujas', {
+        pagination: {
+            page: 1,
+            pageSize: 200
+        },
+        sort: ['order:asc']
+    });
+    const data = pujaData?.data ?? [];
 
     const sitemaps: MetadataRoute.Sitemap = [
         {
@@ -87,7 +91,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     data.forEach((element: any) => {
         sitemaps.push({
-            url: `${process.env.NEXT_PUBLIC_SITE_URL}/puja/${getUrlSlug(element?.puja_name)}/${element?.reference_id}`,
+            url: `${process.env.NEXT_PUBLIC_SITE_URL}/puja/${element?.slug}/${element?.referenceId}`,
             lastModified: new Date(),
             changeFrequency: 'monthly',
             priority: 0.7,

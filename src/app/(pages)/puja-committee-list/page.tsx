@@ -1,10 +1,10 @@
 import { Metadata } from 'next';
 import MainLayout from "@/components/main-layout";
 import Section from "@/components/section";
-import { getModel } from "@/utils/fetch";
+import { getCollection } from "@/utils/fetch";
 import Tabs, { TabProps } from '@/components/tabs';
 import Info, { InfoItem } from '@/components/info';
-import { jubilees, preJubilees, getYear, getCelebrating, getUrlSlug } from "@/utils/functions";
+import { jubilees, preJubilees, getYear, getCelebrating } from "@/utils/functions";
 import schema from "@/utils/schema";
 import Link from "next/link";
 import { metadata as metadataSchema } from "@/app/layout";
@@ -22,9 +22,10 @@ import {
 import cx from 'classix';
 
 interface PujaData {
-    reference_id: string;
-    puja_name: string;
-    puja_zone: string;
+    referenceId: string;
+    slug: string;
+    name: string;
+    zone: string;
     estd: string;
     tags: string[];
 }
@@ -43,7 +44,7 @@ export const metadata: Metadata = {
 
 const getZoneDescription = (zone: string) => {
     switch (zone) {
-        case 'cgr':
+        case 'chandannagar':
             return {
                 title: "Chandannagar - The Heart of Jagadhatri Puja",
                 description: "Known as the cultural capital of Jagadhatri Puja, Chandannagar's celebrations date back to the French colonial era. The city is famous for its stunning light decorations (illumination) and artistic excellence in idol making. Each year, thousands of visitors throng the streets to witness the grand celebrations and spectacular immersion procession along the Hooghly riverfront.",
@@ -53,7 +54,7 @@ const getZoneDescription = (zone: string) => {
                     { icon: <LuBuilding className="text-blue-500" />, title: "Annual Footfall", value: "1 Million+" }
                 ]
             };
-        case 'bhr':
+        case 'bhadreswar':
             return {
                 title: "Bhadreswar - Preserving Ancient Traditions",
                 description: "Bhadreswar carries forward the legacy of traditional Jagadhatri Puja with its unique blend of old-world charm and modern celebrations. The area is particularly known for its traditional dhak, cultural programs, and community engagement that brings together people from all walks of life.",
@@ -69,14 +70,18 @@ const getZoneDescription = (zone: string) => {
 };
 
 export default async function Page() {
-    const pujaData = await getModel('pujas', {
-        sort: { _o: 1 }
+    const pujaData = await getCollection('pujas', {
+        populate: ['procession'],
+        pagination: {
+            page: 1,
+            pageSize: 200
+        },
+        sort: ['order:asc']
     });
+    const data = pujaData?.data ?? [];
 
-    const data = pujaData ?? [];
-
-    const cgr: PujaData[] = data.filter((data: any) => data?.puja_zone === 'cgr');
-    const bhr: PujaData[] = data.filter((data: any) => data?.puja_zone === 'bhr');
+    const cgr: PujaData[] = data.filter((data: any) => data?.zone === 'chandannagar');
+    const bhr: PujaData[] = data.filter((data: any) => data?.zone === 'bhadreswar');
 
     const filterData = (zone: any, cel: any) => {
         return zone.filter((data: any) => {
@@ -85,37 +90,29 @@ export default async function Page() {
     }
 
     const tabContent = (zone: PujaData[]) => {
-        const zoneStats = {
-            total: zone.length,
-            jubilees: filterData(zone, jubilees)?.length,
-            preJubilees: filterData(zone, preJubilees)?.length,
-            adiPujas: zone.filter((data: any) => data?.tags?.includes('adi') ?? false)?.length,
-        };
-
-        const zoneInfo = getZoneDescription(zone[0]?.puja_zone);
-
+        const zoneInfo = getZoneDescription(zone[0]?.zone);
         const items: InfoItem[] = [
             {
                 title: "Total Committees",
-                description: zoneStats?.total,
+                description: zone.length,
                 icon: <LuUsers />,
                 variant: "from-green-500 to-green-300"
             },
             {
                 title: "Jubilee Celebrations",
-                description: zoneStats?.jubilees,
+                description: filterData(zone, jubilees)?.length,
                 icon: <LuMedal />,
                 variant: "from-rose-500 to-rose-300"
             },
             {
                 title: "Pre Jubilee Celebrations",
-                description: zoneStats?.preJubilees,
+                description: filterData(zone, preJubilees)?.length,
                 icon: <LuAward />,
                 variant: "from-blue-500 to-blue-300"
             },
             {
                 title: "Adi Pujas",
-                description: zoneStats?.adiPujas,
+                description: zone.filter((data: any) => data?.tags?.includes('adi') ?? false)?.length,
                 icon: <LuCrown />,
                 variant: "from-purple-500 to-purple-300"
             }
@@ -200,7 +197,7 @@ export default async function Page() {
                                         <td>{index + 1}</td>
                                         <td>
                                             <div className="flex items-center gap-2 whitespace-nowrap">
-                                                <span className="text-left hover:text-green-700 transition-colors">{item?.puja_name}</span>
+                                                <span className="text-left hover:text-green-700 transition-colors">{item?.name}</span>
                                                 {(popular || adi) && (
                                                     <div className="flex gap-1">
                                                         {popular && (
@@ -226,7 +223,7 @@ export default async function Page() {
                                         </td>
                                         <td><span className={celClass}>{cel}</span></td>
                                         <td>
-                                            <Link className="btn btn-ghost btn-xs text-sky-600" href={`/puja/${getUrlSlug(item?.puja_name)}/${item?.reference_id}`}>
+                                            <Link className="btn btn-ghost btn-xs text-sky-600" href={`/puja/${item?.slug}/${item?.referenceId}`}>
                                                 View <LuChevronRight />
                                             </Link>
                                         </td>
@@ -242,12 +239,12 @@ export default async function Page() {
 
     const tabs: TabProps[] = [
         {
-            title: <span className="flex items-center gap-2">Chandannagar <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-300/10 text-blue-500">{cgr?.length}</span></span>,
+            title: <span key={cgr?.length} className="flex items-center gap-2">Chandannagar <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-300/10 text-blue-500">{cgr?.length}</span></span>,
             icon: <LuBuilding />,
             content: tabContent(cgr),
         },
         {
-            title: <span className="flex items-center gap-2">Bhadreswar <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-300/10 text-blue-500">{bhr?.length}</span></span>,
+            title: <span key={bhr?.length} className="flex items-center gap-2">Bhadreswar <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-300/10 text-blue-500">{bhr?.length}</span></span>,
             icon: <LuBuilding2 />,
             content: tabContent(bhr),
         },

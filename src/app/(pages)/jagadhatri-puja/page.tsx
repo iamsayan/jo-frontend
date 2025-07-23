@@ -2,11 +2,12 @@ import type { Metadata } from 'next'
 import Link from 'next/link';
 import MainLayout from '@/components/main-layout';
 import Section from '@/components/section';
-import { getModel } from "@/utils/fetch";
+import { getCollection } from "@/utils/fetch";
 import schema from "@/utils/schema";
 import { metadata as metadataSchema } from "@/app/layout";
 import { LuCalendar, LuHistory, LuMapPin, LuUsers } from 'react-icons/lu';
 import Info from '@/components/info';
+import { getDateByIndex } from '@/utils/functions';
    
 export const metadata: Metadata = {
     title: 'Jagadhatri Puja Jubilee, Pre Jubilee List, Schedule',
@@ -21,11 +22,10 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-    const siteData = await getModel('information', { type: 'item' });
-    const data = siteData ?? null;
+    const siteData = await getCollection('global', { populate: '*' });
+    const data = siteData.data ?? null;
 
-    const currentYear = new Date().getFullYear();
-    const uptoYear = data?.dates[0]?.date ? new Date(data?.dates[0]?.date).getFullYear() : currentYear;
+    const uptoYear = getDateByIndex(data.schedules, 0).getFullYear();
     const yearsArray: number[] = [];
 
     for (let year = uptoYear - 12; year <= uptoYear - 1; year++) {

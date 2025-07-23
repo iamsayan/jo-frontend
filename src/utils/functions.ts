@@ -84,72 +84,13 @@ export const getDay = (date: string | Date): string => {
     return daysOfWeek[dayOfWeek];
 };
 
-export const getDateByIndex = (data: { dates?: { date?: string } [] }, index: number): Date => {
-    const dates = data?.dates ?? [];
+export const getDateByIndex = (dates: { date?: string } [], index: number): Date => {
     return dates[index]?.date ? new Date(dates[index].date) : new Date();
 };
-
-export const getUrlSlug = (text: string): string => {
-    return text.toLowerCase().trim().replaceAll(' ', '-').replace(/[._(),;]/g, '');
-};
-
-export const generateUrlSearchParams = (basePath: string, obj: Record<string, any>): string => {
-    const params = new URLSearchParams();
-
-    for (const key in obj) {
-        if (typeof obj[key] === 'object') {
-            params.append(key, JSON.stringify(obj[key]));
-        } else {
-            params.append(key, obj[key]);
-        }
-    }
-
-    return `${basePath}?${params.toString()}`;
-}
-
-export const getDescription = (puja: any, pujadescriptions: any, count: any): string => {
-    const descriptionIndex = getDescriptionIndex(puja?.reference_id, pujadescriptions?.content?.length || 1);
-    return pujadescriptions?.content?.[descriptionIndex]
-        ?.replaceAll('{pujaName}', puja?.puja_name)
-        .replaceAll('{zone}', puja?.puja_zone === 'bhr' ? 'Bhadreswar' : 'Chandannagar')
-        .replaceAll('{count}', count.toString());
-}
-
-export const getDescriptionIndex = (referenceId: string, totalDescriptions: number): number => {
-    const hash = referenceId.split('').reduce((acc, char) => {
-        return ((acc << 5) - acc) + char.charCodeAt(0) | 0;
-    }, 0);
-    
-    return Math.abs(hash) % totalDescriptions;
-}
 
 export const stripHtmlAndLimit = (text: string, limit: number = 160): string => {
     const strippedText = text.replace(/<\/?[^>]+(>|$)/g, "");
     return strippedText.length > limit ? strippedText.substring(0, limit).trim() + "..." : strippedText;
-}
-
-export const getRndInteger = (min: number, max: number): number => {
-    return Math.floor(Math.random() * (max - min + 1) ) + min;
-}
-
-export const timestampToDate = (timestamp: number): string => {
-    const date = new Date(timestamp * 1000);
-    const options: any = {
-        timeZone: 'Asia/Kolkata',
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false,
-    };
-
-    const formatter = new Intl.DateTimeFormat('en-CA', options);
-    const parts = formatter.formatToParts(date);
-    const getPart = (type: any) => parts.find(p => p.type === type)?.value;
-
-    return `${getPart('year')}-${getPart('month')}-${getPart('day')}T` + `${getPart('hour')}:${getPart('minute')}:${getPart('second')}+05:30`;
 }
 
 export const sanitizeSearchQuery = (query: string | number): string => {

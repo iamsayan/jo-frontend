@@ -2,7 +2,7 @@ import MainLayout from "@/components/main-layout";
 import Section from "@/components/section";
 import schema from "@/utils/schema";
 import GalleryPaginate from "@/components/gallery-paginate";
-import { getModel } from "@/utils/fetch";
+import { getCollection } from "@/utils/fetch";
 import { metadata as metadataSchema } from "@/app/layout";
 import { notFound } from "next/navigation";
 import type { Metadata } from 'next'
@@ -24,25 +24,27 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
     const { year } = await params
     const { page } = await searchParams
 
-    const imagesData = await getModel('images', {
-        filter: {
-            category: { $in: [1, 9] },
+    const imagesData = await getCollection('images', {
+        filters: {
+            category: { $in: ['puja', 'procession', 'immersion'] },
             year: year
         },
-        sort: { _modified: -1 },
-        populate: 1,
-        limit: itemsPerPage,
-        skip: (Number(page ?? 1) - 1) * itemsPerPage
+        populate: {
+            puja: {
+                fields: ['name', 'referenceId']
+            }
+        },
+        sort: ['updatedAt:desc'],
+        pagination: {
+            start: (Number(page ?? 1) - 1) * itemsPerPage,
+            limit: itemsPerPage,
+        }
     })
     let images = imagesData ?? []
 
-    if (images?.data?.length < 1) {
-        notFound()
-    }
-
-    const pageCount = Math.ceil(images.meta.total / itemsPerPage);
+    const pageCount = Math.ceil(images?.meta?.pagination.total / itemsPerPage);
     const currentPage = Number(page ?? 1)
-
+    
     return {
         title: `Photo Gallery of ${year}`,
         description: `View Jagadhatri Puja ${year} photos from Chandannagar, Mankundu, and nearby Bhadreswar—featuring award-winning pandals and themes.`,
@@ -52,10 +54,10 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
             images: images?.data?.slice(0, 3)?.map((item: any) => {
                 return {
                     url: assetImageLoader({
-                        src: `${item?.year}/${item?.reference_id}/${item?.image_name}`,
+                        src: `${item?.year}/${item?.puja?.referenceId}/${item?.name}`,
                         quality: 70
                     }),
-                    alt: item?.puja_entry_id?.puja_name
+                    alt: item?.puja?.name
                 }
             })
         },
@@ -72,17 +74,24 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
 export default async function Page({ params, searchParams }: PageProps) {
     const { year } = await params
     const { page } = await searchParams
-    const imagesData = await getModel('images', {
-        filter: {
-            category: { $in: [1, 9] },
+
+    const imagesData = await getCollection('images', {
+        filters: {
+            category: { $in: ['puja', 'procession', 'immersion'] },
             year: year
         },
-        sort: { _modified: -1 },
-        populate: 1,
-        limit: itemsPerPage,
-        skip: (Number(page ?? 1) - 1) * itemsPerPage
+        sort: ['updatedAt:desc'],
+        populate: ['puja'],
+        pagination: {
+            start: (Number(page ?? 1) - 1) * itemsPerPage,
+            limit: itemsPerPage,
+        }
     })
-    let images = imagesData ?? []
+    let imagesObject = imagesData ?? []
+
+    if (imagesObject?.data?.length < 1) {
+        notFound()
+    }
 
     const jsonLd = schema({
         path: `gallery/${year}`,
@@ -99,7 +108,7 @@ export default async function Page({ params, searchParams }: PageProps) {
         <MainLayout title={`Photo Gallery ${year}`} jsonLd={jsonLd}>
             <Section title="View Jagadhatri Puja" description={`Photo Gallery ${year}`}>
                 <Suspense>
-                    <GalleryPaginate images={images} itemsPerPage={itemsPerPage} />
+                    <GalleryPaginate key={year} images={imagesObject} itemsPerPage={itemsPerPage} />
                 </Suspense>
             </Section>
         </MainLayout>

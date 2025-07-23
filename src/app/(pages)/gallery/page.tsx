@@ -5,14 +5,15 @@ import Gallery from "@/components/gallery";
 import schema from "@/utils/schema";
 import TransformedImage from "@/components/transformed-image";
 import Link from "next/link";
-import { getModel } from "@/utils/fetch";
+import { getCollection } from "@/utils/fetch";
 import { metadata as metadataSchema } from "@/app/layout";
 import { assetImageLoader } from "@/utils/transform";
 
 interface ImageData {
     year: string;
-    reference_id: string;
-    image_name: string;
+    referenceId: string;
+    name: string;
+    puja: any;
 }
 
 export const metadata = {
@@ -28,13 +29,24 @@ export const metadata = {
 }
 
 export default async function Page() {
-    const allImagesData = await getModel('images', {
-        filter: { category: { $in: [1, 9] } },
-        sort: { _modified: -1 },
-        populate: 1
+    const allImagesData = await getCollection('images', {
+        populate: {
+            puja: {
+                fields: ['name', 'referenceId']
+            }
+        },
+        pagination: {
+            page: 1,
+            pageSize: 1000
+        },
+        filters: { 
+            category: { 
+                $in: ['puja', 'procession', 'immersion'] 
+            } 
+        },
+        sort: ['updatedAt:desc'],
     });
-    const allImages = (allImagesData ?? []) as ImageData[];
-    
+    const allImages = (allImagesData?.data ?? []) as ImageData[];
     const availableYears = [...new Set(allImages.map(img => img.year))]
         .sort((a, b) => Number(b) - Number(a));
 
@@ -59,27 +71,27 @@ export default async function Page() {
                         {allImages.slice(0, 12).map((image: any, index: number) => (
                             <a 
                                 href={assetImageLoader({
-                                    src: `${image.year}/${image.reference_id}/${image.image_name}`,
+                                    src: `${image.year}/${image.puja?.referenceId}/${image.name}`,
                                 })}
                                 data-disable-progress={true}
                                 key={index}
                                 className="relative aspect-[3/4] overflow-hidden rounded-lg group cursor-pointer"
-                                data-sub-html={`<h4>${image?.puja_entry_id?.puja_name}</h4><p>By: ${image?.uploaded_by.trim().split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')}</p>`}
+                                data-sub-html={`<h4>${image?.puja?.name}</h4><p>By: ${image?.uploadedBy.trim().split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')}</p>`}
                             >
                                 <TransformedImage
-                                    src={`${image.year}/${image.reference_id}/${image.image_name}`}
+                                    src={`${image.year}/${image.puja?.referenceId}/${image.name}`}
                                     width={500}
                                     height={300}
                                     className="object-cover w-full h-full pointer-events-none text-transparent transition-transform duration-500 group-hover:scale-110"
                                     loading="lazy"
                                     priority={false}
                                     quality={70}
-                                    alt={image?.puja_entry_id?.puja_name}
+                                    alt={image?.puja?.name}
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                 <div className="absolute inset-0 flex items-end left-0 right-0 text-center bottom-0">
                                     <div className="text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 w-full group-hover:mb-3">
-                                        <div className="font-medium mb-2 max-w-50 mx-auto text-xs md:text-sm">{image?.puja_entry_id?.puja_name}</div>
+                                        <div className="font-medium mb-2 max-w-50 mx-auto text-xs md:text-sm">{image?.puja?.name}</div>
                                         {/* <div className="text-sm text-white/80">Click to expand</div> */}
                                     </div>
                                 </div>
@@ -101,7 +113,7 @@ export default async function Page() {
                                     className="relative aspect-[3/4] md:aspect-square overflow-hidden rounded-lg group cursor-pointer"
                                 >
                                     <TransformedImage
-                                        src={`${randomImage.year}/${randomImage.reference_id}/${randomImage.image_name}`}
+                                        src={`${randomImage.year}/${randomImage.puja?.referenceId}/${randomImage.name}`}
                                         width={500}
                                         height={300}
                                         className="object-cover w-full h-full pointer-events-none text-transparent transition-transform duration-500 group-hover:scale-110"

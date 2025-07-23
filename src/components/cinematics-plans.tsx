@@ -348,7 +348,7 @@ export default function CinematicsPlans({ pujaData, planId }: { pujaData: any, p
                         />
                         <datalist id="pujaNameList">
                             {pujaData.map((data: any) => (
-                                <option key={data._id} value={data.puja_name} />
+                                <option key={data.referenceId} value={data.name} />
                             ))}
                         </datalist>
                     </div>
