@@ -174,6 +174,7 @@ export default async function Page({ params }: PageProps) {
     const zone = currentPuja?.zone === 'bhr' ? 'Bhadreswar' : 'Chandannagar';
     const gMapLink = currentPuja?.location?.coordinates?.lat && currentPuja?.location?.coordinates?.lng ? `https://www.google.com/maps/search/?api=1&query=${currentPuja?.location?.coordinates?.lat},${currentPuja?.location?.coordinates?.lng}(${currentPuja?.name}+Jagadhatri+Puja+${zone})` : `https://www.google.com/maps/search/?api=1&query=${currentPuja?.name}+Jagadhatri+Puja+${zone},+Hooghly,+West+Bengal`
     const truckCount = currentPuja?.procession?.truckCount ?? null;
+    const showProcession = currentPuja?.procession && parseInt(currentPuja?.procession?.year) === queryYear;
     
     const artistTypes = [
         { type: 'idol', icon: <LuBrush className="text-xl text-purple-600" />, title: 'Idol Artist' },
@@ -497,7 +498,7 @@ export default async function Page({ params }: PageProps) {
             <div className="w-full bg-gradient-to-br from-purple-50/50 via-white to-purple-50/50">
                 <div className="px-4 pattern-dots">
                     <div className="container px-2 lg:px-0 mx-auto relative -mt-10 mb-16">
-                        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8`}>
+                        <div className={cn(`grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 justify-center items-center mx-auto`, showProcession && 'lg:grid-cols-3 max-w-screen-xl', !showProcession && 'max-w-screen-lg')}>
                             <div className="bg-white rounded-2xl p-5 shadow-xl shadow-purple-100/50 hover:shadow-2xl hover:shadow-purple-100/50 transition-all duration-300">
                                 <div className="flex items-center gap-4">
                                     <div className="p-3 rounded-xl bg-purple-100">
@@ -520,17 +521,21 @@ export default async function Page({ params }: PageProps) {
                                     </div>
                                 </div>
                             </div>
-                            <div className="bg-white rounded-2xl p-5 shadow-xl shadow-purple-100/50 hover:shadow-2xl hover:shadow-purple-100/50 transition-all duration-300">
-                                <div className="flex items-center gap-4">
-                                    <div className="p-3 rounded-xl bg-purple-100">
-                                        <LuPalette className="text-2xl text-purple-600" />
-                                    </div>
-                                    <div>
-                                        <div className="text-xl md:text-2xl font-bold text-gray-800 mb-1">{parseInt(currentPuja?.procession?.year) === queryYear ? 'Participating' : 'Not Participating'}</div>
-                                        <div className="text-xs md:text-sm text-gray-600">{parseInt(currentPuja?.procession?.year) === queryYear && truckCount ? `With ${truckCount} Vehicle${truckCount > 1 ? 's' : ''} in Procession` : `In Procession ${queryYear}`}</div>
+                            {showProcession && (
+                                <div className="bg-white rounded-2xl p-5 shadow-xl shadow-purple-100/50 hover:shadow-2xl hover:shadow-purple-100/50 transition-all duration-300">
+                                    <div className="flex items-center gap-4">
+                                        <div className="p-3 rounded-xl bg-purple-100">
+                                            <LuPalette className="text-2xl text-purple-600" />
+                                        </div>
+                                        <div>
+                                            <div className="text-xl md:text-2xl font-bold text-gray-800 mb-1">Participating</div>
+                                            <div className="text-xs md:text-sm text-gray-600">
+                                                {`With ${truckCount} Vehicle${truckCount > 1 ? 's' : ''} in Procession`}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            )}
                         </div>
                     </div>
                     <div id="about" className="relative overflow-hidden py-16">
