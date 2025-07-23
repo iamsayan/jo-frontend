@@ -12,6 +12,12 @@ import {
     LuBrush,
     LuBook,
     LuLightbulb,
+    LuPhone,
+    LuMail,
+    LuUser,
+    LuBuilding,
+    LuCrown,
+    LuMedal,
 } from "react-icons/lu";
 import {
     FaFacebook,
@@ -624,13 +630,13 @@ export default async function Page({ params }: PageProps) {
                 </div>
           
                 {currentPuja?.images?.length > 0 && (
-                    <div id="gallery" className="py-24 bg-gray-50">
-                        <div className="">
+                    <div id="gallery" className="py-24 bg-gradient-to-br from-white via-amber-50/30 to-orange-50/30">
+
                             <div className="text-center mb-16">
-                                <div className="inline-block px-4 py-2 rounded-lg bg-purple-100 text-purple-700 font-medium mb-4">
+                                <div className="inline-block px-4 py-2 rounded-lg bg-amber-100 text-amber-700 font-medium mb-4">
                                     Our Gallery
                                 </div>
-                                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 px-3" style={{lineHeight: 'normal'}}>Glimpses of Celebration</h2>
+                                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 px-3 bg-gradient-to-r from-amber-700 to-orange-700 bg-clip-text text-transparent" style={{lineHeight: 'normal'}}>Glimpses of Celebration</h2>
                                 <p className="text-gray-600 max-w-2xl mx-auto">Explore moments from our recent celebrations that capture the essence of our tradition and community spirit.</p>
                             </div>
                             <GallerySlider 
@@ -664,18 +670,17 @@ export default async function Page({ params }: PageProps) {
                                 }}
                                 sliderItemClass="aspect-[4/5] overflow-hidden rounded-2xl group"
                             />
-                        </div>
                     </div>
                 )}
 
-                <div className="py-20 bg-gradient-to-br from-white via-purple-50/50 to-purple-100/30">
+                <div className="py-20 bg-gradient-to-br from-white via-blue-50/50 to-indigo-100/30">
                     <div className="max-w-7xl mx-auto px-4">
                         <div className="text-center mb-16">
-                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-100 text-purple-700 font-medium mb-4">
+                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-100 text-blue-700 font-medium mb-4">
                                 <LuCalendar className="text-lg" />
                                 <span>Event Schedule</span>
                             </div>
-                            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-purple-700 to-purple-900 bg-clip-text text-transparent" style={{lineHeight: 'normal'}}>
+                            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent" style={{lineHeight: 'normal'}}>
                                 Upcoming Events
                             </h2>
                             <p className="text-gray-600 max-w-2xl mx-auto">Mark your calendar for these auspicious occasions</p>
@@ -684,14 +689,14 @@ export default async function Page({ params }: PageProps) {
                             {siteData?.schedules?.map((item: any, index: number) => (
                                 <div
                                     key={index}
-                                    className="flex items-center gap-4 bg-white/90 backdrop-blur-sm p-4 rounded-2xl shadow-lg shadow-purple-100/50 hover:shadow-xl hover:shadow-purple-200/60 transition-all duration-300 overflow-hidden border border-purple-100/30"
+                                    className="flex items-center gap-4 bg-white/90 backdrop-blur-sm p-4 rounded-2xl shadow-lg shadow-blue-100/50 hover:shadow-xl hover:shadow-blue-200/60 transition-all duration-300 overflow-hidden border border-blue-100/30"
                                 >
-                                    <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-lg bg-purple-100">
-                                        <LuCalendar className="text-lg text-purple-600" />
+                                    <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-lg bg-blue-100">
+                                        <LuCalendar className="text-lg text-blue-600" />
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2">
-                                            <h3 className="text-base font-semibold text-purple-900 truncate">{item?.event}</h3>
+                                            <h3 className="text-base font-semibold text-blue-700 truncate">{item?.event}</h3>
                                             <span className="text-xs text-gray-500">{formatDate(item?.date)}</span>
                                         </div>
                                         {item?.description && (
@@ -706,47 +711,67 @@ export default async function Page({ params }: PageProps) {
 
                 {/* Location Section */}
                 {/* {currentPuja?.location?.address && (
-                    <div className="py-24">
+                    <div className="py-24 bg-gradient-to-br from-white via-green-50/30 to-emerald-50/30">
                         <div className="max-w-7xl mx-auto px-4">
                             <div className="text-center mb-16">
-                                <div className="inline-block px-4 py-2 rounded-lg bg-purple-100 text-purple-700 font-medium mb-4">
-                                    Location
+                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-green-100 text-green-700 font-medium mb-4">
+                                    <LuMapPin className="text-lg" />
+                                    <span>Location</span>
                                 </div>
-                                <h2 className="text-4xl font-bold mb-4">Find Us</h2>
-                                <p className="text-gray-600 max-w-2xl mx-auto">Visit us to experience the divine atmosphere</p>
+                                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-green-700 to-emerald-700 bg-clip-text text-transparent" style={{lineHeight: 'normal'}}>
+                                    Find Us
+                                </h2>
+                                <p className="text-gray-600 max-w-2xl mx-auto">Visit us to experience the divine atmosphere and spiritual energy</p>
                             </div>
-                            <div className="grid md:grid-cols-5 gap-8 items-center">
-                                <div className="md:col-span-3 h-[500px] rounded-2xl overflow-hidden shadow-lg">
-                                    <GoogleMapsEmbed
-                                        apiKey={process.env.GOOGLE_MAP_API_KEY!}
-                                        height={500}
-                                        width="100%"
-                                        mode="place"
-                                        zoom="16"
-                                        q={`${currentPuja?.location?.lat},${currentPuja?.location?.lng}`}
-                                    />
-                                </div>
+                            <div className="grid md:grid-cols-3 gap-8 items-center">
                                 <div className="md:col-span-2">
-                                    <div className="bg-white p-8 rounded-2xl shadow-lg">
-                                        <h3 className="text-2xl font-semibold mb-6">Contact Information</h3>
-                                        <div className="space-y-6">
-                                            <div className="flex items-start gap-4">
-                                                <div className="p-3 rounded-xl bg-purple-100">
-                                                    <LuMapPin className="text-xl text-purple-600" />
-                                                </div>
-                                                <div>
-                                                    <div className="font-medium mb-1">Address</div>
-                                                    <p className="text-gray-600">{currentPuja.location.address}</p>
-                                                </div>
+                                    <div className="bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-lg shadow-green-100/50 hover:shadow-xl hover:shadow-green-200/60 transition-all duration-300 border border-green-100/30">
+                                        <div className="aspect-video rounded-xl overflow-hidden bg-gradient-to-br from-green-100 to-emerald-100 flex items-center justify-center">
+                                            <div className="text-center p-8">
+                                                <LuMapPin className="text-6xl text-green-600 mx-auto mb-4" />
+                                                <h3 className="text-xl font-semibold text-gray-800 mb-2">Interactive Map</h3>
+                                                <p className="text-gray-600 mb-4">Click below to view the exact location</p>
+                                                <a 
+                                                    href={gMapLink}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl hover:from-green-700 hover:to-emerald-700 transition-all duration-300 shadow-lg hover:shadow-xl"
+                                                >
+                                                    <LuMapPin className="text-sm" />
+                                                    Open in Google Maps
+                                                    <LuArrowRight className="text-sm" />
+                                                </a>
                                             </div>
-                                            <a 
-                                                href={`https://www.google.com/maps/search/?api=1&query=${currentPuja?.location?.lat},${currentPuja?.location?.lng}`}
-                                                target="_blank"
-                                                className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-colors"
-                                            >
-                                                Get Directions
-                                                <LuArrowRight className="text-sm" />
-                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="md:col-span-1">
+                                    <div className="bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-lg shadow-green-100/50 hover:shadow-xl hover:shadow-green-200/60 transition-all duration-300 border border-green-100/30">
+                                        <div className="flex items-center gap-4 mb-6">
+                                            <div className="p-3 rounded-xl bg-green-100">
+                                                <LuMapPin className="text-xl text-green-600" />
+                                            </div>
+                                            <div>
+                                                <h3 className="text-lg font-semibold text-gray-800">Address</h3>
+                                                <p className="text-sm text-gray-600">Puja premises location</p>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-4">
+                                            <div className="p-4 rounded-xl bg-green-50 border border-green-100">
+                                                <p className="text-gray-700 leading-relaxed">{currentPuja.location.address}</p>
+                                            </div>
+                                            <div className="space-y-3">
+                                                <div className="flex items-center gap-3 text-sm text-gray-600">
+                                                    <LuBuilding className="text-green-600" />
+                                                    <span>Zone: {zone}</span>
+                                                </div>
+                                                {currentPuja?.location?.coordinates?.lat && currentPuja?.location?.coordinates?.lng && (
+                                                    <div className="flex items-center gap-3 text-sm text-gray-600">
+                                                        <LuMapPin className="text-green-600" />
+                                                        <span>Coordinates: {currentPuja.location.coordinates.lat.toFixed(6)}, {currentPuja.location.coordinates.lng.toFixed(6)}</span>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -754,6 +779,162 @@ export default async function Page({ params }: PageProps) {
                         </div>
                     </div>
                 )} */}
+
+                {/* Related Pujas Section */}
+                {/* <div className="py-20 bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/30">
+                    <div className="max-w-7xl mx-auto px-4">
+                        <div className="text-center mb-16">
+                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-100 text-blue-700 font-medium mb-4">
+                                <LuBuilding className="text-lg" />
+                                <span>Explore More</span>
+                            </div>
+                            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent" style={{lineHeight: 'normal'}}>
+                                Related Pujas
+                            </h2>
+                            <p className="text-gray-600 max-w-2xl mx-auto">Discover other puja committees in the same area</p>
+                        </div>
+                        
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {pujas
+                                .filter((puja: any) => puja?.zone === currentPuja?.zone && puja?.referenceId !== currentPuja?.referenceId)
+                                .slice(0, 6)
+                                .map((puja: any, index: number) => {
+                                    const pujaYear = getYear(puja?.estd);
+                                    const pujaCel = getCelebrating(pujaYear);
+                                    const pujaAdi = puja?.tags?.includes('adi') ?? false;
+                                    const pujaPopular = puja?.tags?.includes('popular') ?? false;
+                                    
+                                    return (
+                                        <Link
+                                            key={puja.referenceId}
+                                            href={`/puja/${puja.slug}/${puja.referenceId}`}
+                                            className="group bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-lg shadow-blue-100/50 hover:shadow-xl hover:shadow-blue-200/60 transition-all duration-300 border border-blue-100/30 hover:border-blue-200/50"
+                                        >
+                                            <div className="flex items-start justify-between mb-4">
+                                                <div className="flex-1 overflow-hidden">
+                                                    <h3 className="text-lg font-semibold text-gray-800 group-hover:text-blue-600 transition-colors line-clamp-2">
+                                                        {puja.name}
+                                                    </h3>
+                                                    <p className="text-sm text-gray-600 mt-1 truncate">
+                                                        {puja.location?.address ? 
+                                                            puja.location.address : 
+                                                            `${puja.zone === 'bhr' ? 'Bhadreswar' : 'Chandannagar'}`
+                                                        }
+                                                    </p>
+                                                </div>
+                                                <div className="flex flex-col items-end gap-2">
+                                                    {pujaPopular && (
+                                                        <span className="inline-flex items-center gap-1 text-xs px-2 py-1 bg-amber-100 text-amber-700 rounded-full">
+                                                            <svg className="w-3 h-3" viewBox="0 0 24 24">
+                                                                <path fill="currentColor" d="M12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28z"/>
+                                                            </svg>
+                                                            Popular
+                                                        </span>
+                                                    )}
+                                                    {pujaAdi && (
+                                                        <span className="inline-flex items-center gap-1 text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded-full">
+                                                            <LuCrown className="w-3 h-3" />
+                                                            Adi
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            
+                                            <div className="space-y-3">
+                                                <div className="flex items-center gap-3 text-sm">
+                                                    <LuHistory className="text-blue-600" />
+                                                    <span className="text-gray-700">
+                                                        {pujaYear === 'Not Known' ? '300+ Years' : `${pujaYear} Years`}
+                                                    </span>
+                                                </div>
+                                                <div className="flex items-center gap-3 text-sm">
+                                                    <LuCalendar className="text-blue-600" />
+                                                    <span className="text-gray-700">
+                                                        Est. {puja.estd === '0' ? 'Not Known' : puja.estd}
+                                                    </span>
+                                                </div>
+                                                {pujaCel !== '--' && (
+                                                    <div className="inline-flex items-center gap-1 text-xs px-2 py-1 bg-gradient-to-r from-amber-100 to-orange-100 text-amber-700 rounded-full">
+                                                        <LuMedal className="w-3 h-3" />
+                                                        {pujaCel}
+                                                    </div>
+                                                )}
+                                            </div>
+                                            
+                                            <div className="mt-4 pt-4 border-t border-blue-100">
+                                                <div className="flex items-center justify-between text-sm">
+                                                    <span className="text-gray-600">View Details</span>
+                                                    <LuArrowRight className="text-blue-600 group-hover:translate-x-1 transition-transform" />
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    );
+                                })}
+                        </div>
+                        
+                        {pujas.filter((puja: any) => puja?.zone === currentPuja?.zone && puja?.referenceId !== currentPuja?.referenceId).length === 0 && (
+                            <div className="text-center py-12">
+                                <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
+                                    <LuBuilding className="text-2xl text-blue-600" />
+                                </div>
+                                <h3 className="text-xl font-semibold text-gray-800 mb-2">No Related Pujas</h3>
+                                <p className="text-gray-600">This appears to be the only puja in this zone.</p>
+                            </div>
+                        )}
+                    </div>
+                </div> */}
+
+                {/* Quick Actions Section */}
+                <div className="py-16 bg-gradient-to-br from-white via-gray-50/50 to-slate-50/50">
+                    <div className="max-w-4xl mx-auto px-4">
+                        <div className="text-center mb-12">
+                            <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">Quick Actions</h3>
+                            <p className="text-gray-600">Everything you need to know about this puja</p>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <Link
+                                href={`/puja-committee-list`}
+                                className="group p-4 rounded-xl bg-white/80 backdrop-blur-sm border border-gray-200 hover:border-purple-200 hover:bg-purple-50/50 transition-all duration-300 text-center"
+                            >
+                                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:bg-purple-200 transition-colors">
+                                    <LuBuilding className="text-xl text-purple-600" />
+                                </div>
+                                <div className="text-sm font-medium text-gray-700 group-hover:text-purple-700">All Pujas</div>
+                            </Link>
+                            
+                            <Link
+                                href={`/gallery`}
+                                className="group p-4 rounded-xl bg-white/80 backdrop-blur-sm border border-gray-200 hover:border-blue-200 hover:bg-blue-50/50 transition-all duration-300 text-center"
+                            >
+                                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:bg-blue-200 transition-colors">
+                                    <LuPalette className="text-xl text-blue-600" />
+                                </div>
+                                <div className="text-sm font-medium text-gray-700 group-hover:text-blue-700">Gallery</div>
+                            </Link>
+                            
+                            <Link
+                                href={`/puja-history`}
+                                className="group p-4 rounded-xl bg-white/80 backdrop-blur-sm border border-gray-200 hover:border-green-200 hover:bg-green-50/50 transition-all duration-300 text-center"
+                            >
+                                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:bg-green-200 transition-colors">
+                                    <LuHistory className="text-xl text-green-600" />
+                                </div>
+                                <div className="text-sm font-medium text-gray-700 group-hover:text-green-700">History</div>
+                            </Link>
+                            
+                            <Link
+                                href={`/contact-us`}
+                                className="group p-4 rounded-xl bg-white/80 backdrop-blur-sm border border-gray-200 hover:border-orange-200 hover:bg-orange-50/50 transition-all duration-300 text-center"
+                            >
+                                <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:bg-orange-200 transition-colors">
+                                    <LuMail className="text-xl text-orange-600" />
+                                </div>
+                                <div className="text-sm font-medium text-gray-700 group-hover:text-orange-700">Contact</div>
+                            </Link>
+                        </div>
+                    </div>
+                </div>
 
                 {/* Enhanced Navigation */}
                 <div className="py-12">
