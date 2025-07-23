@@ -680,44 +680,23 @@ export default async function Page({ params }: PageProps) {
                             </h2>
                             <p className="text-gray-600 max-w-2xl mx-auto">Mark your calendar for these auspicious occasions</p>
                         </div>
-                        <div className="grid md:grid-cols-3 gap-6">
+                        <div className="grid md:grid-cols-2 gap-4">
                             {siteData?.schedules?.map((item: any, index: number) => (
-                                <div key={index} 
-                                        className="group relative bg-white/90 backdrop-blur-sm p-8 rounded-2xl shadow-lg shadow-purple-100/50 hover:shadow-xl hover:shadow-purple-200/60 transition-all duration-300 overflow-hidden border border-purple-100/30">
-                                    {/* Decorative elements */}
-                                    <div className="absolute -right-8 -top-8 w-32 h-32 bg-purple-200/30 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                                    <div className="absolute -left-8 -bottom-8 w-32 h-32 bg-purple-300/20 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                                    
-                                    {/* Content */}
-                                    <div className="relative">
-                                        <div className="flex gap-4">
-                                            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                                                <LuCalendar className="text-2xl text-purple-600" />
-                                            </div>
-                                            <div className="flex flex-col gap-1">
-                                                <h3 className="text-xl font-semibold text-purple-900">{item?.event}</h3>
-                                                <p className="text-gray-600 mb-4 flex items-center gap-1">
-                                                    <span className="inline-block w-2 h-2 rounded-full bg-purple-400"></span>
-                                                    {formatDate(item?.date)}
-                                                </p>
-                                            </div>
+                                <div
+                                    key={index}
+                                    className="flex items-center gap-4 bg-white/90 backdrop-blur-sm p-4 rounded-2xl shadow-lg shadow-purple-100/50 hover:shadow-xl hover:shadow-purple-200/60 transition-all duration-300 overflow-hidden border border-purple-100/30"
+                                >
+                                    <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-lg bg-purple-100">
+                                        <LuCalendar className="text-lg text-purple-600" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-2">
+                                            <h3 className="text-base font-semibold text-purple-900 truncate">{item?.event}</h3>
+                                            <span className="text-xs text-gray-500">{formatDate(item?.date)}</span>
                                         </div>
-                                        
-                                        {/* Event details */}
                                         {item?.description && (
-                                            <div className="pt-4 border-t border-purple-100">
-                                                <p className="text-sm text-gray-600 leading-relaxed">
-                                                    {item.description}
-                                                </p>
-                                            </div>
+                                            <p className="text-xs text-gray-600 mt-1 line-clamp-2">{item.description}</p>
                                         )}
-                                        
-                                        {/* Decorative corner accent */}
-                                        <div className="absolute -right-1 -bottom-1 w-12 h-12 opacity-0 group-hover:opacity-100 transition-opacity duration-300" 
-                                                style={{
-                                                    backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(147, 51, 234, 0.2) 1.5px, transparent 0)',
-                                                    backgroundSize: '8px 8px'
-                                                }} />
                                     </div>
                                 </div>
                             ))}
