@@ -74,7 +74,7 @@ const addons: Addon[] = [
     { id: 10, title: "Voice-over Narration", price: 2000, applicableTo: "both" }
 ];
 
-export default function CinematicsPlans({ pujaData, planId }: { pujaData: any, planId?: string }) {
+export default function CinematicsPlans({ pujaData, partnershipData, planId }: { pujaData: any, partnershipData: any, planId?: string }) {
     const [selectedPuja, setSelectedPuja] = useState<string | null>(null);
     const [selectedPlan, setSelectedPlan] = useState<PlanId | null>(planId as PlanId ?? null);
     const [selectedAddons, setSelectedAddons] = useState<number[]>([]);
@@ -103,6 +103,8 @@ export default function CinematicsPlans({ pujaData, planId }: { pujaData: any, p
             prev.includes(id) ? prev.filter((a) => a !== id) : [...prev, id]
         );
     };
+    
+    const existingData = partnershipData.find((data: any) => data?.puja?.documentId === selectedPuja) || null;
 
     const planPrice = selectedPlan
         ? plans.find((p) => p.id === selectedPlan)?.price ?? 0
@@ -113,7 +115,7 @@ export default function CinematicsPlans({ pujaData, planId }: { pujaData: any, p
         return sum + (addon?.price ?? 0);
     }, 0);
 
-    const total = planPrice + addonsPrice;
+    const total = existingData ? planPrice + addonsPrice - existingData.amount : planPrice + addonsPrice;
 
     const filteredAddons = addons.filter(
         (a) => selectedPlan && (a.applicableTo === selectedPlan || a.applicableTo === "both")
@@ -173,20 +175,23 @@ export default function CinematicsPlans({ pujaData, planId }: { pujaData: any, p
                         .filter(Boolean);
 
                     const formResult = await submitModel('partnerships', {
-                        puja: {
-                            set: [selectedPuja],
-                        },
+                        ...(!existingData ? {
+                            puja: {
+                                set: [selectedPuja],
+                            },
+                        } : {}),
                         year: formData.year,
-                        amount: total,
+                        amount: parseInt(total.toString()) + (existingData ? parseInt(existingData.amount.toString()) : 0),
                         email: formData.email,
                         name: formData.name,
-                        orderId: response.razorpay_order_id,
-                        paymentId: response.razorpay_payment_id,
+                        orderId: existingData ? existingData.orderId.split(',').concat(response.razorpay_order_id).join(',') : response.razorpay_order_id,
+                        paymentId: existingData ? existingData.paymentId.split(',').concat(response.razorpay_payment_id).join(',') : response.razorpay_payment_id,
                         phone: formData.phone,
                         planName: selectedPlanData?.name,
                         planValue: selectedPlanData?.price,
                         addons: addonDetails,
-                    });
+                        confirmed: true,
+                    }, existingData?.documentId);
                   
                     if (!formResult.success) {
                         console.error('Form submission failed:', formResult.error);
@@ -457,10 +462,10 @@ export default function CinematicsPlans({ pujaData, planId }: { pujaData: any, p
                         <div className="text-lg font-bold">Total: ₹{total}</div>
                         <button
                             type="submit"
-                            disabled={processing || !selectedPlan}
+                            disabled={processing || !selectedPlan || total <= 0}
                             className={cn(
                                 "px-4 py-2 rounded bg-yellow-500 text-white font-semibold cursor-pointer flex items-center justify-center gap-2",
-                                !selectedPlan ? "opacity-50 cursor-not-allowed" : "hover:bg-yellow-600"
+                                !selectedPlan || total <= 0 ? "opacity-50 cursor-not-allowed" : "hover:bg-yellow-600"
                             )}
                         >
                             {processing ? (
