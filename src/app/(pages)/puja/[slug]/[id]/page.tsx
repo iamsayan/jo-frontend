@@ -177,7 +177,7 @@ export default async function Page({ params }: PageProps) {
     const cel = getCelebrating(y);
     const adi = currentPuja?.tags?.includes('adi') ?? false;
     const popular = currentPuja?.tags?.includes('popular') ?? false;
-    const zone = currentPuja?.zone === 'bhr' ? 'Bhadreswar' : 'Chandannagar';
+    const zone = currentPuja?.zone === 'bhadreswar' ? 'Bhadreswar' : 'Chandannagar';
     const gMapLink = currentPuja?.location?.coordinates?.lat && currentPuja?.location?.coordinates?.lng ? `https://www.google.com/maps/search/?api=1&query=${currentPuja?.location?.coordinates?.lat},${currentPuja?.location?.coordinates?.lng}(${currentPuja?.name}+Jagadhatri+Puja+${zone})` : `https://www.google.com/maps/search/?api=1&query=${currentPuja?.name}+Jagadhatri+Puja+${zone},+Hooghly,+West+Bengal`
     const truckCount = currentPuja?.procession?.truckCount ?? null;
     const showProcession = currentPuja?.procession && parseInt(currentPuja?.procession?.year) === queryYear;
@@ -522,7 +522,7 @@ export default async function Page({ params }: PageProps) {
                                         <LuMapPin className="text-2xl text-purple-600" />
                                     </div>
                                     <div>
-                                        <div className="text-xl md:text-2xl font-bold text-gray-800 mb-1">{currentPuja?.zone === 'bhr' ? 'Bhadreswar' : 'Chandannagar'}</div>
+                                        <div className="text-xl md:text-2xl font-bold text-gray-800 mb-1">{currentPuja?.zone === 'bhadreswar' ? 'Bhadreswar' : 'Chandannagar'}</div>
                                         <div className="text-xs md:text-sm text-gray-600">Police Station Zone</div>
                                     </div>
                                 </div>
@@ -818,7 +818,7 @@ export default async function Page({ params }: PageProps) {
                                                     <p className="text-sm text-gray-600 mt-1 truncate">
                                                         {puja.location?.address ? 
                                                             puja.location.address : 
-                                                            `${puja.zone === 'bhr' ? 'Bhadreswar' : 'Chandannagar'}`
+                                                            `${puja.zone === 'bhadreswar' ? 'Bhadreswar' : 'Chandannagar'}`
                                                         }
                                                     </p>
                                                 </div>
