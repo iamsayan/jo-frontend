@@ -11,16 +11,15 @@ export async function POST(request: NextRequest) {
 
         const body = await request.json();
         const { model } = body;
-        const modelName = pluralize(model);
 
-        if (!modelName) {
+        if (!model) {
             return NextResponse.json(
-                { message: 'Missing required fields: modelName' },
+                { message: 'Missing required fields: model' },
                 { status: 400 }
             );
         }
 
-        const tag = `collection-${modelName}`;
+        const tag = `collection-${model}`;
         revalidateTag(tag);
 
         return NextResponse.json({
