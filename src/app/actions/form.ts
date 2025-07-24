@@ -1,28 +1,37 @@
 'use server';
 
-export async function submitForm(data: any, token: string) {
+export async function submitForm(data: any) {
+  if (!process.env.API_URL || !process.env.API_KEY) {
+    console.error('Missing API_URL or API_KEY environment variable');
+    return { success: false, error: 'Server configuration error' };
+  }
+
   try {
-    const res = await fetch(`${process.env.API_URL}/inbox/submit/${token}`, {
+    const response = await fetch(`${process.env.API_URL}/forms`, {
       method: 'POST',
       headers: {
         "Content-Type": "application/json",
-        "api-key": process.env.API_KEY!,
+        "Authorization": `Bearer ${process.env.API_KEY!}`,
       },
-      body: JSON.stringify({data: data})
+      body: JSON.stringify({data})
     });
 
-    const json = await res.json();
+    let json;
+    try {
+      json = await response.json();
+    } catch (jsonErr) {
+      console.error('Failed to parse JSON response:', jsonErr);
+      return { success: false, error: 'Invalid server response' };
+    }
 
-    if (!res.ok) {
+    if (!response.ok) {
       console.error('Form submission failed:', json);
-
       return { success: false, error: 'Form submission failed', response: json };
     }
 
     return { success: true, response: json };
   } catch (err) {
     console.error('Form submit error', err);
-
     return { 
       success: false, 
       error: 'Unexpected server error',

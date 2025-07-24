@@ -6,6 +6,11 @@ interface ApiResponse {
 }
 
 export async function getCollection(collection: string, params: Record<string, any> = {}): Promise<ApiResponse> {
+    if (!process.env.API_URL || !process.env.API_KEY) {
+        console.error('Missing API_URL or API_KEY environment variable');
+        return { success: false, error: 'Server configuration error' };
+    }
+
     const query = qs.stringify(params, {
         encodeValuesOnly: true,
     });

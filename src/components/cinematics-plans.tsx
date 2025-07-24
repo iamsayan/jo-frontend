@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useId } from "react";
 import { cn } from "@/utils/functions";
 import Script from 'next/script';
 import {
@@ -9,7 +9,8 @@ import {
 } from "react-icons/lu";
 import { BiLoaderAlt } from "react-icons/bi";
 import { createRazorpayOrder } from "@/app/actions/razorpay";
-import { submitForm } from "@/app/actions/form";
+import { submitModel } from "@/app/actions/model";
+import Select from 'react-select';
 
 declare global {
     interface Window {
@@ -74,6 +75,7 @@ const addons: Addon[] = [
 ];
 
 export default function CinematicsPlans({ pujaData, planId }: { pujaData: any, planId?: string }) {
+    const [selectedPuja, setSelectedPuja] = useState<string | null>(null);
     const [selectedPlan, setSelectedPlan] = useState<PlanId | null>(planId as PlanId ?? null);
     const [selectedAddons, setSelectedAddons] = useState<number[]>([]);
     const [success, setSuccess] = useState<{ paymentId: string } | null>(null);
@@ -117,10 +119,13 @@ export default function CinematicsPlans({ pujaData, planId }: { pujaData: any, p
         (a) => selectedPlan && (a.applicableTo === selectedPlan || a.applicableTo === "both")
     );
 
+    const pujaName = pujaData.find((data: any) => data.documentId === selectedPuja)?.name;
+    const pujaDataOptions = pujaData.map((data: any) => ({ value: data.documentId, label: data.name }));
+
     const handlePayment = async (e: FormEvent) => {
         e.preventDefault();
 
-        if (!formData.name || !formData.email || !formData.phone) {
+        if (!selectedPuja || !formData.name || !formData.email || !formData.phone) {
             setError('Please fill in all fields');
             return;
         }
@@ -143,42 +148,45 @@ export default function CinematicsPlans({ pujaData, planId }: { pujaData: any, p
                 amount: amountInPaise.toString(),
                 currency: "INR",
                 name: "Jagadhatri Online",
-                description: "Payment of ₹" + total + " for " + formData.pujaName,
+                description: "Payment of ₹" + total + " for " + pujaName,
                 order_id: orderResponse.orderId,
                 notes: {
                     email: formData.email,
                     name: formData.name,
                     phone: formData.phone,
-                    pujaName: formData.pujaName,
+                    pujaName: pujaName,
                     year: formData.year,
                 },
                 handler: async function (response: any) {
-                    console.log(response);
                     setSuccess({ paymentId: response.razorpay_payment_id });
                     setProcessing(false);
 
                     const selectedPlanData = plans.find((p) => p.id === selectedPlan);
-                    const planDetails = selectedPlanData ? `${selectedPlanData.name} - ₹${selectedPlanData.price}` : '';
-                    
                     const addonDetails = selectedAddons
                         .map((id) => {
                             const addon = addons.find((a) => a.id === id);
-                            return addon ? `${addon.title} - ₹${addon.price}` : '';
+                            return addon ? {
+                                title: addon.title,
+                                amount: addon.price,
+                            } : null;
                         })
                         .filter(Boolean);
 
-                    const formResult = await submitForm({
-                        pujaName: formData.pujaName,
+                    const formResult = await submitModel('partnerships', {
+                        puja: {
+                            set: [selectedPuja],
+                        },
                         year: formData.year,
-                        plan: planDetails,
-                        addons: addonDetails,
                         amount: total,
-                        name: formData.name,
                         email: formData.email,
-                        phone: formData.phone,
-                        paymentId: response.razorpay_payment_id,
+                        name: formData.name,
                         orderId: response.razorpay_order_id,
-                    }, 'bd6e259d592acb2fbec4c44fbfbaad8b7cadaca1');
+                        paymentId: response.razorpay_payment_id,
+                        phone: formData.phone,
+                        planName: selectedPlanData?.name,
+                        planValue: selectedPlanData?.price,
+                        addons: addonDetails,
+                    });
                   
                     if (!formResult.success) {
                         console.error('Form submission failed:', formResult.error);
@@ -234,7 +242,7 @@ export default function CinematicsPlans({ pujaData, planId }: { pujaData: any, p
                             <p className="text-gray-600 mb-4">Thank you for your order.</p>
                             <p className="text-sm text-gray-500 mb-4">Payment ID: {success.paymentId}</p>
                             {/* <button
-                                onClick={() => window.location.reload()}
+                                onClick={() => setSuccess(null)}
                                 className="w-full py-2 px-4 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
                             >
                                 Make Another Order
@@ -336,25 +344,56 @@ export default function CinematicsPlans({ pujaData, planId }: { pujaData: any, p
                         <label htmlFor="pujaName" className="block text-sm font-medium text-gray-700 mb-1">
                             Puja Committee Name <span className="text-red-500">*</span>
                         </label>
-                        <input
-                            type="text"
-                            list="pujaNameList"
-                            id="pujaName"
-                            name="pujaName"
-                            value={formData.pujaName}
-                            onChange={handleInputChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-yellow-500"
-                            required
+                        <Select
+                            instanceId={useId()}
+                            options={pujaDataOptions}
+                            placeholder="Select a Puja"
+                            onChange={(value: any) => setSelectedPuja(value?.value ?? null)}
+                            className='w-full'
+                            styles={{
+                                control: (base, state) => ({
+                                    ...base,
+                                    backgroundColor: 'white',
+                                    borderColor: state.isFocused ? '#f59e42' : '#d1d5db', // yellow-500 or gray-300
+                                    boxShadow: state.isFocused ? '0 0 0 1px #f59e42' : undefined,
+                                    '&:hover': { borderColor: '#f59e42' },
+                                    minHeight: '2.5rem',
+                                    borderRadius: '0.375rem', // rounded-md
+                                }),
+                                valueContainer: (base) => ({
+                                    ...base,
+                                    color: '#374151', // text-gray-700
+                                    fontSize: '0.95rem',
+                                    paddingLeft: '0.75rem',
+                                    paddingRight: '0.75rem',
+                                }),
+                                placeholder: (base) => ({
+                                    ...base,
+                                    color: '#9ca3af', // text-gray-400
+                                }),
+                                menu: (base) => ({
+                                    ...base,
+                                    zIndex: 50,
+                                }),
+                                option: (base, state) => ({
+                                    ...base,
+                                    backgroundColor: state.isSelected
+                                        ? '#f59e42' // bg-yellow-500
+                                        : state.isFocused
+                                        ? '#fef3c7' // bg-yellow-50
+                                        : 'white',
+                                    color: state.isSelected
+                                        ? 'white'
+                                        : '#374151', // text-gray-700
+                                    fontSize: '0.95rem',
+                                    cursor: 'pointer',
+                                }),
+                            }}
                         />
-                        <datalist id="pujaNameList">
-                            {pujaData.map((data: any) => (
-                                <option key={data.referenceId} value={data.name} />
-                            ))}
-                        </datalist>
                     </div>
                     <div>
                         <label htmlFor="year" className="block text-sm font-medium text-gray-700 mb-1">
-                            Serving Year <span className="text-red-500">*</span>
+                            Year <span className="text-red-500">*</span>
                         </label>
                         <input
                             type="text"
@@ -365,7 +404,7 @@ export default function CinematicsPlans({ pujaData, planId }: { pujaData: any, p
                             placeholder="YYYY"
                             value={formData.year}
                             onChange={handleInputChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-yellow-500"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500"
                             required
                         />
                     </div>
@@ -379,7 +418,7 @@ export default function CinematicsPlans({ pujaData, planId }: { pujaData: any, p
                             name="name"
                             value={formData.name}
                             onChange={handleInputChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-yellow-500"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500"
                             required
                         />
                     </div>
@@ -396,7 +435,7 @@ export default function CinematicsPlans({ pujaData, planId }: { pujaData: any, p
                             value={formData.phone}
                             pattern="[0-9]{10}"
                             onChange={handleInputChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-yellow-500"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500"
                             required
                         />
                     </div>
@@ -410,7 +449,7 @@ export default function CinematicsPlans({ pujaData, planId }: { pujaData: any, p
                             name="email"
                             value={formData.email}
                             onChange={handleInputChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-yellow-500"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500"
                             required
                         />
                     </div>

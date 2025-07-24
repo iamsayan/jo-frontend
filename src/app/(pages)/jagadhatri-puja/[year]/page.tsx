@@ -113,7 +113,7 @@ export default async function Page({ params }: PageProps) {
     const pujas = pujasRes.data;
     const siteData = siteDataRes.data;
     const processionData = processionRes.data;
-    const canShowProcession = processionData?.every((item: any) => parseInt(item?.year) === queryYear);
+    const canShowProcession = processionData?.length > 0 && processionData?.every((item: any) => parseInt(item?.year) === queryYear);
 
     const displayDate = getDateByIndex(siteData.schedules, 0);
     const dateIsCurrent = queryYear === displayDate.getFullYear();
