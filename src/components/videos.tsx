@@ -6,47 +6,18 @@ import { LuPlay } from 'react-icons/lu';
 
 interface VideoInfo {
     id: string;
-    name: string;
+    title: string;
     description: string;
-    played: number;
+    video: {
+        url: string;
+        provider: string;
+        providerUid: string;
+        privacyHash?: string;
+    }
 }
 
-export default function Videos() {
-    const [videoId, setVideoId] = useState<string>('67g1r7Hin0E');
-
-    const videos: VideoInfo[] = [
-        {
-            id: 'OiK_ZWpZgeA',
-            name: 'Best of Jagadhatri Puja 2024',
-            description: 'Best of Jagadhatri Puja 2022 | Rathersarak | Barabazar | Moranroad | Neogibagan | Circus Math',
-            played: 1000,
-        },
-        {
-            id: 'SGqn6Y2MAEI',
-            name: 'World Famous Lighting',
-            description: 'Best LED Lighting at Chandannagar Jagadhatri Puja 2023',
-            played: 1000,
-        },
-        {
-            id: 'CczMV6ep6p8',
-            name: 'Chandannagar Jagadhatri Puja Procession 2023',
-            description: 'Best video of Jagadhatri Puja',
-            played: 1000,
-        },
-        {
-            id: '67g1r7Hin0E',
-            name: 'Best of Jagadhatri Puja 2022',
-            description: 'Helapukur | Krisnapatty | Palpara | Daibakpara | Ambika',
-            played: 1000,
-        },
-        {
-            id: 'm53r9tdlp5Y',
-            name: 'Best of Jagadhatri Puja 2022',
-            description: 'Rathersarak | Barabazar | Moranroad | Neogibagan | Circus Math',
-            played: 1000,
-        },
-    ];
-
+export default function Videos({ videos }: { videos: VideoInfo[] }) {
+    const [videoId, setVideoId] = useState<string>(videos[0].video.providerUid);
     return (
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-0 lg:gap-5">
             <div className="md:col-span-3">
@@ -60,14 +31,14 @@ export default function Videos() {
                 <div className="flex flex-col justify-between gap-2">
                     <ul className="list bg-base-100 border border-neutral-200 text-left">
                         <li className="p-4 pb-2 text-xs opacity-60 tracking-wide">Most played videos this week</li>
-                        {videos.map((info, index) => (
-                            <li key={index} className="list-row">
-                                <div><img className="size-10 rounded-box object-cover" alt={`Video ${info.description}`} loading="lazy" fetchPriority="low" src={`https://i3.ytimg.com/vi/${info.id}/maxresdefault.jpg`} /></div>
+                        {videos.map((info) => (
+                            <li key={info.video.providerUid} className="list-row">
+                                <div><img className="size-10 rounded-box object-cover" alt={`Video ${info.description}`} loading="lazy" fetchPriority="low" src={`https://i3.ytimg.com/vi/${info.video.providerUid}/maxresdefault.jpg`} /></div>
                                 <div className="list-col-grow overflow-hidden">
-                                    <div className="truncate">{info.name}</div>
+                                    <div className="truncate">{info.title}</div>
                                     <div className="text-xs uppercase font-semibold opacity-60">{info.description}</div>
                                 </div>
-                                <button className="btn btn-square btn-ghost" onClick={() => setVideoId(info.id)}>
+                                <button className="btn btn-square btn-ghost" onClick={() => setVideoId(info.video.providerUid)}>
                                     <LuPlay />
                                 </button>
                             </li>

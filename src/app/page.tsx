@@ -425,12 +425,14 @@ export default async function Home() {
                             </div>
                         ))}
                     </div>
-                    <div>
-                        <p className="font-bold text-base sm:text-xl md:text-2xl xl:text-3xl mb-4">
-                            Glimps of <span className="text-yellow-500">Jagadhatri Puja</span>
-                        </p>
-                        <Videos />
-                    </div>
+                    {data?.videos && 
+                        <div className="relative">
+                            <p className="font-bold text-base sm:text-xl md:text-2xl xl:text-3xl mb-4">
+                                Glimps of <span className="text-yellow-500">Jagadhatri Puja</span>
+                            </p>
+                            <Videos videos={data.videos} />
+                        </div>
+                    }
                 </div>
             </Section>
         </Main>
