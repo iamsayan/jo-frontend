@@ -18,6 +18,7 @@ import {
     LuBuilding,
     LuCrown,
     LuMedal,
+    LuImages,
 } from "react-icons/lu";
 import {
     FaFacebook,
@@ -504,7 +505,7 @@ export default async function Page({ params }: PageProps) {
             <div className="w-full bg-gradient-to-br from-purple-50/50 via-white to-purple-50/50">
                 <div className="px-4 pattern-dots">
                     <div className="container px-2 lg:px-0 mx-auto relative -mt-10 mb-16">
-                        <div className={cn(`grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 justify-center items-center mx-auto`, showProcession && 'lg:grid-cols-3 max-w-screen-xl', !showProcession && 'max-w-screen-lg')}>
+                        <div className={cn(`grid grid-cols-1 gap-4 md:gap-8 justify-center items-center mx-auto`, showProcession && 'lg:grid-cols-3 max-w-screen-xl', !showProcession && 'lg:grid-cols-2 max-w-screen-lg')}>
                             <div className="bg-white rounded-2xl p-5 shadow-xl shadow-purple-100/50 hover:shadow-2xl hover:shadow-purple-100/50 transition-all duration-300">
                                 <div className="flex items-center gap-4">
                                     <div className="p-3 rounded-xl bg-purple-100">
@@ -633,8 +634,9 @@ export default async function Page({ params }: PageProps) {
                     <div id="gallery" className="py-24 bg-gradient-to-br from-white via-amber-50/30 to-orange-50/30">
 
                             <div className="text-center mb-16">
-                                <div className="inline-block px-4 py-2 rounded-lg bg-amber-100 text-amber-700 font-medium mb-4">
-                                    Our Gallery
+                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-100 text-amber-700 font-medium mb-4">
+                                    <LuImages className="text-lg" />
+                                    <span>Our Gallery</span>
                                 </div>
                                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 px-3 bg-gradient-to-r from-amber-700 to-orange-700 bg-clip-text text-transparent" style={{lineHeight: 'normal'}}>Glimpses of Celebration</h2>
                                 <p className="text-gray-600 max-w-2xl mx-auto">Explore moments from our recent celebrations that capture the essence of our tradition and community spirit.</p>

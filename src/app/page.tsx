@@ -127,34 +127,34 @@ export default async function Home() {
     const stats: StatsItem[] = [
         {
             title: 'Followers',
-            stat: '60.5K',
+            stat: '65.5K',
             icon: <FaFacebook className="inline-block size-8 stroke-current" />,
             description: '1K+ new followers in last 30 days'
         },
         {
             title: 'Post Reach',
-            stat: '1.6M',
+            stat: '1.8M',
             icon: <LuHistory className="inline-block size-8 stroke-current" />,
             description: '85% more than last month',
             class: 'text-secondary'
         },
         {
             title: 'Post Engagement',
-            stat: '47.8K',
+            stat: '58.4K',
             icon: <LuVideo className="inline-block size-8 stroke-current" />,
             description: '38% more than last month',
             class: 'text-blue-500'
         },
         {
             title: 'Subscribers',
-            stat: '4.04K',
+            stat: '4.34K',
             icon: <FaYoutube className="inline-block size-8 stroke-current" />,
             description: '500+ new followers in last 1 year',
             class: 'text-green-600'
         },
         {
-            title: 'Visitors',
-            stat: '98.5K',
+            title: 'Website Visitors',
+            stat: '37.5K',
             icon: <LuGlobe className="inline-block size-8 stroke-current" />,
             description: '14% more than last month',
             class: 'text-pink-500'
@@ -407,7 +407,7 @@ export default async function Home() {
                         {data?.schedules?.slice(-5)?.map((item: any, index: number) => (
                             <div
                                 key={index}
-                                className={`flex gap-4 col-span-2 ${index === 3 ? ' md:col-start-2' : ''}`}
+                                className={cn('flex gap-4 col-span-2', index === 3 && 'md:col-start-2')}
                             >
                                 <Image
                                     width={55}
