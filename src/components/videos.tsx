@@ -35,8 +35,8 @@ export default function Videos({ videos }: { videos: VideoInfo[] }) {
                             <li key={info.video.providerUid} className="list-row">
                                 <div><img className="size-10 rounded-box object-cover" alt={`Video ${info.description}`} loading="lazy" fetchPriority="low" src={`https://i3.ytimg.com/vi/${info.video.providerUid}/maxresdefault.jpg`} /></div>
                                 <div className="list-col-grow overflow-hidden">
-                                    <div className="truncate">{info.title}</div>
-                                    <div className="text-xs uppercase font-semibold opacity-60">{info.description}</div>
+                                    <div className="truncate uppercase" title={info.title}>{info.title}</div>
+                                    <div className="text-xs opacity-60 truncate" title={info.description}>{info.description}</div>
                                 </div>
                                 <button className="btn btn-square btn-ghost" onClick={() => setVideoId(info.video.providerUid)}>
                                     <LuPlay />

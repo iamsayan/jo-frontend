@@ -327,7 +327,7 @@ export default async function Page({ params }: PageProps) {
     return (
         <Main jsonLd={jsonLd}>
             {/* Hero Section with Dynamic Background */}
-            <div className="relative md:min-h-[90vh] p-32 w-full flex items-center justify-center overflow-hidden">
+            <div className="relative md:min-h-[90vh] px-16 md:px-32 py-32 w-full flex items-center justify-center overflow-hidden">
                 {/* Background Layer */}
                 <div className="absolute inset-0">
                     {/* Base Gradient */}
@@ -402,7 +402,7 @@ export default async function Page({ params }: PageProps) {
                         {/* Main Title */}
                         <div className="relative">
                             <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight text-center">
-                                <span className="text-shadow-lg text-shadow-grey-900 flex flex-col md:flex-row items-center gap-2">
+                                <span className="text-shadow-xl text-shadow-grey-900 flex flex-col xl:flex-row items-center gap-2">
                                     {currentPuja?.name}
                                     {popular && (
                                         <div className="relative inline-flex items-center tracking-normal">
@@ -463,7 +463,7 @@ export default async function Page({ params }: PageProps) {
                                     description: 'Serial Number'
                                 }
                             ].map((item, index) => (
-                                <div key={index} className="px-6 py-4 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 lg:min-w-[200px] relative overflow-hidden">
+                                <div key={index} className="px-6 py-4 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 xl:min-w-[200px] relative overflow-hidden">
                                     {/* <div className="absolute -right-8 -top-8 w-16 h-16 bg-purple-500/20 rounded-full blur-xl animate-pulse" /> */}
                                     <div className="relative text-center">
                                         <div className="text-xl md:text-2xl font-bold text-white mb-1 flex items-center justify-center gap-2">
@@ -594,14 +594,14 @@ export default async function Page({ params }: PageProps) {
                                             </div>
                                         )}
                                     </div>
-                                    {info.length > 0 && <div className="flex flex-wrap justify-center gap-4 md:gap-6 mt-8 border-t border-purple-100 pt-8">
+                                    {info.length > 0 && <div className="flex flex-wrap md:flex-nowrap justify-center gap-4 md:gap-6 mt-8 border-t border-purple-100 pt-8 overflow-x-auto">
                                         {
                                             info.map((item: any, index: number) => (
                                                 <div key={index} className="flex items-start gap-4 basis-64">
                                                     <div className="p-3 rounded-xl bg-purple-100">
                                                         {item.icon}
                                                     </div>
-                                                    <div>
+                                                    <div className="whitespace-nowrap">
                                                         <div className="font-semibold text-gray-800 mb-1">{item.title}</div>
                                                         <div className="text-sm text-gray-600">{item.value}</div>
                                                     </div>
@@ -631,47 +631,46 @@ export default async function Page({ params }: PageProps) {
                 </div>
           
                 {currentPuja?.images?.length > 0 && (
-                    <div id="gallery" className="py-24 bg-gradient-to-br from-white via-amber-50/30 to-orange-50/30">
-
-                            <div className="text-center mb-16">
-                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-100 text-amber-700 font-medium mb-4">
-                                    <LuImages className="text-lg" />
-                                    <span>Our Gallery</span>
-                                </div>
-                                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 px-3 bg-gradient-to-r from-amber-700 to-orange-700 bg-clip-text text-transparent" style={{lineHeight: 'normal'}}>Glimpses of Celebration</h2>
-                                <p className="text-gray-600 max-w-2xl mx-auto">Explore moments from our recent celebrations that capture the essence of our tradition and community spirit.</p>
+                    <div id="gallery" className="py-20 bg-gradient-to-br from-white via-amber-50/30 to-orange-50/30">
+                        <div className="text-center mb-16">
+                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-100 text-amber-700 font-medium mb-4">
+                                <LuImages className="text-lg" />
+                                <span>Our Gallery</span>
                             </div>
-                            <GallerySlider 
-                                speed={500} 
-                                thumbnail={true} 
-                                slideShowAutoplay={true} 
-                                fullScreen={true} 
-                                slides={pujaImages}
-                                sliderOptions={{
-                                    lazyLoad: 'sequential',
-                                    perPage: pujaImages.length >= 4 ? 4 : pujaImages.length,
-                                    gap: '0.5rem',
-                                    perMove: 1,
-                                    drag: 'free',
-                                    focus: 'center',
-                                    autoScroll: {
-                                        speed: 1,
+                            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 px-3 bg-gradient-to-r from-amber-700 to-orange-800 bg-clip-text text-transparent" style={{lineHeight: 'normal'}}>Glimpses of Celebration</h2>
+                            <p className="text-gray-600 max-w-2xl mx-auto">Explore moments from our recent celebrations that capture the essence of our tradition and community spirit.</p>
+                        </div>
+                        <GallerySlider 
+                            speed={500} 
+                            thumbnail={true} 
+                            slideShowAutoplay={true} 
+                            fullScreen={true} 
+                            slides={pujaImages}
+                            sliderOptions={{
+                                lazyLoad: 'sequential',
+                                perPage: pujaImages.length >= 4 ? 4 : pujaImages.length,
+                                gap: '0.5rem',
+                                perMove: 1,
+                                drag: 'free',
+                                focus: 'center',
+                                autoScroll: {
+                                    speed: 1,
+                                },
+                                height: 600,
+                                pagination: false,
+                                breakpoints: {
+                                    640: {
+                                        perPage: pujaImages.length >= 2 ? 2 : pujaImages.length,
+                                        height: 300,
                                     },
-                                    height: 600,
-                                    pagination: false,
-                                    breakpoints: {
-                                        640: {
-                                            perPage: pujaImages.length >= 2 ? 2 : pujaImages.length,
-                                            height: 300,
-                                        },
-                                        1024: {
-                                            perPage: pujaImages.length >= 3 ? 3 : pujaImages.length,
-                                            height: 350,
-                                        },
+                                    1024: {
+                                        perPage: pujaImages.length >= 3 ? 3 : pujaImages.length,
+                                        height: 350,
                                     },
-                                }}
-                                sliderItemClass="aspect-[4/5] overflow-hidden rounded-2xl group"
-                            />
+                                },
+                            }}
+                            sliderItemClass="aspect-[4/5] overflow-hidden rounded-2xl group"
+                        />
                     </div>
                 )}
 
@@ -691,7 +690,7 @@ export default async function Page({ params }: PageProps) {
                             {siteData?.schedules?.map((item: any, index: number) => (
                                 <div
                                     key={index}
-                                    className="flex items-center gap-4 bg-white/90 backdrop-blur-sm p-4 rounded-2xl shadow-lg shadow-blue-100/50 hover:shadow-xl hover:shadow-blue-200/60 transition-all duration-300 overflow-hidden border border-blue-100/30"
+                                    className="flex items-center gap-4 bg-white/90 backdrop-blur-sm p-4 rounded-2xl backdrop-blur-sm border border-gray-200 hover:border-blue-200 hover:bg-blue-50/50 transition-all duration-300 overflow-hidden"
                                 >
                                     <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-lg bg-blue-100">
                                         <LuCalendar className="text-lg text-blue-600" />

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { FaYoutube, FaFacebookF, FaInstagram, FaXTwitter, FaPinterestP, FaWhatsapp, FaEnvelope, FaHeart } from "react-icons/fa6";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import ScrollTop from "@/components/scroll-top";
@@ -37,6 +38,7 @@ export default function Footer() {
 
     const socialLinks: SocialLink[] = [
         { name: 'Facebook', url: 'https://www.facebook.com/JagadhatriOnlineOfficial/', icon: FaFacebookF, color: 'hover:text-blue-500' },
+        { name: 'WhatsApp', url: 'https://www.whatsapp.com/channel/0029Va54b17DOQIQ6yoP9t39', icon: FaWhatsapp, color: 'hover:text-green-500' },
         { name: 'YouTube', url: 'https://www.youtube.com/c/JagadhatriOnline?sub_confirmation=1', icon: FaYoutube, color: 'hover:text-red-500' },
         { name: 'Instagram', url: 'https://www.instagram.com/jagadhatri_online', icon: FaInstagram, color: 'hover:text-pink-500' },
         { name: 'WhatsApp', url: 'https://whatsapp.com/channel/0029Va54b17DOQIQ6yoP9t39', icon: FaWhatsapp, color: 'hover:text-green-500' },
@@ -57,13 +59,13 @@ export default function Footer() {
             <div className="absolute inset-0 opacity-5 bg-[radial-gradient(circle,#94a3b8_1px,transparent_1px)] bg-[length:40px_40px]"></div>
             
             {/* Main Footer Content */}
-            <div className="relative z-10 container mx-auto px-4 py-12 lg:py-16">
+            <div className="relative container mx-auto px-4 py-12 lg:py-16 text-center md:text-left">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:[grid-template-columns:1.1fr_0.5fr_0.8fr_0.9fr] gap-8">
                     
                     {/* Brand Section */}
                     <div className="lg:col-span-1">
-                        <div className="flex items-center space-x-3 mb-6">
-                            <img src="/logo.png" alt="Jagadhatri Online" className="h-12 w-auto" />
+                        <div className="flex items-center justify-center md:justify-start space-x-3 mb-6">
+                            <Image src="/logo.png" alt="Jagadhatri Online" className="h-14 w-auto" width={500} height={500} />
                             {/* <div>
                                 <h3 className="text-xl font-bold text-white">Jagadhatri Online</h3>
                                 <p className="text-sm text-slate-400">Celebrating Culture & Tradition</p>
@@ -76,7 +78,7 @@ export default function Footer() {
                         </p>
                         
                         {/* Social Links */}
-                        <div className="flex space-x-4">
+                        <div className="flex space-x-4 justify-center md:justify-start">
                             {socialLinks.map((social, index) => (
                                 <a
                                     key={index}
@@ -129,7 +131,7 @@ export default function Footer() {
                         <h4 className="text-lg font-semibold text-white mb-6">Contact & Info</h4>
                         <div className="space-y-4">
                             {contactInfo.map((contact, index) => (
-                                <div key={index} className="flex items-start space-x-3">
+                                <div key={index} className="flex items-start space-x-3 justify-center md:justify-start">
                                     <contact.icon className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
                                     {contact.link ? (
                                         <a
@@ -161,15 +163,15 @@ export default function Footer() {
                             {/* Additional Info */}
                             <div className="pt-4 border-t border-slate-700/30">
                                 <div className="space-y-3">
-                                    <div className="flex items-center space-x-3">
+                                    <div className="flex items-center space-x-3 justify-center md:justify-start">
                                         <div className="size-3 bg-orange-500 rounded-full flex-shrink-0"></div>
                                         <span className="text-slate-300 text-sm">Established in 2016</span>
                                     </div>
-                                    <div className="flex items-center space-x-3">
+                                    <div className="flex items-center space-x-3 justify-center md:justify-start">
                                         <div className="size-3 bg-orange-500 rounded-full flex-shrink-0"></div>
                                         <span className="text-slate-300 text-sm">Cultural Heritage Preservation</span>
                                     </div>
-                                    <div className="flex items-center space-x-3">
+                                    <div className="flex items-center space-x-3 justify-center md:justify-start">
                                         <div className="size-3 bg-orange-500 rounded-full flex-shrink-0"></div>
                                         <span className="text-slate-300 text-sm">Community Driven</span>
                                     </div>
