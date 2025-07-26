@@ -41,7 +41,6 @@ export default function Footer() {
         { name: 'WhatsApp', url: 'https://www.whatsapp.com/channel/0029Va54b17DOQIQ6yoP9t39', icon: FaWhatsapp, color: 'hover:text-green-500' },
         { name: 'YouTube', url: 'https://www.youtube.com/c/JagadhatriOnline?sub_confirmation=1', icon: FaYoutube, color: 'hover:text-red-500' },
         { name: 'Instagram', url: 'https://www.instagram.com/jagadhatri_online', icon: FaInstagram, color: 'hover:text-pink-500' },
-        { name: 'WhatsApp', url: 'https://whatsapp.com/channel/0029Va54b17DOQIQ6yoP9t39', icon: FaWhatsapp, color: 'hover:text-green-500' },
         { name: 'X (Twitter)', url: 'https://x.com/Official_JO16', icon: FaXTwitter, color: 'hover:text-black dark:hover:text-white' },
         { name: 'Pinterest', url: 'https://www.pinterest.com/jagadhatrionline/', icon: FaPinterestP, color: 'hover:text-red-600' },
     ];
@@ -65,20 +64,20 @@ export default function Footer() {
                     {/* Brand Section */}
                     <div className="lg:col-span-1">
                         <div className="flex items-center justify-center md:justify-start space-x-3 mb-6">
-                            <Image src="/logo.png" alt="Jagadhatri Online" className="h-14 w-auto" width={500} height={500} />
+                            <Image src="/logo.png" alt="Jagadhatri Online" className="h-12 md:h-14 w-auto" width={500} height={500} />
                             {/* <div>
                                 <h3 className="text-xl font-bold text-white">Jagadhatri Online</h3>
                                 <p className="text-sm text-slate-400">Celebrating Culture & Tradition</p>
                             </div> */}
                         </div>
-                        <p className="text-slate-300 text-sm leading-relaxed mb-6">
+                        <p className="text-slate-300 text-xs md:text-sm leading-relaxed mb-6">
                             Dedicated to preserving and promoting the rich cultural heritage of Jagadhatri Puja 
                             and fostering community connections through digital platforms. We celebrate the divine 
                             mother Jagadhatri and bring together devotees from around the world.
                         </p>
                         
                         {/* Social Links */}
-                        <div className="flex space-x-4 justify-center md:justify-start">
+                        <div className="flex space-x-2 md:space-x-4 justify-center md:justify-start">
                             {socialLinks.map((social, index) => (
                                 <a
                                     key={index}
@@ -88,7 +87,7 @@ export default function Footer() {
                                     rel="noopener noreferrer"
                                     className={`border-2 border-slate-700/50 p-2 rounded-full bg-slate-700/50 hover:bg-slate-600/50 transition-all duration-300 ${social.color}`}
                                 >
-                                    <social.icon className="w-4 h-4" />
+                                    <social.icon className="size-3 md:size-4" />
                                 </a>
                             ))}
                         </div>
@@ -103,7 +102,7 @@ export default function Footer() {
                                     key={item.name}
                                     href={item.path}
                                     target={item.target ?? '_self'}
-                                    className="block text-slate-300 hover:text-white transition-colors duration-200 text-sm"
+                                    className="block text-slate-300 hover:text-white transition-colors duration-200 text-xs md:text-sm"
                                 >
                                     {item.name}
                                 </Link>
@@ -117,7 +116,7 @@ export default function Footer() {
                                     <Link
                                         key={item.name}
                                         href={item.path}
-                                        className="block text-slate-400 hover:text-white transition-colors duration-200 text-xs"
+                                        className="block text-slate-400 hover:text-white transition-colors duration-200 text-xs md:text-sm"
                                     >
                                         {item.name}
                                     </Link>
@@ -136,12 +135,12 @@ export default function Footer() {
                                     {contact.link ? (
                                         <a
                                             href={contact.link}
-                                            className="text-slate-300 hover:text-white transition-colors duration-200 text-sm"
+                                            className="text-slate-300 hover:text-white transition-colors duration-200 text-xs md:text-sm"
                                         >
                                             {contact.text}
                                         </a>
                                     ) : (
-                                        <span className="text-slate-300 text-sm">{contact.text}</span>
+                                        <span className="text-slate-300 text-xs md:text-sm">{contact.text}</span>
                                     )}
                                 </div>
                             ))}
@@ -164,16 +163,16 @@ export default function Footer() {
                             <div className="pt-4 border-t border-slate-700/30">
                                 <div className="space-y-3">
                                     <div className="flex items-center space-x-3 justify-center md:justify-start">
-                                        <div className="size-3 bg-orange-500 rounded-full flex-shrink-0"></div>
-                                        <span className="text-slate-300 text-sm">Established in 2016</span>
+                                        <div className="size-2 md:size-3 bg-orange-500 rounded-full flex-shrink-0"></div>
+                                        <span className="text-slate-300 text-xs md:text-sm">Established in 2016</span>
                                     </div>
                                     <div className="flex items-center space-x-3 justify-center md:justify-start">
-                                        <div className="size-3 bg-orange-500 rounded-full flex-shrink-0"></div>
-                                        <span className="text-slate-300 text-sm">Cultural Heritage Preservation</span>
+                                        <div className="size-2 md:size-3 bg-orange-500 rounded-full flex-shrink-0"></div>
+                                        <span className="text-slate-300 text-xs md:text-sm">Cultural Heritage Preservation</span>
                                     </div>
                                     <div className="flex items-center space-x-3 justify-center md:justify-start">
-                                        <div className="size-3 bg-orange-500 rounded-full flex-shrink-0"></div>
-                                        <span className="text-slate-300 text-sm">Community Driven</span>
+                                        <div className="size-2 md:size-3 bg-orange-500 rounded-full flex-shrink-0"></div>
+                                        <span className="text-slate-300 text-xs md:text-sm">Community Driven</span>
                                     </div>
                                 </div>
                             </div>
@@ -186,12 +185,12 @@ export default function Footer() {
                         <div className="space-y-4">
                             <div className="bg-slate-700/30 rounded-lg p-3">
                                 <div className="text-orange-400 text-xs font-medium uppercase">Oct - Nov 2025</div>
-                                <div className="text-white text-sm font-medium mt-1">Jagadhatri Puja</div>
+                                <div className="text-white text-xs md:text-sm font-medium mt-1">Jagadhatri Puja</div>
                                 <div className="text-slate-300 text-xs">Annual celebration from 28th October to 1st November</div>
                             </div>
                             <div className="bg-slate-700/30 rounded-lg p-3">
                                 <div className="text-orange-400 text-xs font-medium uppercase">Nov 2025</div>
-                                <div className="text-white text-sm font-medium mt-1">Grand Procession</div>
+                                <div className="text-white text-xs md:text-sm font-medium mt-1">Grand Procession</div>
                                 <div className="text-slate-300 text-xs">Grand procession starts on 1st November, from 6:00 PM onwards</div>
                             </div>
                         </div>

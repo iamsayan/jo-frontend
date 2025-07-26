@@ -12,12 +12,8 @@ import {
     LuBrush,
     LuBook,
     LuLightbulb,
-    LuPhone,
     LuMail,
-    LuUser,
     LuBuilding,
-    LuCrown,
-    LuMedal,
     LuImages,
 } from "react-icons/lu";
 import {
@@ -214,20 +210,20 @@ export default async function Page({ params }: PageProps) {
     const socialLinks = [
         {
             type: "facebook",
-            icon: <FaFacebook className="text-xl text-white/80 hover:text-white transition-colors" />
+            icon: <FaFacebook className="text-sm md:text-xl text-white/80 hover:text-white transition-colors" />
         },
         {
             type: "instagram", 
             link: "#",
-            icon: <FaInstagram className="text-xl text-white/80 hover:text-white transition-colors" />
+            icon: <FaInstagram className="text-sm md:text-xl text-white/80 hover:text-white transition-colors" />
         },
         {
             type: "youtube",
-            icon: <FaYoutube className="text-xl text-white/80 hover:text-white transition-colors" />
+            icon: <FaYoutube className="text-sm md:text-xl text-white/80 hover:text-white transition-colors" />
         },
         {
             type: "x",
-            icon: <FaXTwitter className="text-xl text-white/80 hover:text-white transition-colors" />
+            icon: <FaXTwitter className="text-sm md:text-xl text-white/80 hover:text-white transition-colors" />
         }
     ].map((item: any) => {
         return {
@@ -409,7 +405,7 @@ export default async function Page({ params }: PageProps) {
                                             {/* <span className="absolute -inset-2">
                                                 <div className="w-full h-full max-w-sm mx-auto rotate-2 blur-sm bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 opacity-30 animate-pulse" />
                                             </span> */}
-                                            <span className="relative flex items-center gap-1 text-sm font-semibold px-3 py-1.5 bg-gradient-to-r from-yellow-400/20 via-orange-500/20 to-red-600/20 rounded-full border border-yellow-400/30 backdrop-blur-sm">
+                                            <span className="relative flex items-center gap-1 text-xs md:text-sm font-semibold px-3 py-1.5 bg-gradient-to-r from-yellow-400/20 via-orange-500/20 to-red-600/20 rounded-full border border-yellow-400/30 backdrop-blur-sm">
                                                 <svg className="w-4 h-4 text-yellow-400 animate-spin-slow" viewBox="0 0 24 24">
                                                     <path fill="currentColor" d="M12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28z"/>
                                                 </svg>
@@ -426,8 +422,8 @@ export default async function Page({ params }: PageProps) {
                         {/* Location */}
                         <div className="relative mb-12">
                             <div className="flex items-center justify-center gap-3 px-6 py-3 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
-                                <LuMapPin className="text-purple-400" />
-                                <a href={gMapLink} target="_blank" className="text-sm md:text-base text-white/90">
+                                <span className="size-4"><LuMapPin className="text-purple-400" /></span>
+                                <a href={gMapLink} target="_blank" className="text-xs md:text-sm text-white/90">
                                     {currentPuja?.location?.address || `${zone}, Hooghly, West Bengal`}
                                 </a>
                             </div>
@@ -478,10 +474,6 @@ export default async function Page({ params }: PageProps) {
                                     }} />
                                 </div>
                             ))}
-                            {/* <div className="px-6 py-4 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
-                                <div className="text-xl md:text-2xl font-bold text-white mb-1">{adi ? 'Adi Puja' : 'Traditional'}</div>
-                                <div className="text-xs md:text-sm text-white/70">Puja Category</div>
-                            </div> */}
                         </div>
 
                         <div className="flex items-center justify-center gap-4 mt-4">
@@ -492,7 +484,7 @@ export default async function Page({ params }: PageProps) {
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className={cn("p-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-300", item.link === '#' && 'pointer-events-none')}
-                                    aria-label={`Visit our ${item.type} page`}
+                                    aria-label={`Visit our ${item.type} profile`}
                                 >
                                     {item.icon}
                                 </a>
@@ -559,7 +551,7 @@ export default async function Page({ params }: PageProps) {
                                     {currentPuja?.estd === '0' ? 'A Legacy of Tradition' : `Since the year ${currentPuja?.estd}`}
                                 </p>
                             </div>
-                            <div className="bg-white rounded-3xl p-8 border border-purple-100 shadow-xl shadow-purple-100/50 relative overflow-hidden">
+                            <div className="bg-white rounded-3xl p-6 md:p-8 border border-purple-100 shadow-xl shadow-purple-100/50 relative overflow-hidden">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-purple-100/50 rounded-full blur-3xl -mr-16 -mt-16" />
                                 <div className="absolute bottom-0 left-0 w-32 h-32 bg-purple-100/50 rounded-full blur-3xl -ml-16 -mb-16" />
                                 <div className="relative">
@@ -594,10 +586,10 @@ export default async function Page({ params }: PageProps) {
                                             </div>
                                         )}
                                     </div>
-                                    {info.length > 0 && <div className="flex flex-wrap md:flex-nowrap justify-center gap-4 md:gap-6 mt-8 border-t border-purple-100 pt-8 overflow-x-auto">
+                                    {info.length > 0 && <div className={cn(`lg:max-w-screen-xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-${info.length} justify-center gap-4 md:gap-6 mt-8 border-t border-purple-100 pt-8`)}>
                                         {
                                             info.map((item: any, index: number) => (
-                                                <div key={index} className="flex items-start gap-4 basis-64">
+                                                <div key={index} className="flex items-start gap-4">
                                                     <div className="p-3 rounded-xl bg-purple-100">
                                                         {item.icon}
                                                     </div>
