@@ -191,7 +191,7 @@ export default function CinematicsPlans({ pujaData, planId }: { pujaData: any, p
                         planName: selectedPlanData?.name,
                         planValue: selectedPlanData?.price,
                         addons: addonDetails,
-                        confirmed: true,
+                        fullPaid: true,
                     }, existingData?.documentId);
                   
                     if (!formResult.success) {
@@ -245,7 +245,7 @@ export default function CinematicsPlans({ pujaData, planId }: { pujaData: any, p
                                 </svg>
                             </div>
                             <h3 className="text-xl font-bold text-green-600 mb-2">Payment Successful!</h3>
-                            <p className="text-gray-600 mb-4">Thank you for your order.</p>
+                            <p className="text-gray-600 mb-4">Thank you for your payment.</p>
                             <p className="text-sm text-gray-500 mb-4">Payment ID: {success.paymentId}</p>
                             {/* <button
                                 onClick={() => setSuccess(null)}
