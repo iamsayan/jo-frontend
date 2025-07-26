@@ -20,39 +20,19 @@ export default async function Page({ searchParams }: { searchParams: Promise<{
     plan: string;
 }> }) {
     const { plan } = await searchParams;
-    const pujasDataReq = getCollection('pujas', {
+    const pujasData = await getCollection('pujas', {
+        populate: ['partnerships'],
         pagination: {
             page: 1,
             pageSize: 200
         },
         sort: ['order:asc']
     });
-    const partnershipDataReq = getCollection('partnerships', {
-        populate: ['puja'],
-        pagination: {
-            page: 1,
-            pageSize: 200
-        },
-        filters: {
-            confirmed: {
-                $eq: false
-            },
-            year: {
-                $eq: new Date().getFullYear()
-            }
-        },
-    });
-    const [pujasRes, partnershipRes] = await Promise.allSettled([pujasDataReq, partnershipDataReq]).then(results => [
-        results[0].status === "fulfilled" ? results[0].value : { data: [] },
-        results[1].status === "fulfilled" ? results[1].value : { data: [] }
-    ]);
 
-    const pujasData = pujasRes?.data ?? [];
-    const partnershipData = partnershipRes?.data ?? [];
-    
+    const pujas = pujasData?.data ?? [];
     return (
         <div className="pt-1 flex items-center flex-col">
-            <CinematicsPlans pujaData={pujasData} partnershipData={partnershipData} planId={plan} />
+            <CinematicsPlans pujaData={pujas} planId={plan} />
         </div>
     )
 }

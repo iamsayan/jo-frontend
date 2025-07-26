@@ -71,7 +71,7 @@ export default function Footer() {
                             </div> */}
                         </div>
                         <p className="text-slate-300 text-xs md:text-sm leading-relaxed mb-6">
-                            Dedicated to preserving and promoting the rich cultural heritage of Jagadhatri Puja 
+                            Dedicated to preserving and promoting the rich cultural heritage of Chandannagar Jagadhatri Puja 
                             and fostering community connections through digital platforms. We celebrate the divine 
                             mother Jagadhatri and bring together devotees from around the world.
                         </p>

@@ -74,7 +74,7 @@ const addons: Addon[] = [
     { id: 10, title: "Voice-over Narration", price: 2000, applicableTo: "both" }
 ];
 
-export default function CinematicsPlans({ pujaData, partnershipData, planId }: { pujaData: any, partnershipData: any, planId?: string }) {
+export default function CinematicsPlans({ pujaData, planId }: { pujaData: any, planId?: string }) {
     const [selectedPuja, setSelectedPuja] = useState<string | null>(null);
     const [selectedPlan, setSelectedPlan] = useState<PlanId | null>(planId as PlanId ?? null);
     const [selectedAddons, setSelectedAddons] = useState<number[]>([]);
@@ -103,8 +103,9 @@ export default function CinematicsPlans({ pujaData, partnershipData, planId }: {
             prev.includes(id) ? prev.filter((a) => a !== id) : [...prev, id]
         );
     };
-    
-    const existingData = partnershipData.find((data: any) => data?.puja?.documentId === selectedPuja) || null;
+
+    const selectedPujaData = pujaData.find((data: any) => data?.documentId === selectedPuja) ?? null;
+    const existingData = selectedPujaData?.partnerships.find((partnership: any) => parseInt(partnership.year) === parseInt(formData.year) && partnership.fullPaid === false) ?? null;
 
     const planPrice = selectedPlan
         ? plans.find((p) => p.id === selectedPlan)?.price ?? 0
@@ -121,7 +122,7 @@ export default function CinematicsPlans({ pujaData, partnershipData, planId }: {
         (a) => selectedPlan && (a.applicableTo === selectedPlan || a.applicableTo === "both")
     );
 
-    const pujaName = pujaData.find((data: any) => data.documentId === selectedPuja)?.name;
+    const pujaName = selectedPujaData?.name;
     const pujaDataOptions = pujaData.map((data: any) => ({ value: data.documentId, label: data.name }));
 
     const handlePayment = async (e: FormEvent) => {

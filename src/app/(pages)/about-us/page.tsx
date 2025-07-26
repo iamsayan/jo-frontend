@@ -89,6 +89,16 @@ export default function Page() {
             name: "Suvam Mohanty",
             role: "Executive Member",
             icon: "suvam.png"
+        },
+        {
+            name: "Joyjit Ghosh",
+            role: "Executive Member",
+            icon: "joyjit.png"
+        },
+        {
+            name: "Subhojit Hara",
+            role: "Executive Member",
+            icon: "subhojit.png"
         }
     ];
 
@@ -156,7 +166,7 @@ export default function Page() {
                     <div className="flex flex-col items-center gap-5 w-full">
                         <h2 className="text-xl font-bold">The Powerhouse Team</h2>
                         <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-4 w-full">
-                            {arrayShuffle(members).map((item: Person, index: number) => (
+                            {members.map((item: Person, index: number) => (
                                 <div key={index} className="flex flex-col p-6 bg-base-100 gap-4 items-center w-full shadow-sm rounded-md">
                                     <div className="avatar">
                                         <div className="w-24 rounded-full">
