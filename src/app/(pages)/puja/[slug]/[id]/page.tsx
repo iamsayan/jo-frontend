@@ -323,7 +323,7 @@ export default async function Page({ params }: PageProps) {
     return (
         <Main jsonLd={jsonLd}>
             {/* Hero Section with Dynamic Background */}
-            <div className="relative md:min-h-[90vh] px-16 md:px-32 py-32 w-full flex items-center justify-center overflow-hidden">
+            <div className="relative md:min-h-[90vh] py-32 w-full flex items-center justify-center overflow-hidden">
                 {/* Background Layer */}
                 <div className="absolute inset-0">
                     {/* Base Gradient */}
@@ -386,34 +386,32 @@ export default async function Page({ params }: PageProps) {
                 </div>
 
                 {/* Content Layer */}
-                <div className="relative mx-auto px-4">
+                <div className="relative mx-auto px-8">
                     <div className="flex flex-col items-center">
                         {/* Badge */}
                         <div className="inline-block mb-10">
-                            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20">
-                                <Breadcrumbs breadcrumbTitle={currentPuja?.name} className="text-white/90 capitalize p-0" end={-1} />
-                            </div>
+                            <Breadcrumbs breadcrumbTitle={currentPuja?.name} className="text-white/90 capitalize" end={-1} />
                         </div>
 
                         {/* Main Title */}
                         <div className="relative">
-                            <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight text-center">
-                                <span className="text-shadow-xl text-shadow-grey-900 flex flex-col xl:flex-row items-center gap-2">
+                            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 tracking-tight text-center flex flex-col xl:flex-row items-center gap-2">
+                                <span className="text-shadow-xl text-shadow-grey-900">
                                     {currentPuja?.name}
-                                    {popular && (
-                                        <div className="relative inline-flex items-center tracking-normal">
-                                            {/* <span className="absolute -inset-2">
-                                                <div className="w-full h-full max-w-sm mx-auto rotate-2 blur-sm bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 opacity-30 animate-pulse" />
-                                            </span> */}
-                                            <span className="relative flex items-center gap-1 text-xs md:text-sm font-semibold px-3 py-1.5 bg-gradient-to-r from-yellow-400/20 via-orange-500/20 to-red-600/20 rounded-full border border-yellow-400/30 backdrop-blur-sm">
-                                                <svg className="w-4 h-4 text-yellow-400 animate-spin-slow" viewBox="0 0 24 24">
-                                                    <path fill="currentColor" d="M12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28z"/>
-                                                </svg>
-                                                Popular
-                                            </span>
-                                        </div>
-                                    )}
                                 </span>
+                                {popular && (
+                                    <div className="relative inline-flex items-center tracking-normal">
+                                        {/* <span className="absolute -inset-2">
+                                            <div className="w-full h-full max-w-sm mx-auto rotate-2 blur-sm bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 opacity-30 animate-pulse" />
+                                        </span> */}
+                                        <span className="relative flex items-center gap-1 text-xs md:text-sm font-semibold px-3 py-1.5 bg-gradient-to-r from-yellow-400/20 via-orange-500/20 to-red-600/20 rounded-full border border-yellow-400/30 backdrop-blur-sm">
+                                            <svg className="w-4 h-4 text-yellow-400 animate-spin-slow" viewBox="0 0 24 24">
+                                                <path fill="currentColor" d="M12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28z"/>
+                                            </svg>
+                                            Popular
+                                        </span>
+                                    </div>
+                                )}
                                 <div className="absolute -top-6 -right-6 w-12 h-12 bg-purple-400/20 rounded-full blur-xl" />
                                 <div className="absolute -bottom-6 -left-6 w-12 h-12 bg-pink-400/20 rounded-full blur-xl" />
                             </h1>
@@ -463,10 +461,10 @@ export default async function Page({ params }: PageProps) {
                                     {/* <div className="absolute -right-8 -top-8 w-16 h-16 bg-purple-500/20 rounded-full blur-xl animate-pulse" /> */}
                                     <div className="relative text-center">
                                         <div className="text-xl md:text-2xl font-bold text-white mb-1 flex items-center justify-center gap-2">
-                                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-200 to-amber-500">{item.text}</span>
+                                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-200 to-amber-500 whitespace-nowrap">{item.text}</span>
                                             {item?.after}
                                         </div>
-                                        <div className="text-xs md:text-sm text-white/70">{item.description}</div>
+                                        <div className="text-xs md:text-sm text-white/70 whitespace-nowrap">{item.description}</div>
                                     </div>
                                     <div className="absolute -left-2 -bottom-2 w-8 h-8" style={{
                                         backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.2) 1px, transparent 0)',
