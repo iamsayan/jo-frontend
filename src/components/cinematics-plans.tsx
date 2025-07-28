@@ -11,6 +11,7 @@ import { BiLoaderAlt } from "react-icons/bi";
 import { createRazorpayOrder } from "@/app/actions/razorpay";
 import { submitModel } from "@/app/actions/model";
 import Select from 'react-select';
+import { loadRazorpayScript } from "@/utils/load-razorpay";
 
 declare global {
     interface Window {
@@ -128,6 +129,12 @@ export default function CinematicsPlans({ pujaData, planId }: { pujaData: any, p
     const handlePayment = async (e: FormEvent) => {
         e.preventDefault();
 
+        const loaded = await loadRazorpayScript();
+        if (!loaded || !window.Razorpay) {
+            alert('Failed to load Razorpay SDK');
+            return;
+        }
+
         if (!selectedPuja || !formData.name || !formData.email || !formData.phone) {
             setError('Please fill in all fields');
             return;
@@ -231,10 +238,10 @@ export default function CinematicsPlans({ pujaData, planId }: { pujaData: any, p
 
     return (
         <>
-            <Script
+            {/* <Script
                 src="https://checkout.razorpay.com/v1/checkout.js"
                 strategy="beforeInteractive"
-            />
+            /> */}
             {success && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
                     <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
