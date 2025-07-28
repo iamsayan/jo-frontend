@@ -131,7 +131,7 @@ export default function CinematicsPlans({ pujaData, planId }: { pujaData: any, p
 
         const loaded = await loadRazorpayScript();
         if (!loaded || !window.Razorpay) {
-            alert('Failed to load Razorpay SDK');
+            setError('Failed to load Razorpay SDK');
             return;
         }
 
@@ -238,10 +238,6 @@ export default function CinematicsPlans({ pujaData, planId }: { pujaData: any, p
 
     return (
         <>
-            {/* <Script
-                src="https://checkout.razorpay.com/v1/checkout.js"
-                strategy="beforeInteractive"
-            /> */}
             {success && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
                     <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
