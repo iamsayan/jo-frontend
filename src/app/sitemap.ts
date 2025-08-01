@@ -66,6 +66,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             changeFrequency: 'monthly',
             priority: 0.6,
         },
+        {
+            url: `${process.env.NEXT_PUBLIC_SITE_URL}/cinematics`,
+            lastModified: new Date(),
+            changeFrequency: 'monthly',
+            priority: 0.2,
+        },
     ]
 
     const galleryYears = Array.from({length: 2}, (_, i) => i + 2023);

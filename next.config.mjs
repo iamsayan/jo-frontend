@@ -102,8 +102,8 @@ const nextConfig = {
                 permanent: true,
             },
             {
-                source: '/puja',
-                destination: '/puja-committee-list',
+                source: '/digital-media-partnership/:path*',
+                destination: '/cinematics/:path*',
                 permanent: true,
             },
         ]
