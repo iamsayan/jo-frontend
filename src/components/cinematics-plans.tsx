@@ -2,7 +2,6 @@
 
 import { useState, FormEvent, useId } from "react";
 import { cn } from "@/utils/functions";
-import Script from 'next/script';
 import {
     LuCheck,
     LuPlus
@@ -68,11 +67,10 @@ const addons: Addon[] = [
     { id: 3, title: "Nabami or Dashami Full-Day Shoot", price: 4000, applicableTo: "basic", basicPrice: 6000 },
     { id: 4, title: "Nabami or Dashami Half-Day Shoot", price: 2000, applicableTo: "basic", basicPrice: 3000 },
     { id: 5, title: "Idol Lifting + Immersion (Drone)", price: 4000, applicableTo: "basic" },
-    { id: 6, title: "Idol Lifting + Procession + Immersion (Drone Combo)", price: 6000, applicableTo: "basic" },
-    { id: 7, title: "Procession Drone Shoot", price: 1000, applicableTo: "basic" },
-    { id: 8, title: "Pre-Puja Event Coverage", price: 1000, applicableTo: "basic" },
-    { id: 9, title: "Idol Lifting (Drone Only)", price: 3000, applicableTo: "both" },
-    { id: 10, title: "Voice-over Narration", price: 2000, applicableTo: "both" }
+    { id: 6, title: "Procession Drone Shoot", price: 1000, applicableTo: "basic" },
+    { id: 7, title: "Pre-Puja Event Coverage", price: 1000, applicableTo: "basic" },
+    { id: 8, title: "Idol Lifting (Drone Only)", price: 3000, applicableTo: "both" },
+    { id: 9, title: "Voice-over Narration", price: 2000, applicableTo: "both" }
 ];
 
 export default function CinematicsPlans({ pujaData, planId }: { pujaData: any, planId?: string }) {
