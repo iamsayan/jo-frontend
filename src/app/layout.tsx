@@ -56,7 +56,6 @@ export const metadata: Metadata = {
     other: {
         'p:domain_verify': '17e6e3cc4fa6744677baf74c22411d8d',
         'facebook-domain-verification': 'g7w4rsbdbiffzthsoh176leffkonxf',
-        'fb:admins': '100009403062755',
         'google-adsense-account': process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID!
     },
 }
