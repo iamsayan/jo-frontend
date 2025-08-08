@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import logo from '@/public/logo.png';
 import circleLogo from '@/public/circle-logo.png';
 import { cn } from '@/utils/functions';
@@ -21,12 +21,13 @@ interface MenuItem {
 
 const Navbar: React.FC = () => {
     const pathname = usePathname();
+    const searchParams = useSearchParams();
     const { query } = useKBar();
     const [isScrolled, setIsScrolled] = useState<boolean>(false);
     const [isInitialized, setIsInitialized] = useState<boolean>(false);
 
     useEffect(() => {
-        sendGTMEvent({ event: 'page_view', value: pathname });
+        sendGTMEvent({ event: 'page_view', value: pathname + searchParams.toString() });
 
         const controller = new AbortController();
         const handleScroll = () => {
