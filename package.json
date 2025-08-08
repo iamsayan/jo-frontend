@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@bprogress/next": "^3.2.12",
-    "@next/third-parties": "^15.4.3",
+    "@next/third-parties": "^15.4.6",
     "@splidejs/react-splide": "^0.7.12",
     "@splidejs/splide-extension-auto-scroll": "^0.5.3",
     "@splidejs/splide-extension-grid": "^0.4.1",
@@ -24,14 +24,14 @@
     "classix": "^2.2.2",
     "kbar": "^0.1.0-beta.46",
     "lightgallery": "^2.8.3",
-    "next": "^15.4.3",
+    "next": "^15.4.6",
     "pluralize": "^8.0.0",
     "qs": "^6.14.0",
     "razorpay": "^2.9.6",
-    "react": "^19.1.0",
+    "react": "^19.1.1",
     "react-countdown": "^2.3.6",
-    "react-dom": "^19.1.0",
-    "react-hook-form": "^7.60.0",
+    "react-dom": "^19.1.1",
+    "react-hook-form": "^7.62.0",
     "react-icons": "^5.5.0",
     "react-intersection-observer": "^9.16.0",
     "react-markdown": "^10.1.0",
@@ -44,14 +44,14 @@
     "use-debounce": "^10.0.5"
   },
   "devDependencies": {
-    "@types/node": "^22.16.5",
-    "@types/react": "^19.1.8",
-    "@types/react-dom": "^19.1.6",
-    "daisyui": "^5.0.46",
+    "@types/node": "^22.17.0",
+    "@types/react": "^19.1.9",
+    "@types/react-dom": "^19.1.7",
+    "daisyui": "^5.0.50",
     "postcss": "^8.5.6",
-    "sass": "^1.89.2",
+    "sass": "^1.90.0",
     "sharp": "^0.33.5",
     "tailwind-scrollbar": "^4.0.2",
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.2"
   }
 }
