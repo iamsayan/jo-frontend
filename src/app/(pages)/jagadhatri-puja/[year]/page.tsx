@@ -54,8 +54,6 @@ interface Puja {
     tags: string[];
 }
 
-export const dynamicParams = false
-
 export async function generateStaticParams() {
     return Array.from({ length: 100 }, (_, i) => ({
         year: (i + 2000).toString()
