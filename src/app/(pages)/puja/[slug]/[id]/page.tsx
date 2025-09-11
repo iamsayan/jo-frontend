@@ -461,6 +461,7 @@ export default async function Page({ params }: PageProps) {
                                     rel="noopener"
                                     className={cn("p-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-300", item.link === '#' && 'pointer-events-none')}
                                     aria-label={`Visit our ${capitalizeFirst(item.type)}`}
+                                    title={capitalizeFirst(item.type)}
                                 >
                                     {item.icon}
                                 </a>

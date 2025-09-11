@@ -84,6 +84,7 @@ export default function Footer() {
                                     key={index}
                                     href={social.url}
                                     aria-label={social.name}
+                                    title={social.name}
                                     target="_blank"
                                     rel="noopener"
                                     className={`border-2 border-slate-700/50 p-2 rounded-full bg-slate-700/50 hover:bg-slate-600/50 transition-all duration-300 ${social.color}`}
