@@ -456,8 +456,8 @@ export default async function Page({ params }: PageProps) {
                 "url": process.env.NEXT_PUBLIC_SITE_URL
             },
             "image": `${process.env.NEXT_PUBLIC_SITE_URL}/og-image.jpg`,
-            "startDate": toISOWithOffset(getDateByIndex(siteData?.schedules, 0)),
-            "endDate": toISOWithOffset(getDateByIndex(siteData?.schedules, 4)),
+            "startDate": toISOWithOffset(getDateByIndex(siteData?.schedules, 0), "06:00:00"),
+            "endDate": toISOWithOffset(getDateByIndex(siteData?.schedules, 4), "23:59:59"),
             "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}/#schema-${queryYear}`, // ensure unique ID
             "inLanguage": "en-IN",
             "mainEntityOfPage": {

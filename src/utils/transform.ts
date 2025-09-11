@@ -13,7 +13,7 @@ export function assetImageLoader({
     src,
     width,
     height,
-    quality = 85,
+    quality = 80,
     fit,
     blur,
     grayscale,

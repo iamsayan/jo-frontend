@@ -10,6 +10,7 @@ const nextConfig = {
         RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET,
     },
     images: {
+        qualities: [25, 50, 70, 80, 90, 100],
         formats: ['image/webp'],
         contentDispositionType: 'attachment',
         contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",

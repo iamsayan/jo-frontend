@@ -84,9 +84,7 @@ export const getDay = (date: string | Date): string => {
     return daysOfWeek[dayOfWeek];
 };
 
-export const getDateByIndex = (data: { dates?: { date?: string }[] }, index: number | "last", addDays: number = 0): Date => {
-    const dates = data?.dates ?? [];
-
+export const getDateByIndex = (dates: { date?: string } [], index: number | "last", addDays: number = 0): Date => {
     // Resolve index (if "last", point to last element)
     const resolvedIndex =
         index === "last" ? Math.max(dates.length - 1, 0) : index;

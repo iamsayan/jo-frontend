@@ -288,9 +288,12 @@ export default async function Page({ params }: PageProps) {
             "name": currentPuja.name,
             "url": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}`
         },
-        "image": pujaImages.map((item: any) => item.src),
-        "startDate": `${toISOWithOffset(getDateByIndex(siteData?.schedules, 0))}`,
-        "endDate": `${toISOWithOffset(getDateByIndex(siteData?.schedules, 4))}`,
+        "image": pujaImages.map((item: any) => assetImageLoader({
+            src: item.src,
+            quality: 70
+        })),
+        "startDate": `${toISOWithOffset(getDateByIndex(siteData?.schedules, 0), "06:00:00")}`,
+        "endDate": `${toISOWithOffset(getDateByIndex(siteData?.schedules, 4), "23:59:59")}`,
         "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}/#schema-${currentPuja?.order+1}`, // ensure unique ID
         "inLanguage": "en-IN",
         "mainEntityOfPage": {
