@@ -43,14 +43,14 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
     let images = imagesData ?? []
 
     const pageCount = Math.ceil(images?.meta?.pagination.total / itemsPerPage);
-    const currentPage = Number(page ?? 1)
+    const currentPage = Number(page ?? 0)
     
     return {
         title: `Photo Gallery of ${year}`,
         description: `View Jagadhatri Puja ${year} photos from Chandannagar, Mankundu, and nearby Bhadreswar—featuring award-winning pandals and themes.`,
         openGraph: {
             ...metadataSchema.openGraph,
-            url: `/gallery/${year}?page=${currentPage}`,
+            url: currentPage === 0 ? `/gallery/${year}` : `/gallery/${year}?page=${currentPage}`,
             images: images?.data?.slice(0, 3)?.map((item: any) => {
                 return {
                     url: assetImageLoader({
@@ -62,7 +62,7 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
             })
         },
         alternates: {
-            canonical: `/gallery/${year}?page=${currentPage}`,
+            canonical: currentPage === 0 ? `/gallery/${year}` : `/gallery/${year}?page=${currentPage}`,
         },
         pagination: {
             previous: currentPage > 1 ? `/gallery/${year}?page=${currentPage - 1}` : undefined,
