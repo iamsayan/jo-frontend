@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffectOnce } from '@/hooks/useEffectOnce';
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 
 interface RazorPayButtonProps {
     buttonId: string;
@@ -10,7 +9,7 @@ interface RazorPayButtonProps {
 const RazorPayButton: React.FC<RazorPayButtonProps> = ({ buttonId }) => {
     const formRef = useRef<HTMLFormElement>(null);
 
-    useEffectOnce(() => {
+    useEffect(() => {
         const script = document.createElement('script');
         script.src = 'https://checkout.razorpay.com/v1/payment-button.js';
         script.async = true;
@@ -19,7 +18,7 @@ const RazorPayButton: React.FC<RazorPayButtonProps> = ({ buttonId }) => {
         if (formRef.current) {
             formRef.current.appendChild(script);
         }
-    });
+    }, [buttonId]);
 
     return <form ref={formRef} data-prevent-progress={true}></form>;
 };

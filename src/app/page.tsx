@@ -169,10 +169,16 @@ export default async function Home() {
                 "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/#organization`,
                 "name": "Jagadhatri Online",
                 "url": process.env.NEXT_PUBLIC_SITE_URL,
+                "logo": `${process.env.NEXT_PUBLIC_SITE_URL}/circle-logo.png`,
                 "email": "info@jagadhatrionline.co.in",
                 "sameAs": [
                     "https://www.facebook.com/JagadhatriOnlineOfficial/",
-                    "https://twitter.com/Official_JO16"
+                    "https://www.youtube.com/c/JagadhatriOnline?sub_confirmation=1",
+                    "https://www.instagram.com/jagadhatri_online",
+                    "https://www.threads.com/@jagadhatri_online",
+                    "https://x.com/Official_JO16",
+                    "https://www.pinterest.com/jagadhatrionline/",
+                    "https://www.whatsapp.com/channel/0029Va54b17DOQIQ6yoP9t39"
                 ]
             },
             {
@@ -192,7 +198,7 @@ export default async function Home() {
             },
             {
                 "@type": "WebPage",
-                "@id": `${process.env.NEXT_PUBLIC_SITE_URL}#webpage`,
+                "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/#webpage`,
                 "url": process.env.NEXT_PUBLIC_SITE_URL,
                 "name": "Jagadhatri Online | the #1 Puja Portal for Chandannagar Jagadhatri Puja",
                 "datePublished": "2016-05-06T00:00:00+05:30",
@@ -386,7 +392,7 @@ export default async function Home() {
                         <a
                             href="https://store.jagadhatrionline.co.in"
                             target="_blank"
-                            rel="noopener noreferrer"
+                            rel="noopener"
                             className="btn bg-yellow-500 border-0 uppercase py-3 px-6 h-auto shadow-none rounded-md hover:text-white hover:bg-blue-700"
                         >
                             Visit Store

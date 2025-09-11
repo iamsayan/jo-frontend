@@ -3,7 +3,6 @@ import Script from "next/script"
 import { livvic } from "@/fonts"
 import { GoogleTagManager } from '@next/third-parties/google'
 import Providers from '@/app/providers';
-import OneSignal from '@/components/onesignal';
 import '@/app/globals.sass'
 import '@bprogress/core/css';
 
@@ -40,7 +39,7 @@ export const metadata: Metadata = {
     },
     openGraph: {
         siteName: 'Jagadhatri Online',
-        locale: 'en_US',
+        locale: 'en_IN',
         type: 'website',
         url: '/'
     },
@@ -66,7 +65,7 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
     return (
-        <html lang="en" data-theme="light" suppressHydrationWarning={process.env.NODE_ENV === 'production'}>
+        <html lang="en-IN" data-theme="light" suppressHydrationWarning={process.env.NODE_ENV === 'production'}>
             {process.env.NODE_ENV === 'production' &&
                 <>
                     <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GA4_ID!} dataLayer={{
@@ -90,7 +89,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
                 <Providers>
                     {children}
                 </Providers>
-                <OneSignal />
             </body>
         </html>
     )

@@ -1,6 +1,6 @@
 import { notFound, permanentRedirect } from 'next/navigation';
 import { getCollection } from "@/utils/fetch";
-import { cn, getDateByIndex, stripHtmlAndLimit } from "@/utils/functions";
+import { capitalizeFirst, cn, getDateByIndex, stripHtmlAndLimit, toISOWithOffset } from "@/utils/functions";
 import {
     LuArrowLeft,
     LuArrowRight,
@@ -21,6 +21,8 @@ import {
     FaInstagram,
     FaYoutube,
     FaXTwitter,
+    FaThreads,
+    FaGlobe,
 } from "react-icons/fa6";
 import {
     getYear,
@@ -90,7 +92,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const { slug, id } = await params
 
     const pujaData = await getCollection('pujas', {
-        populate: ['images'],
+        populate: ['images', 'links'],
         filters: {
             referenceId: {
                 $eq: id
@@ -117,7 +119,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             })
         },
         alternates: {
-            canonical: `/puja/${slug}/${id}`
+            canonical: currentPuja?.links?.find((link: any) => link.title === 'website')?.url ?? `/puja/${slug}/${id}`
         },
     }
 }
@@ -214,7 +216,6 @@ export default async function Page({ params }: PageProps) {
         },
         {
             type: "instagram", 
-            link: "#",
             icon: <FaInstagram className="text-sm md:text-xl text-white/80 hover:text-white transition-colors" />
         },
         {
@@ -224,7 +225,15 @@ export default async function Page({ params }: PageProps) {
         {
             type: "x",
             icon: <FaXTwitter className="text-sm md:text-xl text-white/80 hover:text-white transition-colors" />
-        }
+        },
+        {
+            type: "threads",
+            icon: <FaThreads className="text-sm md:text-xl text-white/80 hover:text-white transition-colors" />
+        },
+        {
+            type: "website",
+            icon: <FaGlobe className="text-sm md:text-xl text-white/80 hover:text-white transition-colors" />
+        },
     ].map((item: any) => {
         return {
             ...item,
@@ -253,70 +262,39 @@ export default async function Page({ params }: PageProps) {
         "@type": "Event",
         "eventStatus": "https://schema.org/EventScheduled",
         "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-        "location": [
-            {
-                "@type": "Place",
-                "name": zone,
-                "url": `https://en.wikipedia.org/wiki/${currentPuja?.zone === 'bhadreswar' ? 'Bhadreswar,_Hooghly' : 'Chandannagar'}`,
-                "address": {
-                    "@type": "PostalAddress",
-                    "name": `${currentPuja?.name} Puja Premises`,
-                    "streetAddress": `${currentPuja?.location?.address || `${zone}, Hooghly, West Bengal`}`,
-                    "addressLocality": zone,
-                    "addressRegion": "West Bengal",
-                    "addressCountry": "IN"
+        "location": {
+            "@type": "Place",
+            "name": zone,
+            "url": `https://en.wikipedia.org/wiki/${currentPuja?.zone === 'bhadreswar' ? 'Bhadreswar,_Hooghly' : 'Chandannagar'}`,
+            "address": {
+                "@type": "PostalAddress",
+                "name": `${currentPuja?.name} Puja Premises`,
+                "streetAddress": `${currentPuja?.location?.address || `${zone}, Hooghly, West Bengal`}`,
+                "addressLocality": zone,
+                "addressRegion": "West Bengal",
+                "addressCountry": "IN"
+            },
+            ...(currentPuja?.location?.coordinates?.lat && currentPuja?.location?.coordinates?.lng ? {
+                "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": currentPuja?.location?.coordinates?.lat,
+                    "longitude": currentPuja?.location?.coordinates?.lng
                 },
-                ...(currentPuja?.location?.coordinates?.lat && currentPuja?.location?.coordinates?.lng ? {
-                    "geo": {
-                        "@type": "GeoCoordinates",
-                        "latitude": currentPuja?.location?.coordinates?.lat,
-                        "longitude": currentPuja?.location?.coordinates?.lng
-                    },
-                } : {}),
-                "hasMap": gMapLink
-            }
-        ],
+            } : {}),
+            "hasMap": gMapLink
+        },
         "organizer": {
             "@type": "Organization",
-            "name": currentPuja?.name || 'Jagadhatri Puja',
+            "name": currentPuja.name,
             "url": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}`
         },
         "image": pujaImages.map((item: any) => item.src),
-        "startDate": `${getDateByIndex(siteData?.schedules, 0)}T00:00:00+05:30`,
-        "endDate": `${getDateByIndex(siteData?.schedules, 4)}T21:59:59+05:30`,
-        "subEvent": siteData?.schedules?.map((item: any) => {
-            const date = new Date(item?.date);
-            date.setDate(date.getDate() + 1);
-            return {
-                "@type": "Event",
-                "name": item?.event,
-                "description": `Jagadhatri Puja ${queryYear} ${item?.event} celebration by ${currentPuja?.name} Sarbajanin, ${zone}`,
-                "eventStatus": "https://schema.org/EventScheduled",
-                "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-                "startDate": item?.event === 'Procession' ? `${item?.date}T18:00:00+05:30` : `${item?.date}T00:00:00+05:30`,
-                "endDate": item?.event === 'Procession' ? `${date.toISOString().split('T')[0]}T08:00:00+05:30` : `${item?.date}T21:59:59+05:30`,
-                "location": {
-                    "@type": "Place",
-                    "name": "Haridradanga Puja Premises",
-                    "address": {
-                        "@type": "PostalAddress",
-                        "streetAddress": `${currentPuja?.location?.address || `${zone}, Hooghly, West Bengal`}`,
-                        "addressLocality": zone,
-                        "addressRegion": "West Bengal",
-                        "addressCountry": "IN"
-                    },
-                },
-                "organizer": {
-                    "@type": "Organization",
-                    "name": currentPuja?.name || 'Jagadhatri Puja',
-                    "url": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}`
-                },
-            }
-        }),
-        "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}#schema-${currentPuja?.order+1}`, // ensure unique ID
+        "startDate": `${toISOWithOffset(getDateByIndex(siteData?.schedules, 0))}`,
+        "endDate": `${toISOWithOffset(getDateByIndex(siteData?.schedules, 4))}`,
+        "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}/#schema-${currentPuja?.order+1}`, // ensure unique ID
         "inLanguage": "en-IN",
         "mainEntityOfPage": {
-            "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}#webpage`
+            "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}/#webpage`
         }
     });
 
@@ -480,9 +458,9 @@ export default async function Page({ params }: PageProps) {
                                     key={index}
                                     href={item.link}
                                     target="_blank"
-                                    rel="noopener noreferrer"
+                                    rel="noopener"
                                     className={cn("p-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-300", item.link === '#' && 'pointer-events-none')}
-                                    aria-label={`Visit our ${item.type} profile`}
+                                    aria-label={`Visit our ${capitalizeFirst(item.type)}`}
                                 >
                                     {item.icon}
                                 </a>

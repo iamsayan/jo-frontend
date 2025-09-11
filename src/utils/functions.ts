@@ -84,9 +84,45 @@ export const getDay = (date: string | Date): string => {
     return daysOfWeek[dayOfWeek];
 };
 
-export const getDateByIndex = (dates: { date?: string } [], index: number): Date => {
-    return dates[index]?.date ? new Date(dates[index].date) : new Date();
+export const getDateByIndex = (data: { dates?: { date?: string }[] }, index: number | "last", addDays: number = 0): Date => {
+    const dates = data?.dates ?? [];
+
+    // Resolve index (if "last", point to last element)
+    const resolvedIndex =
+        index === "last" ? Math.max(dates.length - 1, 0) : index;
+
+    const date = dates[resolvedIndex]?.date
+        ? new Date(dates[resolvedIndex].date)
+        : new Date();
+
+    date.setDate(date.getDate() + addDays);
+    return date;
 };
+
+export const toISOWithOffset = (date: Date, time?: string): string => {
+    const pad = (num: number) => String(num).padStart(2, "0");
+
+    // If custom time is provided (e.g. "18:00:00")
+    if (time) {
+        const [hh, mm, ss] = time?.split(":").map(Number);
+        date.setHours(hh || 0, mm || 0, ss || 0, 0);
+    }
+
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1);
+    const day = pad(date.getDate());
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
+    const seconds = pad(date.getSeconds());
+
+    // timezone offset in minutes (negative if ahead of UTC)
+    const tzOffset = -date.getTimezoneOffset();
+    const sign = tzOffset >= 0 ? "+" : "-";
+    const offsetHours = pad(Math.floor(Math.abs(tzOffset) / 60));
+    const offsetMinutes = pad(Math.abs(tzOffset) % 60);
+
+    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${sign}${offsetHours}:${offsetMinutes}`;
+}
 
 export const stripHtmlAndLimit = (text: string, limit: number = 160): string => {
     const strippedText = text.replace(/<\/?[^>]+(>|$)/g, "");
@@ -104,4 +140,17 @@ export const sanitizeSearchQuery = (query: string | number): string => {
         .replace(/[<>{}[\]\\\/]/g, '') // Remove potentially dangerous characters
         //.replace(/[&]/g, ' and ') // Replace & with 'and'
         .replace(/\s+/g, ' '); // Replace multiple spaces with single space
+}
+
+export const capitalizeFirst = (name: string): string => {
+    if (!name) return "";
+    return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+}
+
+export const toUpper = (name: string): string => {
+    return name?.toUpperCase() ?? "";
+}
+
+export const toLower = (name: string): string => {
+    return name?.toLowerCase() ?? "";
 }

@@ -11,6 +11,7 @@ import {
     formatDate,
     getDay,
     getDateByIndex,
+    toISOWithOffset,
 } from "@/utils/functions";
 import schema from "@/utils/schema";
 import Link from "next/link";
@@ -455,12 +456,12 @@ export default async function Page({ params }: PageProps) {
                 "url": process.env.NEXT_PUBLIC_SITE_URL
             },
             "image": `${process.env.NEXT_PUBLIC_SITE_URL}/og-image.jpg`,
-            "startDate": getDateByIndex(siteData?.schedules, 0),
-            "endDate": getDateByIndex(siteData?.schedules, 4),
-            "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}#schema-${queryYear}`, // ensure unique ID
+            "startDate": toISOWithOffset(getDateByIndex(siteData?.schedules, 0)),
+            "endDate": toISOWithOffset(getDateByIndex(siteData?.schedules, 4)),
+            "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}/#schema-${queryYear}`, // ensure unique ID
             "inLanguage": "en-IN",
             "mainEntityOfPage": {
-                "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}#webpage`
+                "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}/#webpage`
             }
         });
     }

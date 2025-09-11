@@ -17,7 +17,6 @@ interface GalleryPaginateProps {
 }
 
 function GalleryPaginate({ className, images, itemsPerPage }: GalleryPaginateProps) {
-
     const router = useRouter();
     const params = useParams();
     const searchParams = useSearchParams();

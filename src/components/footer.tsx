@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { FaYoutube, FaFacebookF, FaInstagram, FaXTwitter, FaPinterestP, FaWhatsapp, FaEnvelope, FaHeart } from "react-icons/fa6";
+import { FaYoutube, FaFacebookF, FaInstagram, FaXTwitter, FaPinterestP, FaWhatsapp, FaEnvelope, FaHeart, FaThreads } from "react-icons/fa6";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import ScrollTop from "@/components/scroll-top";
 
@@ -41,6 +41,7 @@ export default function Footer() {
         { name: 'WhatsApp', url: 'https://www.whatsapp.com/channel/0029Va54b17DOQIQ6yoP9t39', icon: FaWhatsapp, color: 'hover:text-green-500' },
         { name: 'YouTube', url: 'https://www.youtube.com/c/JagadhatriOnline?sub_confirmation=1', icon: FaYoutube, color: 'hover:text-red-500' },
         { name: 'Instagram', url: 'https://www.instagram.com/jagadhatri_online', icon: FaInstagram, color: 'hover:text-pink-500' },
+        { name: 'Threads', url: 'https://www.threads.com/@jagadhatri_online', icon: FaThreads, color: 'hover:text-black dark:hover:text-white' },
         { name: 'X (Twitter)', url: 'https://x.com/Official_JO16', icon: FaXTwitter, color: 'hover:text-black dark:hover:text-white' },
         { name: 'Pinterest', url: 'https://www.pinterest.com/jagadhatrionline/', icon: FaPinterestP, color: 'hover:text-red-600' },
     ];
@@ -77,14 +78,14 @@ export default function Footer() {
                         </p>
                         
                         {/* Social Links */}
-                        <div className="flex space-x-2 md:space-x-4 justify-center md:justify-start">
+                        <div className="flex space-x-1.5 md:space-x-4 justify-center md:justify-start">
                             {socialLinks.map((social, index) => (
                                 <a
                                     key={index}
                                     href={social.url}
                                     aria-label={social.name}
                                     target="_blank"
-                                    rel="noopener noreferrer"
+                                    rel="noopener"
                                     className={`border-2 border-slate-700/50 p-2 rounded-full bg-slate-700/50 hover:bg-slate-600/50 transition-all duration-300 ${social.color}`}
                                 >
                                     <social.icon className="size-3 md:size-4" />
