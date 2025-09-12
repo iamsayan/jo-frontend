@@ -16,16 +16,19 @@ import {
     LuGlobe, 
     LuPencil, 
     LuShirt, 
-    LuShoppingBag 
+    LuShoppingBag, 
+    LuTrendingUp,
+    LuCalendar1
 } from "react-icons/lu";
 import { 
     FaFacebook, 
     FaYoutube 
 } from "react-icons/fa";
-import { cn, formatDate, getDateByIndex } from "@/utils/functions";
+import { buildGoogleCalendarUrl, cn, getDateByIndex } from "@/utils/functions";
 import { paytoneOne } from "@/fonts";
 import { getCollection } from "@/utils/fetch";
 import { PiConfettiThin } from "react-icons/pi";
+import { format, parseISO } from "date-fns";
 
 const imagesPath = [
     '20241107-044545.jpg',
@@ -48,6 +51,7 @@ interface StatsItem {
     title: string;
     stat: string;
     icon: React.ReactNode;
+    statDesc: string;
     description: string;
     class?: string;
 }
@@ -129,34 +133,39 @@ export default async function Home() {
             title: 'Followers',
             stat: '65.5K',
             icon: <FaFacebook className="inline-block size-8 stroke-current" />,
-            description: '1K+ new followers in last 30 days'
+            statDesc: '1K+',
+            description: 'new followers in last 30 days'
         },
         {
             title: 'Post Reach',
             stat: '1.8M',
             icon: <LuHistory className="inline-block size-8 stroke-current" />,
-            description: '85% more than last month',
+            statDesc: '85%',
+            description: 'more than last month',
             class: 'text-secondary'
         },
         {
             title: 'Post Engagement',
             stat: '58.4K',
             icon: <LuVideo className="inline-block size-8 stroke-current" />,
-            description: '38% more than last month',
+            statDesc: '38%',
+            description: 'more than last month',
             class: 'text-blue-500'
         },
         {
             title: 'Subscribers',
             stat: '4.34K',
             icon: <FaYoutube className="inline-block size-8 stroke-current" />,
-            description: '500+ new followers in last 1 year',
+            statDesc: '500+',
+            description: 'new followers in last 1 year',
             class: 'text-green-600'
         },
         {
             title: 'Website Visitors',
             stat: '37.5K',
             icon: <LuGlobe className="inline-block size-8 stroke-current" />,
-            description: '14% more than last month',
+            statDesc: '14%',
+            description: 'more than last month',
             class: 'text-pink-500'
         },
     ];
@@ -300,10 +309,16 @@ export default async function Home() {
                     <div className="stats stats-vertical lg:stats-horizontal text-left shadow-sm container">
                         {stats?.map((item, index) => (
                             <div className="stat bg-white !border-gray-200" key={index}>
-                                <div className={`${cn('stat-figure text-primary', item?.class)}`}>{item?.icon}</div>
-                                <div className="stat-title">{item?.title}</div>
-                                <div className={`${cn('stat-value text-primary', item?.class)}`}>{item?.stat}</div>
-                                <div className="stat-desc">{item?.description}</div>
+                                <div className={`${cn('stat-figure text-primary', item?.class)}`}>{item.icon}</div>
+                                <div className="stat-title">{item.title}</div>
+                                <div className={`${cn('stat-value text-primary', item?.class)}`}>{item.stat}</div>
+                                <div className="stat-desc">
+                                    <span className="text-green-600 font-semibold mr-1">
+                                        <LuTrendingUp className="inline-block size-3 mr-1" />
+                                        {item.statDesc}
+                                    </span>
+                                    {item.description}
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -411,24 +426,37 @@ export default async function Home() {
                     <CountdownTimer className="mt-3" targetDate={data?.schedules[0]?.date} />
                     <div className="grid gap-6 grid-cols-2 md:grid-cols-6">
                         {data?.schedules?.slice(-5)?.map((item: any, index: number) => (
-                            <div
+                            <a
                                 key={index}
-                                className={cn('flex gap-4 col-span-2', index === 3 && 'md:col-start-2')}
+                                href={buildGoogleCalendarUrl({
+                                    title: `${item.event} - Jagadhatri Puja ${year}`,
+                                    location: 'Chandannagar',
+                                    description: item.description
+                                }, item.date, '00:00:00', '23:59:59')}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={cn('flex gap-4 col-span-2 border border-gray-200 rounded-xl p-4 bg-gray-50', index === 3 && 'md:col-start-2')}
                             >
-                                <Image
-                                    width={55}
-                                    height={55}
-                                    src={`/images/dates/${index}.png`}
-                                    alt={item?.event}
-                                    unoptimized={true}
-                                    loading="lazy"
-                                    className="h-fit"
-                                />
-                                <div className="flex flex-col gap-2 text-left">
-                                    <span className="font-bold">{item?.description}</span>
-                                    <span className="">{item?.event}: {formatDate(item?.date)}</span>
+                                <div className="bg-white p-2 rounded-full self-start border border-gray-200">
+                                    <Image
+                                        width={56}
+                                        height={56}
+                                        src={`/images/dates/${index}.png`}
+                                        alt={item?.event}
+                                        unoptimized={true}
+                                        loading="lazy"
+                                        className="h-fit"
+                                    />
                                 </div>
-                            </div>
+                                <div className="flex flex-col gap-1.5 text-left">
+                                    <span className="font-bold">{item?.event}</span>
+                                    <span className="text-sm">{item?.description}</span>
+                                    <span className="flex items-center gap-1.5 mt-1">
+                                        <LuCalendar1 className="inline-block size-4 text-violet-600" />
+                                        <span className="text-sm">{format(parseISO(item.date), 'EEEE, do MMMM yyyy')}</span>
+                                    </span>
+                                </div>
+                            </a>
                         ))}
                     </div>
                     {data?.videos && 

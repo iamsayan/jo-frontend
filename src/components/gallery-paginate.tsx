@@ -4,11 +4,12 @@ import React, { useCallback, useRef } from 'react';
 import { useSearchParams, useParams } from 'next/navigation';
 import { useRouter } from '@bprogress/next/app';
 import TransformedImage from '@/components/transformed-image';
-import { cn } from '@/utils/functions';
+import { capitalizeFirst, cn } from '@/utils/functions';
 import Gallery from "@/components/gallery";
 import ReactPaginate from 'react-paginate';
-import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
+import { LuCamera, LuChevronLeft, LuChevronRight } from 'react-icons/lu';
 import { assetImageLoader } from '@/utils/transform';
+import { renderToString } from "react-dom/server";
 
 interface GalleryPaginateProps {
     className?: string;
@@ -37,6 +38,18 @@ function GalleryPaginate({ className, images, itemsPerPage }: GalleryPaginatePro
         }
     }, []);
 
+    const subHtml = (item: any) => {
+        return (
+            <div className="flex flex-col items-center justify-center gap-1.5">
+                <div className="font-bold text-xl">{item?.puja?.name}</div>
+                <div className="flex items-center justify-center gap-1.5">
+                    <LuCamera className="inline-block size-3.5" /> 
+                    <div className="text-xs">Captured by: <span className="font-bold">{item?.uploadedBy.trim().split(' ').map((word: string) => capitalizeFirst(word)).join(' ')}</span></div>
+                </div>
+            </div>
+        )
+    }
+
     const paginatedImages = images.data;
     const dynamicEl = paginatedImages.map((item: any, index: number) => {
         const imagePath = assetImageLoader({
@@ -47,7 +60,7 @@ function GalleryPaginate({ className, images, itemsPerPage }: GalleryPaginatePro
             src: imagePath,
             thumb: imagePath,
             alt: item?.puja?.name,
-            subHtml: `<h4>${item?.puja?.name}</h4><p>By: ${item?.uploadedBy.trim().split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')}</p>`,
+            subHtml: renderToString(subHtml(item)),
         }
     });
 

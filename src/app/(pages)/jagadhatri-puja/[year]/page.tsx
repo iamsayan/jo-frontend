@@ -11,7 +11,7 @@ import {
     formatDate,
     getDay,
     getDateByIndex,
-    toISOWithOffset,
+    buildGoogleCalendarUrl,
 } from "@/utils/functions";
 import schema from "@/utils/schema";
 import Link from "next/link";
@@ -31,11 +31,13 @@ import {
     LuCrown, 
     LuTruck, 
     LuMedal, 
-    LuAward 
+    LuAward, 
+    LuPlus
 } from "react-icons/lu";
 import { metadata as metadataSchema } from "@/app/layout";
 import type { Metadata } from 'next'
 import cx from 'classix';
+import { format } from "date-fns";
 
 // Exporting runtime for edge function if needed
 // export const runtime = 'edge';
@@ -265,6 +267,7 @@ export default async function Page({ params }: PageProps) {
                                 <th>Date (English Calender)</th>
                                 <th>Weekday</th>
                                 <th>Tithi</th>
+                                <th>Event</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -276,6 +279,15 @@ export default async function Page({ params }: PageProps) {
                                         <td className="text-gray-600">{getDay(item?.date)}</td>
                                         <td>
                                             <span className="px-2.5 py-1 text-sm rounded-md whitespace-nowrap bg-pink-300/10 text-pink-700">{item?.event}</span>
+                                        </td>
+                                        <td>
+                                            <a className="btn btn-ghost btn-xs text-sky-600 bg-gray-100 rounded-md" target="_blank" href={buildGoogleCalendarUrl({
+                                                title: `${item.event} - Jagadhatri Puja ${new Date().getFullYear()}`,
+                                                location: 'Chandannagar',
+                                                description: item.description
+                                            }, item.date, '00:00:00', '23:59:59')} rel="noopener noreferrer">
+                                                <LuPlus /> Add
+                                            </a>
                                         </td>
                                     </tr>
                                 );
@@ -456,8 +468,8 @@ export default async function Page({ params }: PageProps) {
                 "url": process.env.NEXT_PUBLIC_SITE_URL
             },
             "image": `${process.env.NEXT_PUBLIC_SITE_URL}/og-image.jpg`,
-            "startDate": toISOWithOffset(getDateByIndex(siteData?.schedules, 0), "06:00:00"),
-            "endDate": toISOWithOffset(getDateByIndex(siteData?.schedules, 4), "23:59:59"),
+            "startDate": format(getDateByIndex(siteData?.schedules, 0, "06:00:00"), "yyyy-MM-dd'T'HH:mm:ssXXX"),
+            "endDate": format(getDateByIndex(siteData?.schedules, 4, "23:59:59"), "yyyy-MM-dd'T'HH:mm:ssXXX"),
             "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}/#schema-${queryYear}`, // ensure unique ID
             "inLanguage": "en-IN",
             "mainEntityOfPage": {
@@ -526,8 +538,7 @@ export default async function Page({ params }: PageProps) {
                                 <h3 className="text-xl font-semibold text-blue-800">Festival Schedule</h3>
                             </div>
                             <p className="text-gray-700 leading-relaxed">
-                                In {queryYear}, Jagadhatri Puja will be observed on {formatDate(displayDate)}. This year it will start
-                                on {formatDate(displayDate, true)} and continue up to {formatDate(getDateByIndex(siteData?.schedules, 4), true)}.
+                                In {queryYear}, the grand festival of Jagadhatri Puja will be celebrated with immense devotion and splendor beginning on <span className="font-semibold">{format(displayDate, "EEEE, 'the' do 'of' MMMM yyyy")}</span>, which marks the auspicious day of Jagadhatri Puja itself, and the festivities, cultural programs, and rituals will continue in full spirit and grandeur for several consecutive days until <span className="font-semibold">{format(getDateByIndex(siteData?.schedules, 4), "EEEE, 'the' do 'of' MMMM yyyy")}</span>, making this sacred occasion a five-day-long celebration filled with traditional worship, elaborate decorations, vibrant processions, and community gatherings that unite devotees and visitors alike in an atmosphere of joy, faith, and cultural harmony..
                             </p>
                         </div>
                     )}

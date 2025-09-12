@@ -1,6 +1,6 @@
 import { notFound, permanentRedirect } from 'next/navigation';
 import { getCollection } from "@/utils/fetch";
-import { capitalizeFirst, cn, getDateByIndex, stripHtmlAndLimit, toISOWithOffset } from "@/utils/functions";
+import { capitalizeFirst, cn, getDateByIndex, stripHtmlAndLimit } from "@/utils/functions";
 import {
     LuArrowLeft,
     LuArrowRight,
@@ -38,6 +38,7 @@ import Breadcrumbs from '@/components/breadcrumbs';
 import GallerySlider from '@/components/gallery-slider';
 import Markdown from '@/components/markdown';
 import { assetImageLoader } from '@/utils/transform';
+import { format } from "date-fns";
 
 interface PujaData {
     referenceId: string;
@@ -292,8 +293,8 @@ export default async function Page({ params }: PageProps) {
             src: item.src,
             quality: 70
         })),
-        "startDate": `${toISOWithOffset(getDateByIndex(siteData?.schedules, 0), "06:00:00")}`,
-        "endDate": `${toISOWithOffset(getDateByIndex(siteData?.schedules, 4), "23:59:59")}`,
+        "startDate": `${format(getDateByIndex(siteData?.schedules, 0, "06:00:00"), "yyyy-MM-dd'T'HH:mm:ssXXX")}`,
+        "endDate": `${format(getDateByIndex(siteData?.schedules, 4, "23:59:59"), "yyyy-MM-dd'T'HH:mm:ssXXX")}`,
         "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}/#schema-${currentPuja?.order+1}`, // ensure unique ID
         "inLanguage": "en-IN",
         "mainEntityOfPage": {

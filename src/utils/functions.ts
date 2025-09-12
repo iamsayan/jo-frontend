@@ -1,5 +1,7 @@
 import cx, { ClassName } from 'classix';
 import { twMerge } from 'tailwind-merge';
+import { parseISO, format, isDate } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz'
 
 export const cn = (...classes: ClassName[]) => {
     return twMerge(cx(...classes));
@@ -84,7 +86,7 @@ export const getDay = (date: string | Date): string => {
     return daysOfWeek[dayOfWeek];
 };
 
-export const getDateByIndex = (dates: { date?: string } [], index: number | "last", addDays: number = 0): Date => {
+export const getDateByIndex = (dates: { date?: string }[], index: number | "last", time?: string, addDays: number = 0): Date => {
     // Resolve index (if "last", point to last element)
     const resolvedIndex =
         index === "last" ? Math.max(dates.length - 1, 0) : index;
@@ -94,32 +96,38 @@ export const getDateByIndex = (dates: { date?: string } [], index: number | "las
         : new Date();
 
     date.setDate(date.getDate() + addDays);
-    return date;
+    return setTime(date, time);
 };
 
-export const toISOWithOffset = (date: Date, time?: string): string => {
-    const pad = (num: number) => String(num).padStart(2, "0");
+const setTime = (date: Date, time?: string) => {
+    if (!time) return date;
+    const [hh, mm, ss] = time?.split(":").map(Number);
+    date.setHours(hh || 0, mm || 0, ss || 0, 0);
+    return date;
+}
 
-    // If custom time is provided (e.g. "18:00:00")
-    if (time) {
-        const [hh, mm, ss] = time?.split(":").map(Number);
-        date.setHours(hh || 0, mm || 0, ss || 0, 0);
-    }
+export const buildGoogleCalendarUrl = ({
+    title = "",
+    description = "",
+    location = "",
+},
+    date: string | Date,
+    startTime: string,
+    endTime: string,
+) => {
+    const base = "https://calendar.google.com/calendar/render?action=TEMPLATE";
 
-    const year = date.getFullYear();
-    const month = pad(date.getMonth() + 1);
-    const day = pad(date.getDate());
-    const hours = pad(date.getHours());
-    const minutes = pad(date.getMinutes());
-    const seconds = pad(date.getSeconds());
+    // Normalize input date
+    const baseDate = isDate(date) ? date : parseISO(date);
 
-    // timezone offset in minutes (negative if ahead of UTC)
-    const tzOffset = -date.getTimezoneOffset();
-    const sign = tzOffset >= 0 ? "+" : "-";
-    const offsetHours = pad(Math.floor(Math.abs(tzOffset) / 60));
-    const offsetMinutes = pad(Math.abs(tzOffset) % 60);
+    const dates = `${formatInTimeZone(setTime(baseDate, startTime), 'UTC', "yyyyMMdd'T'HHmmss'Z'")}/${formatInTimeZone(setTime(baseDate, endTime), 'UTC', "yyyyMMdd'T'HHmmss'Z'")}`;
+    const params = new URLSearchParams({
+        text: title,
+        details: description,
+        location
+    });
 
-    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${sign}${offsetHours}:${offsetMinutes}`;
+    return `${base}&${params.toString()}&dates=${encodeURIComponent(dates)}`;
 }
 
 export const stripHtmlAndLimit = (text: string, limit: number = 160): string => {
