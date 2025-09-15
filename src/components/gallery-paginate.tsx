@@ -73,8 +73,8 @@ function GalleryPaginate({ className, images, itemsPerPage, total }: GalleryPagi
                         <TransformedImage
                             key={item.documentId ?? index}
                             src={`${item.year}/${item.puja?.referenceId}/${item.name}`}
-                            fill={true} 
-                            sizes="(max-width: 768px) 50vw, (max-width: 1280px) 25vw, 16vw" 
+                            width={500}
+                            height={300}
                             className="object-cover w-full h-full pointer-events-none text-transparent transform transition-all duration-700 group-hover:scale-110"
                             priority={true}
                             quality={70}

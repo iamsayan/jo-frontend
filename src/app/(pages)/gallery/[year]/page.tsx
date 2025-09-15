@@ -108,9 +108,7 @@ export default async function Page({ params, searchParams }: PageProps<Params, S
     return (
         <MainLayout title={`Photo Gallery ${year}`} jsonLd={jsonLd}>
             <Section title="View Jagadhatri Puja" description={`Photo Gallery ${year}`}>
-                <Suspense>
-                    <GalleryPaginate key={year} total={imagesObject.meta.pagination.total} images={images} itemsPerPage={itemsPerPage} />
-                </Suspense>
+                <GalleryPaginate key={year} total={imagesObject.meta.pagination.total} images={images} itemsPerPage={itemsPerPage} />
             </Section>
         </MainLayout>
     )

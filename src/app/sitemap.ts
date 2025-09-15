@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { getCollection } from "@/utils/fetch";
+import type { Puja } from '@/types';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const pujaData = await getCollection('pujas', {
@@ -9,7 +10,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         },
         sort: ['order:asc']
     });
-    const data = pujaData?.data ?? [];
+    const data: Puja[] = pujaData.data ?? [];
 
     const sitemaps: MetadataRoute.Sitemap = [
         {
@@ -95,9 +96,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         });
     });
 
-    data.forEach((element: any) => {
+    data.forEach((element: Puja) => {
         sitemaps.push({
-            url: `${process.env.NEXT_PUBLIC_SITE_URL}/puja/${element?.slug}/${element?.referenceId}`,
+            url: `${process.env.NEXT_PUBLIC_SITE_URL}/puja/${element.slug}/${element.referenceId}`,
             lastModified: new Date(),
             changeFrequency: 'monthly',
             priority: 0.7,

@@ -19,7 +19,7 @@ import {
     LuAward, 
     LuMapPin 
 } from "react-icons/lu";
-import cx from 'classix';
+import PujaList from '@/components/puja-list';
 import type { Puja } from "@/types";
 
 export const metadata: Metadata = {
@@ -63,7 +63,7 @@ const getZoneDescription = (zone: Puja['zone']) => {
 
 export default async function Page() {
     const pujaData = await getCollection('pujas', {
-        populate: ['procession'],
+        populate: ['procession', 'images'],
         pagination: {
             page: 1,
             pageSize: 200
@@ -156,7 +156,8 @@ export default async function Page() {
                     </div>
                 </div>
                 <Info items={items} />
-                <div className="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
+                <PujaList data={zone} />
+                {/* <div className="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
                     <table className="table text-center table-zebra">
                         <thead>
                             <tr className="bg-blue-100 text-gray-700">
@@ -224,7 +225,7 @@ export default async function Page() {
                             })}
                         </tbody>
                     </table>
-                </div>
+                </div> */}
             </div>
         )
     }
