@@ -49,7 +49,7 @@ export default async function Page() {
         sort: ['updatedAt:desc'],
     });
     const allImages: Image[] = allImagesData.data ?? [];
-    const availableYears = [...new Set(allImages.map((img: Image) => Number(img.year)))].sort((a: number, b: number) => b - a);
+    const availableYears = [...new Set(allImages.map((img: Image) => img.year))].sort((a: number, b: number) => b - a);
 
     const jsonLd = schema({
         path: 'gallery',
@@ -105,6 +105,7 @@ export default async function Page() {
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3 lg:gap-4">
                         {availableYears.map((year: number) => {
                             const yearImages = allImages.filter((img: Image) => img.year === year);
+                            if (yearImages.length === 0) return null;
                             const randomImage = yearImages[Math.floor(Math.random() * yearImages.length)];
                             
                             return (
