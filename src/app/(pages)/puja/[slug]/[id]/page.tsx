@@ -15,6 +15,8 @@ import {
     LuMail,
     LuBuilding,
     LuImages,
+    LuMedal,
+    LuCrown,
 } from "react-icons/lu";
 import {
     FaFacebook,
@@ -240,7 +242,7 @@ export default async function Page({ params }: PageProps) {
             ...item,
             link: currentPuja?.links?.find((link: any) => link.title === item.type)?.url ?? '#'
         }
-    });
+    }).filter(item => item.link !== '#');
 
     const schemaData = {
         path: `puja/${currentPuja?.slug}/${currentPuja?.referenceId}`,
@@ -456,7 +458,7 @@ export default async function Page({ params }: PageProps) {
                             ))}
                         </div>
 
-                        <div className="flex items-center justify-center gap-4 mt-4">
+                        {socialLinks.length > 0 && <div className="flex items-center justify-center gap-4 mt-4">
                             {socialLinks.map((item, index) => (
                                 <a 
                                     key={index}
@@ -470,7 +472,7 @@ export default async function Page({ params }: PageProps) {
                                     {item.icon}
                                 </a>
                             ))}
-                        </div>
+                        </div>}
                     </div>
                 </div>
             </div>
@@ -684,7 +686,7 @@ export default async function Page({ params }: PageProps) {
                 </div>
 
                 {/* Location Section */}
-                {/* {currentPuja?.location?.address && (
+                {currentPuja?.location?.address && (
                     <div className="py-24 bg-gradient-to-br from-white via-green-50/30 to-emerald-50/30">
                         <div className="max-w-7xl mx-auto px-4">
                             <div className="text-center mb-16">
@@ -752,10 +754,10 @@ export default async function Page({ params }: PageProps) {
                             </div>
                         </div>
                     </div>
-                )} */}
+                )}
 
                 {/* Related Pujas Section */}
-                {/* <div className="py-20 bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/30">
+                <div className="py-20 bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/30">
                     <div className="max-w-7xl mx-auto px-4">
                         <div className="text-center mb-16">
                             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-100 text-blue-700 font-medium mb-4">
@@ -856,7 +858,7 @@ export default async function Page({ params }: PageProps) {
                             </div>
                         )}
                     </div>
-                </div> */}
+                </div>
 
                 {/* Quick Actions Section */}
                 <div className="py-16 bg-gradient-to-br from-white via-gray-50/50 to-slate-50/50">

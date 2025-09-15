@@ -38,23 +38,13 @@ import { metadata as metadataSchema } from "@/app/layout";
 import type { Metadata } from 'next'
 import cx from 'classix';
 import { format } from "date-fns";
+import type { Puja, PageProps, Global, Procession, SharedSchedule } from "@/types";
 
 // Exporting runtime for edge function if needed
 // export const runtime = 'edge';
 
-interface PageProps {
-    params: Promise<{
-        year: string;
-    }>;
-}
-
-interface Puja {
-    slug: string;
-    referenceId: string;
-    name: string;
-    zone: string;
-    estd: string;
-    tags: string[];
+interface Params {
+    year: string;
 }
 
 export async function generateStaticParams() {
@@ -63,11 +53,11 @@ export async function generateStaticParams() {
     }));
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps<Params>): Promise<Metadata> {
     const { year } = await params
     const queryYear = parseInt(year);
     const siteDataRes = await getCollection('global', { populate: '*' });
-    const siteData = siteDataRes.data ?? null;
+    const siteData: Global = siteDataRes.data ?? null;
     const displayDate = getDateByIndex(siteData.schedules, 0);
     const dateIsCurrent = queryYear === displayDate.getFullYear();
 
@@ -88,7 +78,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     }
 }
 
-export default async function Page({ params }: PageProps) {
+export default async function Page({ params }: PageProps<Params>) {
     const { year } = await params
     const queryYear = Number(year);
     
@@ -111,10 +101,10 @@ export default async function Page({ params }: PageProps) {
         results[1].status === "fulfilled" ? results[1].value : { data: {} },
         results[2].status === "fulfilled" ? results[2].value : { data: [] }
     ]);
-    const pujas = pujasRes.data;
-    const siteData = siteDataRes.data;
-    const processionData = processionRes.data;
-    const canShowProcession = processionData?.length > 0 && processionData?.every((item: any) => parseInt(item?.year) === queryYear);
+    const pujas: Puja[] = pujasRes.data;
+    const siteData: Global = siteDataRes.data;
+    const processionData: Procession[] = processionRes.data;
+    const canShowProcession = processionData?.length > 0 && processionData?.every((item: Procession) => parseInt(item?.year) === queryYear);
 
     const displayDate = getDateByIndex(siteData.schedules, 0);
     const dateIsCurrent = queryYear === displayDate.getFullYear();
@@ -271,7 +261,7 @@ export default async function Page({ params }: PageProps) {
                             </tr>
                         </thead>
                         <tbody>
-                            {siteData?.schedules?.map((item: any, index: number) => {
+                            {siteData?.schedules?.map((item: SharedSchedule, index: number) => {
                                 return (
                                     <tr key={index} className='row'>
                                         <td>{index + 1}</td>
@@ -300,7 +290,7 @@ export default async function Page({ params }: PageProps) {
     }
 
     const tabProcessionList = () => {
-        const totalVehicles = processionData?.reduce((sum: number, item: any) => sum + (parseInt(item?.truckCount) || 0), 0) || 0;
+        const totalVehicles = processionData?.reduce((sum: number, item: Procession) => sum + (parseInt(String(item?.truckCount)) || 0), 0) || 0;
         const items: InfoItem[] = [
             {
                 title: "Total Procession",
@@ -344,9 +334,12 @@ export default async function Page({ params }: PageProps) {
                             </tr>
                         </thead>
                         <tbody>
-                            {processionData?.map((item: any, index: number) => {
+                            {processionData?.map((item: Procession, index: number) => {
                                 const puja = item?.puja ?? null;
-                                const y = getYear(puja?.estd, queryYear);
+                                if (!puja) {
+                                    return null;
+                                }
+                                const y = getYear(puja.estd, queryYear);
                                 const cel = getCelebrating(y);
                                 const adi = puja?.tags?.includes('adi') ?? false;
                                 const popular = puja?.tags?.includes('popular') ?? false;

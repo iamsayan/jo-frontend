@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import CinematicsPlans from '@/components/cinematics-plans';
 import { getCollection } from '@/utils/fetch';
+import type { Puja, PageProps } from '@/types';
 
 export const metadata: Metadata = {
     title: 'JO Cinematics Registration',
@@ -16,9 +17,11 @@ export const metadata: Metadata = {
     },
 }
 
-export default async function Page({ searchParams }: { searchParams: Promise<{
+interface SearchParams {
     plan: string;
-}> }) {
+};
+
+export default async function Page({ searchParams }: PageProps<{}, SearchParams>) {
     const { plan } = await searchParams;
     const pujasData = await getCollection('pujas', {
         populate: ['partnerships'],
@@ -29,7 +32,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{
         sort: ['order:asc']
     });
 
-    const pujas = pujasData?.data ?? [];
+    const pujas: Puja[] = pujasData.data ?? [];
     return (
         <div className="pt-1 flex items-center flex-col">
             <CinematicsPlans pujaData={pujas} planId={plan} />

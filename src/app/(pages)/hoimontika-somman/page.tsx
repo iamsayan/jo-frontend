@@ -17,6 +17,7 @@ import { metadata as metadataSchema } from "@/app/layout";
 import Tabs, { TabProps } from '@/components/tabs';
 import Link from 'next/link';
 import { createElement } from 'react';
+import { Award, AwardsCategory, AwardsPosition } from '@/types';
 
 export const metadata: Metadata = {
     title: 'Amie Srestho Hoimantika Somman',
@@ -62,17 +63,17 @@ export default async function Page() {
             }
         }
     })
-    let awards = awardsData?.data ?? null
+    let awards: Award[] = awardsData?.data ?? null
 
     let tabs: TabProps[] = []
 
-    const tabContent = (award: any) => {
+    const tabContent = (award: Award) => {
         return (
             <div className="p-4">
-                {award?.description && <p className="text-center text-gray-500 mb-4">{award?.description}</p>}
-                {award?.categories?.length > 0 ? (
+                {award.description && <p className="text-center text-gray-500 mb-4">{award.description}</p>}
+                {(award.categories && award.categories.length > 0) ? (
                     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                        {award?.categories?.map((category: any, idx: any) => (
+                        {award.categories.map((category: AwardsCategory, idx: number) => (
                             <div 
                                 key={idx}
                                 className="group hover:scale-105 transition-all duration-300 delay-300 ease-in-out hover:shadow-lg border rounded-xl border-neutral-200 bg-gradient-to-br from-white to-neutral-50 flex gap-5"
@@ -84,7 +85,7 @@ export default async function Page() {
                                 </div>
                                 
                                 <div className="flex flex-col gap-3 py-4 pr-4">
-                                    {category?.positions?.map((position: any, posIdx: any) => (
+                                    {category.positions && category.positions.map((position: AwardsPosition, posIdx: number) => (
                                         <div key={posIdx}>
                                             <div className={`flex items-center gap-2 ${getPositionStyle(position.position).color} font-semibold mb-1`}>
                                                 {createElement(getPositionStyle(position.position).icon, { className: "text-lg" })}

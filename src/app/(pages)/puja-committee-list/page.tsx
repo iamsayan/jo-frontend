@@ -20,16 +20,7 @@ import {
     LuMapPin 
 } from "react-icons/lu";
 import cx from 'classix';
-
-interface PujaData {
-    referenceId: string;
-    slug: string;
-    name: string;
-    zone: string;
-    estd: string;
-    tags: string[];
-    images?: any[];
-}
+import type { Puja } from "@/types";
 
 export const metadata: Metadata = {
     title: 'Jagadhatri Puja Committee List',
@@ -43,7 +34,7 @@ export const metadata: Metadata = {
     },
 }
 
-const getZoneDescription = (zone: string) => {
+const getZoneDescription = (zone: Puja['zone']) => {
     switch (zone) {
         case 'chandannagar':
             return {
@@ -79,19 +70,19 @@ export default async function Page() {
         },
         sort: ['order:asc']
     });
-    const data = pujaData?.data ?? [];
+    const data: Puja[] = pujaData.data ?? [];
 
-    const cgr: PujaData[] = data.filter((data: any) => data?.zone === 'chandannagar');
-    const bhr: PujaData[] = data.filter((data: any) => data?.zone === 'bhadreswar');
+    const cgr: Puja[] = data.filter((data: Puja) => data.zone === 'chandannagar');
+    const bhr: Puja[] = data.filter((data: Puja) => data.zone === 'bhadreswar');
 
-    const filterData = (zone: any, cel: any) => {
-        return zone.filter((data: any) => {
+    const filterData = (zone: Puja[], cel: number[]) => {
+        return zone.filter((data: Puja) => {
             return cel.includes(Number(getYear(data?.estd)));
         });
     }
 
-    const tabContent = (zone: PujaData[]) => {
-        const zoneInfo = getZoneDescription(zone[0]?.zone);
+    const tabContent = (zone: Puja[]) => {
+        const zoneInfo = getZoneDescription(zone[0].zone);
         const items: InfoItem[] = [
             {
                 title: "Total Committees",
@@ -101,19 +92,19 @@ export default async function Page() {
             },
             {
                 title: "Jubilee Celebrations",
-                description: filterData(zone, jubilees)?.length,
+                description: filterData(zone, jubilees).length,
                 icon: <LuMedal />,
                 variant: "from-rose-500 to-rose-300"
             },
             {
                 title: "Pre Jubilee Celebrations",
-                description: filterData(zone, preJubilees)?.length,
+                description: filterData(zone, preJubilees).length,
                 icon: <LuAward />,
                 variant: "from-blue-500 to-blue-300"
             },
             {
                 title: "Adi Pujas",
-                description: zone.filter((data: any) => data?.tags?.includes('adi') ?? false)?.length,
+                description: zone.filter((data: Puja) => data.tags.includes('adi') ?? false).length,
                 icon: <LuCrown />,
                 variant: "from-purple-500 to-purple-300"
             }
@@ -177,11 +168,11 @@ export default async function Page() {
                             </tr>
                         </thead>
                         <tbody>
-                            {zone.map((item: PujaData, index: number) => {
-                                const y = getYear(item?.estd);
+                            {zone.map((item: Puja, index: number) => {
+                                const y = getYear(item.estd);
                                 const cel = getCelebrating(y);
-                                const adi = item?.tags?.includes('adi') ?? false;
-                                const popular = item?.tags?.includes('popular') ?? false;
+                                const adi = item.tags.includes('adi');
+                                const popular = item.tags.includes('popular');
                                 const formattedCel = cel.replaceAll(' ', '-').toLowerCase();
                                 const celClass = cx(
                                     'px-2.5 py-1 text-xs font-medium rounded-md whitespace-nowrap',
@@ -198,7 +189,7 @@ export default async function Page() {
                                         <td>{index + 1}</td>
                                         <td>
                                             <div className="flex items-center gap-2 whitespace-nowrap">
-                                                <span className="text-left hover:text-green-700 transition-colors">{item?.name}</span>
+                                                <span className="text-left hover:text-green-700 transition-colors">{item.name}</span>
                                                 {(popular || adi) && (
                                                     <div className="flex gap-1">
                                                         {popular && (
@@ -224,7 +215,7 @@ export default async function Page() {
                                         </td>
                                         <td><span className={celClass}>{cel}</span></td>
                                         <td>
-                                            <Link className="btn btn-ghost btn-xs text-sky-600" href={`/puja/${item?.slug}/${item?.referenceId}`}>
+                                            <Link className="btn btn-ghost btn-xs text-sky-600" href={`/puja/${item.slug}/${item.referenceId}`}>
                                                 View <LuChevronRight />
                                             </Link>
                                         </td>
@@ -240,12 +231,12 @@ export default async function Page() {
 
     const tabs: TabProps[] = [
         {
-            title: <span key={cgr?.length} className="flex items-center gap-2">Chandannagar <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-300/10 text-blue-500">{cgr?.length}</span></span>,
+            title: <span key={cgr.length} className="flex items-center gap-2">Chandannagar <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-300/10 text-blue-500">{cgr.length}</span></span>,
             icon: <LuBuilding />,
             content: tabContent(cgr),
         },
         {
-            title: <span key={bhr?.length} className="flex items-center gap-2">Bhadreswar <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-300/10 text-blue-500">{bhr?.length}</span></span>,
+            title: <span key={bhr.length} className="flex items-center gap-2">Bhadreswar <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-300/10 text-blue-500">{bhr.length}</span></span>,
             icon: <LuBuilding2 />,
             content: tabContent(bhr),
         },

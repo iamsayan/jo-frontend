@@ -8,6 +8,8 @@ import Link from "next/link";
 import { getCollection } from "@/utils/fetch";
 import { metadata as metadataSchema } from "@/app/layout";
 import { assetImageLoader } from "@/utils/transform";
+import { Image } from "@/types";
+import { capitalizeFirst } from "@/utils/functions";
 
 interface ImageData {
     year: string;
@@ -46,9 +48,8 @@ export default async function Page() {
         },
         sort: ['updatedAt:desc'],
     });
-    const allImages = (allImagesData?.data ?? []) as ImageData[];
-    const availableYears = [...new Set(allImages.map(img => img.year))]
-        .sort((a, b) => Number(b) - Number(a));
+    const allImages: Image[] = allImagesData.data ?? [];
+    const availableYears = [...new Set(allImages.map((img: Image) => Number(img.year)))].sort((a: number, b: number) => b - a);
 
     const jsonLd = schema({
         path: 'gallery',
@@ -68,7 +69,7 @@ export default async function Page() {
                         slideShowAutoplay={true}
                         fullScreen={true}
                     >
-                        {allImages.slice(0, 12).map((image: any, index: number) => (
+                        {allImages.slice(0, 12).map((image: Image, index: number) => (
                             <a 
                                 href={assetImageLoader({
                                     src: `${image.year}/${image.puja?.referenceId}/${image.name}`,
@@ -76,7 +77,7 @@ export default async function Page() {
                                 data-disable-progress={true}
                                 key={index}
                                 className="relative aspect-[3/4] overflow-hidden rounded-lg group cursor-pointer"
-                                data-sub-html={`<h4>${image?.puja?.name}</h4><p>By: ${image?.uploadedBy.trim().split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')}</p>`}
+                                data-sub-html={`<h4>${image.puja?.name}</h4><p>By: ${capitalizeFirst(image.uploadedBy)}</p>`}
                             >
                                 <TransformedImage
                                     src={`${image.year}/${image.puja?.referenceId}/${image.name}`}
@@ -86,12 +87,12 @@ export default async function Page() {
                                     loading="lazy"
                                     priority={false}
                                     quality={70}
-                                    alt={image?.puja?.name}
+                                    alt={image.puja?.name ?? image.name}
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                 <div className="absolute inset-0 flex items-end left-0 right-0 text-center bottom-0">
                                     <div className="text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 w-full group-hover:mb-3">
-                                        <div className="font-medium mb-2 max-w-50 mx-auto text-xs md:text-sm">{image?.puja?.name}</div>
+                                        <div className="font-medium mb-2 max-w-50 mx-auto text-xs md:text-sm">{image.puja?.name ?? image.name}</div>
                                         {/* <div className="text-sm text-white/80">Click to expand</div> */}
                                     </div>
                                 </div>
@@ -102,8 +103,8 @@ export default async function Page() {
                 <div>
                     <h2 className="text-2xl font-bold mb-6">Browse by Year</h2>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3 lg:gap-4">
-                        {availableYears.map((year: string) => {
-                            const yearImages = allImages.filter(img => img.year === year);
+                        {availableYears.map((year: number) => {
+                            const yearImages = allImages.filter((img: Image) => img.year === year);
                             const randomImage = yearImages[Math.floor(Math.random() * yearImages.length)];
                             
                             return (

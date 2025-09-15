@@ -1,7 +1,9 @@
 import cx, { ClassName } from 'classix';
 import { twMerge } from 'tailwind-merge';
-import { parseISO, format, isDate } from 'date-fns';
+import { parseISO, isDate } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz'
+
+type MaybeDates<T> = T[] | null | undefined;
 
 export const cn = (...classes: ClassName[]) => {
     return twMerge(cx(...classes));
@@ -86,16 +88,15 @@ export const getDay = (date: string | Date): string => {
     return daysOfWeek[dayOfWeek];
 };
 
-export const getDateByIndex = (dates: { date?: string }[], index: number | "last", time?: string, addDays: number = 0): Date => {
-    // Resolve index (if "last", point to last element)
-    const resolvedIndex =
-        index === "last" ? Math.max(dates.length - 1, 0) : index;
+export const getDateByIndex = <T extends { date: string | Date }>(dates: MaybeDates<T>, index: number | "last", time?: string, addDays: number = 0): Date => {
+    if (!dates || dates.length === 0) return setTime(new Date(), time);
 
-    const date = dates[resolvedIndex]?.date
-        ? new Date(dates[resolvedIndex].date)
-        : new Date();
+    const resolvedIndex = index === 'last' ? Math.max(dates.length - 1, 0) : index;
+    const raw = dates[resolvedIndex].date;
+    const date = raw instanceof Date ? new Date(raw) : raw ? new Date(raw) : new Date();
 
-    date.setDate(date.getDate() + addDays);
+    if (addDays !== 0) date.setDate(date.getDate() + addDays);
+
     return setTime(date, time);
 };
 
@@ -148,7 +149,7 @@ export const sanitizeSearchQuery = (query: string | number): string => {
         .replace(/\s+/g, ' '); // Replace multiple spaces with single space
 }
 
-export const capitalizeFirst = (name: string): string => {
+export const capitalizeFirst = (name?: string): string => {
     if (!name) return "";
     return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
 }

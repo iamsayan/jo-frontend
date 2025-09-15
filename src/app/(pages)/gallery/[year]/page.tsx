@@ -8,19 +8,19 @@ import { notFound } from "next/navigation";
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import { assetImageLoader } from "@/utils/transform";
+import type { Image, PageProps } from "@/types";
 
-interface PageProps {
-    params: Promise<{
-        year: string;
-    }>;
-    searchParams: Promise<{
-        page: string | number;
-    }>;
+interface Params {
+    year: string;
+};
+
+interface SearchParams {
+    page?: string | number;
 }
 
 const itemsPerPage = 36;
 
-export async function generateMetadata({ params, searchParams }: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: PageProps<Params, SearchParams>): Promise<Metadata> {
     const { year } = await params
     const { page } = await searchParams
 
@@ -51,13 +51,13 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
         openGraph: {
             ...metadataSchema.openGraph,
             url: currentPage === 0 ? `/gallery/${year}` : `/gallery/${year}?page=${currentPage}`,
-            images: images?.data?.slice(0, 3)?.map((item: any) => {
+            images: images?.data?.slice(0, 3)?.map((item: Image) => {
                 return {
                     url: assetImageLoader({
-                        src: `${item?.year}/${item?.puja?.referenceId}/${item?.name}`,
+                        src: `${item.year}/${item.puja?.referenceId}/${item.name}`,
                         quality: 70
                     }),
-                    alt: item?.puja?.name
+                    alt: item.puja?.name ?? item.name
                 }
             })
         },
@@ -71,7 +71,7 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
     }
 }
 
-export default async function Page({ params, searchParams }: PageProps) {
+export default async function Page({ params, searchParams }: PageProps<Params, SearchParams>) {
     const { year } = await params
     const { page } = await searchParams
 
@@ -87,9 +87,10 @@ export default async function Page({ params, searchParams }: PageProps) {
             limit: itemsPerPage,
         }
     })
-    let imagesObject = imagesData ?? []
+    const imagesObject = imagesData ?? []
+    const images: Image[] = imagesObject.data ?? []
 
-    if (imagesObject?.data?.length < 1) {
+    if (images.length < 1) {
         notFound()
     }
 
@@ -108,7 +109,7 @@ export default async function Page({ params, searchParams }: PageProps) {
         <MainLayout title={`Photo Gallery ${year}`} jsonLd={jsonLd}>
             <Section title="View Jagadhatri Puja" description={`Photo Gallery ${year}`}>
                 <Suspense>
-                    <GalleryPaginate key={year} images={imagesObject} itemsPerPage={itemsPerPage} />
+                    <GalleryPaginate key={year} total={imagesObject.meta.pagination.total} images={images} itemsPerPage={itemsPerPage} />
                 </Suspense>
             </Section>
         </MainLayout>

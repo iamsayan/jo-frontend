@@ -6,6 +6,7 @@ import schema from "@/utils/schema";
 import { getCollection } from "@/utils/fetch";
 import { metadata as metadataSchema } from "@/app/layout";
 import { LuCircleCheck } from 'react-icons/lu';
+import type { Global, SharedAchievement } from '@/types';
 
 export const metadata: Metadata = {
     title: 'Achievements',
@@ -21,7 +22,7 @@ export const metadata: Metadata = {
 
 export default async function Page() {
     const siteData = await getCollection('global', { populate: 'achievements' });
-    const data = siteData?.data ?? null
+    const data: Global = siteData.data ?? null
 
     const jsonLd = schema({
         path: 'achievements',
@@ -36,17 +37,17 @@ export default async function Page() {
                     <p>Through tireless efforts and the support of our vibrant community, we’ve achieved remarkable milestones—from pioneering virtual puja experiences and launching mobile apps to organizing prestigious award ceremonies and expanding our digital reach beyond borders. Each accomplishment represents a step toward preserving our rich cultural heritage while embracing the possibilities of the digital age. Here’s a snapshot of some of our proudest and most impactful achievements along this incredible journey:</p>
                 </div>
                 <ul className="timeline timeline-snap-icon max-md:timeline-compact timeline-vertical">
-                    {data && data?.achievements?.map((item: any, index: number) => (
+                    {data.achievements && data.achievements.map((item: SharedAchievement, index: number) => (
                         <li key={index}>
                             <div className="timeline-middle">
                                 <LuCircleCheck className="size-5 text-success" />
                             </div>
                             <div className={`flex flex-col gap-2 timeline-box ${index % 2 !== 0 ? 'timeline-start md:text-end' : 'timeline-end md:text-start'}`}>
-                                <time className="font-mono italic">{item?.year}</time>
-                                <div className="text-lg font-bold text-green-600">{item?.title}</div>
-                                <Markdown className="text-sm leading-6" content={item?.details} />
+                                <time className="font-mono italic">{item.year}</time>
+                                <div className="text-lg font-bold text-green-600">{item.title}</div>
+                                <Markdown className="text-sm leading-6" content={item.details} />
                             </div>
-                            {index !== data?.achievements?.length-1 && <hr className="bg-success"/>}
+                            {data.achievements && index !== data.achievements.length-1 && <hr className="bg-success"/>}
                         </li>
                     ))}
                 </ul>
