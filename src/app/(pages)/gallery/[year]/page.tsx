@@ -15,7 +15,7 @@ interface Params {
 };
 
 interface SearchParams {
-    page?: string | number;
+    page: string | number;
 }
 
 const itemsPerPage = 36;
