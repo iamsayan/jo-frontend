@@ -21,11 +21,12 @@ export interface TabsProps {
   tabSelectedClassName?: string;
   tabPanelClassName?: string;
   tabPanelSelectedClassName?: string;
+  forceRenderTabPanel?: boolean;
 }
 
 export default function Tabs({ tabs, className, ...props }: TabsProps) {
   return (
-    <ReactTabs className={cn("w-full", className)}>
+    <ReactTabs className={cn("w-full", className)} forceRenderTabPanel={props.forceRenderTabPanel}>
       <TabList className={cn("flex overflow-x-auto", props.tabListClassName)}>
         {tabs.map((tab: TabProps, index: number) => (
           <ReactTab 

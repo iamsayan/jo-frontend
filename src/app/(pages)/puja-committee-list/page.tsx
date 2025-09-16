@@ -4,12 +4,10 @@ import Section from "@/components/section";
 import { getCollection } from "@/utils/fetch";
 import Tabs, { TabProps } from '@/components/tabs';
 import Info, { InfoItem } from '@/components/info';
-import { jubilees, preJubilees, getYear, getCelebrating } from "@/utils/functions";
+import { extendPuja } from "@/utils/functions";
 import schema from "@/utils/schema";
-import Link from "next/link";
 import { metadata as metadataSchema } from "@/app/layout";
 import { 
-    LuChevronRight, 
     LuLandmark, 
     LuUsers, 
     LuBuilding, 
@@ -20,7 +18,7 @@ import {
     LuMapPin 
 } from "react-icons/lu";
 import PujaList from '@/components/puja-list';
-import type { Puja } from "@/types";
+import type { Puja, PujaExtended } from "@/types";
 
 export const metadata: Metadata = {
     title: 'Jagadhatri Puja Committee List',
@@ -34,7 +32,7 @@ export const metadata: Metadata = {
     },
 }
 
-const getZoneDescription = (zone: Puja['zone']) => {
+const getZoneDescription = (zone: PujaExtended['zone']) => {
     switch (zone) {
         case 'chandannagar':
             return {
@@ -71,17 +69,12 @@ export default async function Page() {
         sort: ['order:asc']
     });
     const data: Puja[] = pujaData.data ?? [];
+    const extendedData: PujaExtended[] = data.map((data: Puja) => extendPuja(data));
 
-    const cgr: Puja[] = data.filter((data: Puja) => data.zone === 'chandannagar');
-    const bhr: Puja[] = data.filter((data: Puja) => data.zone === 'bhadreswar');
+    const cgr: PujaExtended[] = extendedData.filter((data: PujaExtended) => data.zone === 'chandannagar');
+    const bhr: PujaExtended[] = extendedData.filter((data: PujaExtended) => data.zone === 'bhadreswar');
 
-    const filterData = (zone: Puja[], cel: number[]) => {
-        return zone.filter((data: Puja) => {
-            return cel.includes(Number(getYear(data?.estd)));
-        });
-    }
-
-    const tabContent = (zone: Puja[]) => {
+    const tabContent = (zone: PujaExtended[]) => {
         const zoneInfo = getZoneDescription(zone[0].zone);
         const items: InfoItem[] = [
             {
@@ -92,13 +85,13 @@ export default async function Page() {
             },
             {
                 title: "Jubilee Celebrations",
-                description: filterData(zone, jubilees).length,
+                description: zone.filter((data: PujaExtended) => data.jubilee === true).length,
                 icon: <LuMedal />,
                 variant: "from-rose-500 to-rose-300"
             },
             {
                 title: "Pre Jubilee Celebrations",
-                description: filterData(zone, preJubilees).length,
+                description: zone.filter((data: PujaExtended) => data.preJubilee === true).length,
                 icon: <LuAward />,
                 variant: "from-blue-500 to-blue-300"
             },
@@ -274,6 +267,7 @@ export default async function Page() {
                         tabListClassName="bg-gray-30 border-b border-base-300 pattern-dots"
                         tabClassName="py-4 px-6 border-b-2 border-transparent bg-gray-50"
                         tabSelectedClassName="border-b-2 !border-blue-700 bg-white"
+                        forceRenderTabPanel={true}
                     />
                 </div>
             </Section>

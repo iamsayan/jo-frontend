@@ -2,6 +2,7 @@ import cx, { ClassName } from 'classix';
 import { twMerge } from 'tailwind-merge';
 import { parseISO, isDate } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz'
+import { Puja, PujaExtended } from '@/types';
 
 type MaybeDates<T> = T[] | null | undefined;
 
@@ -11,6 +12,24 @@ export const cn = (...classes: ClassName[]) => {
 
 export const jubilees: number[] = [25, 50, 60, 75, 100, 125, 150, 160, 175, 200, 225, 250, 260, 275, 300];
 export const preJubilees: number[] = [24, 49, 59, 74, 99, 124, 149, 159, 174, 199, 224, 249, 259, 274, 299];
+
+export const extendPuja = (puja: Puja): PujaExtended => {
+    const y = getYear(puja.estd);
+    const cel = getCelebrating(y);
+    const zone = puja.zone === 'bhadreswar' ? 'Bhadreswar' : 'Chandannagar';
+
+    return {
+        ...puja,
+        year: y,
+        celebrating: cel,
+        popular: (puja.tags ?? []).includes('popular'),
+        adi: (puja.tags ?? []).includes('adi'),
+        jubilee: jubilees.includes(Number(y)),
+        preJubilee: preJubilees.includes(Number(y)),
+        psZone: zone,
+        address: puja.location?.address ?? `${zone}, Hooghly, West Bengal`,
+    }
+}
 
 export const getCelebrating = (year: number | string): string => {
     const parsedYear = parseInt(year as string);

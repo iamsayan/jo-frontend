@@ -3,25 +3,32 @@
 import React, { useEffect, useState, Fragment } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FaBolt, FaLocationDot, FaRegClock } from "react-icons/fa6";
-import { MdOutline360 } from "react-icons/md";
 import { getYear, getCelebrating, capitalizeFirst } from "@/utils/functions";
 import TransformedImage from './transformed-image';
 import { useDebounce } from 'use-debounce';
-import { Puja } from '@/types';
-import { LuAward, LuClockArrowUp, LuCone, LuMapPin, LuMedal, LuTrendingUp } from 'react-icons/lu';
+import { LuAward, LuClockArrowUp, LuMapPin, LuMedal, LuSparkles, LuTrendingUp } from 'react-icons/lu';
 import { Tooltip } from 'react-tooltip'
+import { Puja, PujaExtended } from '@/types';
 import placeholder from '@/public/logo.png'
 
-export default function PujaList({ data }: { data: Puja[] }) {
+type Filter = 'all' | 'popular' | 'jubilee' | 'preJubilee' | 'adi';
+
+export default function PujaList({ data }: { data: PujaExtended[] }) {
     const [hydrated, setHydrated] = useState(false);
     const [search, setSearch] = useState('');
+    const [filter, setFilter] = useState<Filter>('all');
     const [value] = useDebounce(search, 400);
     const [filteredData, setFilteredData] = useState(data);
 
     useEffect(() => {
-        setFilteredData(data.filter((item: Puja) => item.name.toLowerCase().includes(value.toLowerCase())));
+        setFilteredData(data.filter((item: PujaExtended) => 
+            [item.name, item.year, item.theme, item.zone].some((val: any) => val.toLowerCase().includes(value.toLowerCase()))
+        ));
     }, [value]);
+
+    useEffect(() => {
+        setFilteredData(filter === 'all' ? data : data.filter((item: PujaExtended) => item[filter]));
+    }, [filter]);
 
     useEffect(() => {
         setHydrated(true);
@@ -44,13 +51,30 @@ export default function PujaList({ data }: { data: Puja[] }) {
 
     return (
         <>
-            <input
+            {/* <input
                 type="text"
                 className="bg-transparent mb-4 w-full py-2 px-3 border-b-2 border-slate-300 focus:border-blue-500 outline-none"
                 placeholder="Search Puja"
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
-            />
+                onChange={(e) => {
+                    setSearch(e.target.value); 
+                    //setHydrated(false);
+                }}
+            /> */}
+            <div className="flex justify-between items-center gap-3">
+                <input type="text" placeholder="Search by name, year, theme..." className="input w-full !outline-none border-gray-200 !shadow-none" onChange={(e) => {
+                    setSearch(e.target.value);
+                }} />
+                <select defaultValue="all" className="select !outline-none border-gray-200 !shadow-none" onChange={(e) => {
+                    setFilter(e.target.value as Filter);
+                }}>
+                    <option value="all">All</option>
+                    <option value="popular">Popular</option>
+                    <option value="jubilee">Jubilees</option>
+                    <option value="preJubilee">Pre Jubilees</option>
+                    <option value="adi">Adi Puja</option>
+                </select>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 md:gap-4 gap-2">
                 {filteredData.map((item: Puja, index: number) => {
                     //const isPlaceForPromotion = (index + 1) % 6 === 0;
@@ -61,7 +85,7 @@ export default function PujaList({ data }: { data: Puja[] }) {
                     const popular = item.tags.includes('popular') ?? false;
                     const image = item.images?.[0];
 
-                    const html = <Link href={`/puja/${item.slug}/${item.referenceId}`} key={index} className="bg-base-100 border border-base-content/10 grid grid-cols-5 sm:grid-cols-1">
+                    const html = <Link href={`/puja/${item.slug}/${item.referenceId}`} key={index} className="bg-base-100 border border-base-300 grid grid-cols-5 sm:grid-cols-1">
                         <div className="relative aspect-[5/6] sm:aspect-[3/2] col-span-2 sm:col-span-1 overflow-hidden bg-gray-200">
                             {/* <span className="absolute uppercase bg-yellow-500 text-white font-bold text-[9px] sm:text-xs top-2 left-2 sm:py-1 sm:px-2 py-1/4 px-1 z-10">{y}</span> */}
                             {image ? <TransformedImage
@@ -81,32 +105,32 @@ export default function PujaList({ data }: { data: Puja[] }) {
                             {/* <Link data-tooltip-id={`name-${item.referenceId}`} className="block font-bold text-base sm:text-xl pb-1 sm:pb-2 truncate text-blue-900" href={`/watch/`}>{item.name}</Link> */}
                             {/* <Tooltip id={`name-${item.referenceId}`} content={item.name} /> */}
                             <div className="text-[10px] sm:text-xs flex gap-1 items-center justify-center">
-                                <span className="-mt-0.5"><LuMapPin className="inline text-green-600" /></span>
+                                <span className="-mt-0.5"><LuMapPin className="inline text-green-600 size-3.5" /></span>
                                 <span className="truncate">{item.location.address ? item.location.address : capitalizeFirst(item.zone) + ', Hooghly'}</span>
                             </div>
                             <div className="text-[10px] sm:text-xs flex gap-1 items-center justify-center">
-                                <span className="-mt-0.5"><LuClockArrowUp className="inline text-red-600" /></span>
+                                <span className="-mt-0.5"><LuClockArrowUp className="inline text-red-600 size-3.5" /></span>
                                 <span className="truncate">{item.estd == 0 ? 'Not Known' : y + ' Years'}</span>
                             </div>
                             <div className="text-xs flex gap-1 items-center justify-center">
-                                <span className="-mt-0.5"><LuCone className="inline text-purple-600"/></span>
+                                <span className="-mt-0.5"><LuSparkles className="inline text-purple-600 size-3.5" /></span>
                                 <span className="truncate">Theme: {item.theme ? item.theme : 'Not Known'}</span>
                             </div>
-                            <div className="text-xs flex gap-2 items-center justify-center mt-2 hidden sm:block">
+                            <div className="text-xs gap-2 items-center justify-center mt-2 hidden sm:flex">
                                 {popular && (
-                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium text-amber-700 bg-amber-100 rounded-md whitespace-nowrap">
-                                        <LuMedal className="text-amber-500" />
+                                    <span className="inline-flex items-center justify-center gap-1 px-2 py-1 text-[10px] font-medium text-amber-700 bg-amber-100 rounded-md whitespace-nowrap">
+                                        <LuMedal className="text-amber-500 size-2.5 mt-0.5" />
                                         Popular
                                     </span>
                                 )}
                                 {adi && (
-                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium text-purple-700 bg-purple-100 rounded-md whitespace-nowrap">
-                                        <LuAward className="text-purple-500" />
+                                    <span className="inline-flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-purple-700 bg-purple-100 rounded-md whitespace-nowrap">
+                                        <LuAward className="text-purple-500 size-2.5 mt-0.5" />
                                         Adi Puja
                                     </span>
                                 )}
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium text-slate-700 bg-slate-100 rounded-md whitespace-nowrap">
-                                    <LuTrendingUp className="text-slate-500" />
+                                <span className="inline-flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-slate-700 bg-slate-100 rounded-md whitespace-nowrap">
+                                    <LuTrendingUp className="text-slate-500 size-2.5 mt-0.5" />
                                     Featured
                                 </span>
                             </div>
