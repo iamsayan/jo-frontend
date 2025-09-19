@@ -68,11 +68,9 @@ export default async function Page() {
         },
         sort: ['order:asc']
     });
-    const data: Puja[] = pujaData.data ?? [];
-    const extendedData: PujaExtended[] = data.map((data: Puja) => extendPuja(data));
-
-    const cgr: PujaExtended[] = extendedData.filter((data: PujaExtended) => data.zone === 'chandannagar');
-    const bhr: PujaExtended[] = extendedData.filter((data: PujaExtended) => data.zone === 'bhadreswar');
+    const data: PujaExtended[] = pujaData.data ? pujaData.data.map((data: Puja) => extendPuja(data)) : [];
+    const cgr: PujaExtended[] = data.filter((data: PujaExtended) => data.zone === 'chandannagar');
+    const bhr: PujaExtended[] = data.filter((data: PujaExtended) => data.zone === 'bhadreswar');
 
     const tabContent = (zone: PujaExtended[]) => {
         const zoneInfo = getZoneDescription(zone[0].zone);

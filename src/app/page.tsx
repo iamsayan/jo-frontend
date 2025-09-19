@@ -24,11 +24,11 @@ import {
     FaFacebook, 
     FaYoutube 
 } from "react-icons/fa";
-import { buildGoogleCalendarUrl, cn, getDateByIndex } from "@/utils/functions";
+import { buildGoogleCalendarUrl, cn, formatDate, getDateByIndex } from "@/utils/functions";
 import { paytoneOne } from "@/fonts";
 import { getCollection } from "@/utils/fetch";
 import { PiConfettiThin } from "react-icons/pi";
-import { format, parseISO } from "date-fns";
+import { Global, SharedSchedule } from "@/types";
 
 const imagesPath = [
     '20241107-044545.jpg',
@@ -72,12 +72,12 @@ interface ShopItem {
 
 export default async function Home() {
     const siteData = await getCollection('global', { populate: '*' });
-    const data = siteData.data ?? null;
+    const data: Global = siteData.data ?? null;
     const year = getDateByIndex(data.schedules, 0).getFullYear();
     const curYear = new Date().getFullYear();
     const btnYear = curYear > year ? curYear : year;
 
-    const sliderImages = imagesPath.map((image) => ({
+    const sliderImages = imagesPath.map((image: string) => ({
         src: `static/${image}`,
         alt: image,
     }));
@@ -307,7 +307,7 @@ export default async function Home() {
                         </Link>
                     </div>
                     <div className="stats stats-vertical lg:stats-horizontal text-left shadow-sm container">
-                        {stats?.map((item, index) => (
+                        {stats.map((item: StatsItem, index) => (
                             <div className="stat bg-white !border-gray-200" key={index}>
                                 <div className={`${cn('stat-figure text-primary', item?.class)}`}>{item.icon}</div>
                                 <div className="stat-title">{item.title}</div>
@@ -353,16 +353,16 @@ export default async function Home() {
                         }}
                     />
                     <div className="grid gap-2 grid-cols-2 xl:grid-cols-4 mt-5">
-                        {items?.map((item, index) => (
+                        {items.map((item: MenuItem, index) => (
                             <Link
                                 key={index}
-                                href={item?.link}
-                                target={item?.link?.includes('https') ? '_blank' : '_self'}
+                                href={item.link}
+                                target={item.link.includes('https') ? '_blank' : '_self'}
                                 className="flex flex-col gap-2 items-center"
                             >
-                                <span className="p-5 border border-gray-200 rounded-full">{item?.icon}</span>
-                                <span className="text-xl font-bold uppercase">{item?.title}</span>
-                                <span className="">{item?.description}</span>
+                                <span className="p-5 border border-gray-200 rounded-full">{item.icon}</span>
+                                <span className="text-xl font-bold uppercase">{item.title}</span>
+                                <span className="">{item.description}</span>
                             </Link>
                         ))}
                     </div>
@@ -380,7 +380,7 @@ export default async function Home() {
                     </p>
                     
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl">
-                        {shopItems.map((item, index) => (
+                        {shopItems.map((item: ShopItem, index) => (
                             <div 
                                 key={index}
                                 className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300"
@@ -423,9 +423,9 @@ export default async function Home() {
                 description={`Countdown ${year}`}
             >
                 <div className="flex flex-col gap-8 text-center">
-                    <CountdownTimer className="mt-3" targetDate={data?.schedules[0]?.date} />
+                    {data.schedules && <CountdownTimer className="mt-3" targetDate={formatDate(data.schedules[0].date)} />}
                     <div className="grid gap-6 grid-cols-2 md:grid-cols-6">
-                        {data?.schedules?.slice(-5)?.map((item: any, index: number) => (
+                        {data.schedules?.slice(-5).map((item: SharedSchedule, index: number) => (
                             <a
                                 key={index}
                                 href={buildGoogleCalendarUrl({
@@ -442,18 +442,18 @@ export default async function Home() {
                                         width={56}
                                         height={56}
                                         src={`/images/dates/${index}.png`}
-                                        alt={item?.event}
+                                        alt={item.event}
                                         unoptimized={true}
                                         loading="lazy"
                                         className="h-fit"
                                     />
                                 </div>
                                 <div className="flex flex-col gap-1.5 text-left">
-                                    <span className="font-bold">{item?.event}</span>
-                                    <span className="text-sm">{item?.description}</span>
+                                    <span className="font-bold">{item.event}</span>
+                                    <span className="text-sm">{item.description}</span>
                                     <span className="flex items-center gap-1.5 mt-1">
                                         <LuCalendar1 className="inline-block size-4 text-violet-600" />
-                                        <span className="text-sm">{format(parseISO(item.date), 'EEEE, do MMMM yyyy')}</span>
+                                        <span className="text-sm">{formatDate(item.date, 'EEEE, do MMMM yyyy')}</span>
                                     </span>
                                 </div>
                             </a>

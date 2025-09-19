@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import CinematicsPlans from '@/components/cinematics-plans';
 import { getCollection } from '@/utils/fetch';
-import type { Puja, PageProps } from '@/types';
+import { extendPuja } from '@/utils/functions';
+import type { Puja, PageProps, PujaExtended } from '@/types';
 
 export const metadata: Metadata = {
     title: 'JO Cinematics Registration',
@@ -32,7 +33,7 @@ export default async function Page({ searchParams }: PageProps<{}, SearchParams>
         sort: ['order:asc']
     });
 
-    const pujas: Puja[] = pujasData.data ?? [];
+    const pujas: PujaExtended[] = pujasData.data ? pujasData.data.map((data: Puja) => extendPuja(data)) : [];
     return (
         <div className="pt-1 flex items-center flex-col">
             <CinematicsPlans pujaData={pujas} planId={plan} />

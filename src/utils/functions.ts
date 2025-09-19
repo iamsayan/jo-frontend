@@ -1,20 +1,20 @@
 import cx, { ClassName } from 'classix';
 import { twMerge } from 'tailwind-merge';
-import { parseISO, isDate } from 'date-fns';
+import { parseISO, isDate, format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz'
 import { Puja, PujaExtended } from '@/types';
 
 type MaybeDates<T> = T[] | null | undefined;
 
-export const cn = (...classes: ClassName[]) => {
+export function cn(...classes: ClassName[]) {
     return twMerge(cx(...classes));
 };
 
 export const jubilees: number[] = [25, 50, 60, 75, 100, 125, 150, 160, 175, 200, 225, 250, 260, 275, 300];
 export const preJubilees: number[] = [24, 49, 59, 74, 99, 124, 149, 159, 174, 199, 224, 249, 259, 274, 299];
 
-export const extendPuja = (puja: Puja): PujaExtended => {
-    const y = getYear(puja.estd);
+export function extendPuja(puja: Puja, year?: number): PujaExtended {
+    const y = getYear(puja.estd, year);
     const cel = getCelebrating(y);
     const zone = puja.zone === 'bhadreswar' ? 'Bhadreswar' : 'Chandannagar';
 
@@ -31,7 +31,7 @@ export const extendPuja = (puja: Puja): PujaExtended => {
     }
 }
 
-export const getCelebrating = (year: number | string): string => {
+export function getCelebrating(year: number | string): string {
     const parsedYear = parseInt(year as string);
     if (jubilees.includes(parsedYear)) {
         return populateCel(parsedYear);
@@ -41,7 +41,7 @@ export const getCelebrating = (year: number | string): string => {
     return '--';
 };
 
-export const populateCel = (year: number, pre: boolean = false): string => {
+export function populateCel(year: number, pre: boolean = false): string {
     const adjustedYear = pre ? year + 1 : year;
     let name = '';
 
@@ -67,66 +67,47 @@ export const populateCel = (year: number, pre: boolean = false): string => {
     return name ? name + " Jubilee" : "Jubilee";
 };
 
-export const getYear = (estd: number | string, year?: number): string => {
+export function getYear(estd: number | string, year?: number): string {
     const parsedEstd = parseInt(estd as string);
     const currentYear = year ?? new Date().getFullYear();
     return parsedEstd ? (currentYear - parsedEstd + 1).toString() : 'Not Known';
 };
 
-export const getDaySuffix = (day: number): string => {
-    if (day > 3 && day < 21) return 'th';
-    switch (day % 10) {
-        case 1:
-            return 'st';
-        case 2:
-            return 'nd';
-        case 3:
-            return 'rd';
-        default:
-            return 'th';
+export const setTime = (date: Date, time?: string): Date => {
+    if (time) {
+        const [hh, mm, ss] = time?.split(":").map(Number);
+        date.setHours(hh || 0, mm || 0, ss || 0, 0);
     }
+    return date;
+}
+
+export function createDate(date: Date | string, time?: string): Date;
+export function createDate(date: Date | string, time: string | undefined, dateFormat: string): string;
+export function createDate(date: Date | string, time?: string, dateFormat?: string): Date | string {
+    let baseDate = isDate(date) ? date : parseISO(date);
+    if (time) baseDate = setTime(baseDate, time);
+    return dateFormat ? format(baseDate, dateFormat) : baseDate;
+}
+
+export function formatDate(date: string | Date): Date;
+export function formatDate(date: string | Date, dateFormat: string): string;
+export function formatDate(date: string | Date, dateFormat?: string): Date | string {
+    return dateFormat ? createDate(date, undefined, dateFormat) : createDate(date);
 };
 
-export const formatDate = (date: string | Date, showDay: boolean = false): string => {
-    const parsedDate = new Date(date);
-    const options: Intl.DateTimeFormatOptions = { month: 'long', year: 'numeric' };
-    const day = parsedDate.getDate();
-    const daySuffix = getDaySuffix(day);
-    if (showDay) {
-        const dayOfWeek = parsedDate.getDay();
-        const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        return `${daysOfWeek[dayOfWeek]}, ${day}${daySuffix} ${parsedDate.toLocaleDateString('en-US', options)}`;
-    }
-    return `${day}${daySuffix} ${parsedDate.toLocaleDateString('en-US', options)}`;
-};
-
-export const getDay = (date: string | Date): string => {
-    const parsedDate = new Date(date);
-    const dayOfWeek = parsedDate.getDay();
-    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    return daysOfWeek[dayOfWeek];
-};
-
-export const getDateByIndex = <T extends { date: string | Date }>(dates: MaybeDates<T>, index: number | "last", time?: string, addDays: number = 0): Date => {
+export function getDateByIndex<T extends { date: string | Date }>(dates: MaybeDates<T>, index: number | "last", time?: string, addDays: number = 0): Date {
     if (!dates || dates.length === 0) return setTime(new Date(), time);
 
     const resolvedIndex = index === 'last' ? Math.max(dates.length - 1, 0) : index;
     const raw = dates[resolvedIndex].date;
-    const date = raw instanceof Date ? new Date(raw) : raw ? new Date(raw) : new Date();
+    const date = createDate(raw, time);
 
     if (addDays !== 0) date.setDate(date.getDate() + addDays);
 
-    return setTime(date, time);
+    return date;
 };
 
-const setTime = (date: Date, time?: string) => {
-    if (!time) return date;
-    const [hh, mm, ss] = time?.split(":").map(Number);
-    date.setHours(hh || 0, mm || 0, ss || 0, 0);
-    return date;
-}
-
-export const buildGoogleCalendarUrl = ({
+export function buildGoogleCalendarUrl({
     title = "",
     description = "",
     location = "",
@@ -134,13 +115,12 @@ export const buildGoogleCalendarUrl = ({
     date: string | Date,
     startTime: string,
     endTime: string,
-) => {
+): string {
     const base = "https://calendar.google.com/calendar/render?action=TEMPLATE";
+    const startDate = createDate(date, startTime);
+    const endDate = createDate(date, endTime);
 
-    // Normalize input date
-    const baseDate = isDate(date) ? date : parseISO(date);
-
-    const dates = `${formatInTimeZone(setTime(baseDate, startTime), 'UTC', "yyyyMMdd'T'HHmmss'Z'")}/${formatInTimeZone(setTime(baseDate, endTime), 'UTC', "yyyyMMdd'T'HHmmss'Z'")}`;
+    const dates = `${formatInTimeZone(startDate, 'UTC', "yyyyMMdd'T'HHmmss'Z'")}/${formatInTimeZone(endDate, 'UTC', "yyyyMMdd'T'HHmmss'Z'")}`;
     const params = new URLSearchParams({
         text: title,
         details: description,
@@ -150,12 +130,12 @@ export const buildGoogleCalendarUrl = ({
     return `${base}&${params.toString()}&dates=${encodeURIComponent(dates)}`;
 }
 
-export const stripHtmlAndLimit = (text: string, limit: number = 160): string => {
+export function stripHtmlAndLimit(text: string, limit: number = 160): string {
     const strippedText = text.replace(/<\/?[^>]+(>|$)/g, "");
     return strippedText.length > limit ? strippedText.substring(0, limit).trim() + "..." : strippedText;
 }
 
-export const sanitizeSearchQuery = (query: string | number): string => {
+export function sanitizeSearchQuery(query: string | number): string {
     if (typeof query !== 'string') {
         query = String(query);
     }
@@ -168,15 +148,15 @@ export const sanitizeSearchQuery = (query: string | number): string => {
         .replace(/\s+/g, ' '); // Replace multiple spaces with single space
 }
 
-export const capitalizeFirst = (name?: string): string => {
+export function capitalizeFirst(name?: string): string {
     if (!name) return "";
     return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
 }
 
-export const toUpper = (name: string): string => {
+export function toUpper(name: string): string {
     return name?.toUpperCase() ?? "";
 }
 
-export const toLower = (name: string): string => {
+export function toLower(name: string): string {
     return name?.toLowerCase() ?? "";
 }

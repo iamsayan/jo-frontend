@@ -41,6 +41,7 @@ import GallerySlider from '@/components/gallery-slider';
 import Markdown from '@/components/markdown';
 import { assetImageLoader } from '@/utils/transform';
 import { format } from "date-fns";
+import { Puja, SharedSchedule } from '@/types';
 
 interface PujaData {
     referenceId: string;
@@ -83,11 +84,11 @@ export async function generateStaticParams() {
         },
         sort: ['order:asc']
     });
-    const data = pujaData?.data ?? []
+    const data: Puja[] = pujaData.data ?? [];
 
-    return data.map((item: any) => ({
-        slug: item?.slug,
-        id: item?.referenceId,
+    return data.map((item: Puja) => ({
+        slug: item.slug,
+        id: item.referenceId,
     }));
 }
 
@@ -102,12 +103,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             }
         }
     });
-    const data = pujaData?.data ?? []
+    const data: Puja[] = pujaData.data ?? []
     const currentPuja = data?.[0] ?? null;
 
     return {
         title: `${currentPuja?.name} Sarbajanin, ${currentPuja?.zone === 'bhadreswar' ? 'Bhadreswar' : 'Chandannagar'}`,
-        description: stripHtmlAndLimit(currentPuja?.info),
+        description: stripHtmlAndLimit(currentPuja.info ?? ''),
         openGraph: {
             ...metadataSchema.openGraph,
             url: `/puja/${slug}/${id}`,
@@ -295,8 +296,8 @@ export default async function Page({ params }: PageProps) {
             src: item.src,
             quality: 70
         })),
-        "startDate": `${format(getDateByIndex(siteData?.schedules, 0, "06:00:00"), "yyyy-MM-dd'T'HH:mm:ssXXX")}`,
-        "endDate": `${format(getDateByIndex(siteData?.schedules, 4, "23:59:59"), "yyyy-MM-dd'T'HH:mm:ssXXX")}`,
+        "startDate": `${format(getDateByIndex(siteData.schedules, 0, "06:00:00"), "yyyy-MM-dd'T'HH:mm:ssXXX")}`,
+        "endDate": `${format(getDateByIndex(siteData.schedules, 4, "23:59:59"), "yyyy-MM-dd'T'HH:mm:ssXXX")}`,
         "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}/#schema-${currentPuja?.order+1}`, // ensure unique ID
         "inLanguage": "en-IN",
         "mainEntityOfPage": {
@@ -662,7 +663,7 @@ export default async function Page({ params }: PageProps) {
                             <p className="text-gray-600 max-w-2xl mx-auto">Mark your calendar for these auspicious occasions</p>
                         </div>
                         <div className="grid md:grid-cols-2 gap-4">
-                            {siteData?.schedules?.map((item: any, index: number) => (
+                            {siteData.schedules?.map((item: SharedSchedule, index: number) => (
                                 <div
                                     key={index}
                                     className="flex items-center gap-4 bg-white/90 backdrop-blur-sm p-4 rounded-2xl backdrop-blur-sm border border-gray-200 hover:border-blue-200 hover:bg-blue-50/50 transition-all duration-300 overflow-hidden"
@@ -672,10 +673,10 @@ export default async function Page({ params }: PageProps) {
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2">
-                                            <h3 className="text-base font-semibold text-blue-700 truncate">{item?.event}</h3>
-                                            <span className="text-xs text-gray-500">{formatDate(item?.date)}</span>
+                                            <h3 className="text-base font-semibold text-blue-700 truncate">{item.event}</h3>
+                                            <span className="text-xs text-gray-500">{formatDate(item.date, 'dd MMMM yyyy')}</span>
                                         </div>
-                                        {item?.description && (
+                                        {item.description && (
                                             <p className="text-xs text-gray-600 mt-1 line-clamp-2">{item.description}</p>
                                         )}
                                     </div>
@@ -686,7 +687,7 @@ export default async function Page({ params }: PageProps) {
                 </div>
 
                 {/* Location Section */}
-                {currentPuja?.location?.address && (
+                {/* {currentPuja?.location?.address && (
                     <div className="py-24 bg-gradient-to-br from-white via-green-50/30 to-emerald-50/30">
                         <div className="max-w-7xl mx-auto px-4">
                             <div className="text-center mb-16">
@@ -754,10 +755,10 @@ export default async function Page({ params }: PageProps) {
                             </div>
                         </div>
                     </div>
-                )}
+                )} */}
 
                 {/* Related Pujas Section */}
-                <div className="py-20 bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/30">
+                {/* <div className="py-20 bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/30">
                     <div className="max-w-7xl mx-auto px-4">
                         <div className="text-center mb-16">
                             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-100 text-blue-700 font-medium mb-4">
@@ -858,7 +859,7 @@ export default async function Page({ params }: PageProps) {
                             </div>
                         )}
                     </div>
-                </div>
+                </div> */}
 
                 {/* Quick Actions Section */}
                 <div className="py-16 bg-gradient-to-br from-white via-gray-50/50 to-slate-50/50">

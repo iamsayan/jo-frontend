@@ -6,17 +6,10 @@ import schema from "@/utils/schema";
 import TransformedImage from "@/components/transformed-image";
 import Link from "next/link";
 import { getCollection } from "@/utils/fetch";
+import { capitalizeFirst } from "@/utils/functions";
 import { metadata as metadataSchema } from "@/app/layout";
 import { assetImageLoader } from "@/utils/transform";
 import { Image } from "@/types";
-import { capitalizeFirst } from "@/utils/functions";
-
-interface ImageData {
-    year: string;
-    referenceId: string;
-    name: string;
-    puja: any;
-}
 
 export const metadata = {
     title: 'Photo Gallery',

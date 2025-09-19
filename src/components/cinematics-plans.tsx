@@ -6,11 +6,12 @@ import {
     LuCheck,
     LuPlus
 } from "react-icons/lu";
+import Select from 'react-select';
 import { BiLoaderAlt } from "react-icons/bi";
 import { createRazorpayOrder } from "@/app/actions/razorpay";
 import { submitModel } from "@/app/actions/model";
-import Select from 'react-select';
 import { loadRazorpayScript } from "@/utils/load-razorpay";
+import { Partnership, PujaExtended } from "@/types";
 
 declare global {
     interface Window {
@@ -73,7 +74,7 @@ const addons: Addon[] = [
     { id: 9, title: "Voice-over Narration", price: 2000, applicableTo: "both" }
 ];
 
-export default function CinematicsPlans({ pujaData, planId }: { pujaData: any, planId?: string }) {
+export default function CinematicsPlans({ pujaData, planId }: { pujaData: PujaExtended[], planId?: string }) {
     const [selectedPuja, setSelectedPuja] = useState<string | null>(null);
     const [selectedPlan, setSelectedPlan] = useState<PlanId | null>(planId as PlanId ?? null);
     const [selectedAddons, setSelectedAddons] = useState<number[]>([]);
@@ -103,11 +104,11 @@ export default function CinematicsPlans({ pujaData, planId }: { pujaData: any, p
         );
     };
 
-    const selectedPujaData = pujaData.find((data: any) => data?.documentId === selectedPuja) ?? null;
-    const existingData = selectedPujaData?.partnerships.find((partnership: any) => parseInt(partnership.year) === parseInt(formData.year) && partnership.fullPaid === false) ?? null;
+    const selectedPujaData = pujaData.find((data: PujaExtended) => data.documentId === selectedPuja) ?? null;
+    const existingData = selectedPujaData?.partnerships?.find((partnership: Partnership) => parseInt(String(partnership.year)) === parseInt(formData.year) && partnership.fullPaid === false) ?? null;
 
     const planPrice = selectedPlan
-        ? plans.find((p) => p.id === selectedPlan)?.price ?? 0
+        ? plans.find((p: Plan) => p.id === selectedPlan)?.price ?? 0
         : 0;
 
     const addonsPrice = selectedAddons.reduce((sum, id) => {
@@ -121,8 +122,8 @@ export default function CinematicsPlans({ pujaData, planId }: { pujaData: any, p
         (a) => selectedPlan && (a.applicableTo === selectedPlan || a.applicableTo === "both")
     );
 
-    const pujaName = selectedPujaData?.name;
-    const pujaDataOptions = pujaData.map((data: any) => ({ value: data.documentId, label: data.name }));
+    const pujaName = selectedPujaData?.name ?? '';
+    const pujaDataOptions = pujaData.map((data: PujaExtended) => ({ value: data.documentId, label: data.name }));
 
     const handlePayment = async (e: FormEvent) => {
         e.preventDefault();
@@ -190,8 +191,8 @@ export default function CinematicsPlans({ pujaData, planId }: { pujaData: any, p
                         amount: parseInt(total.toString()) + (existingData ? parseInt(existingData.amount.toString()) : 0),
                         email: formData.email,
                         name: formData.name,
-                        orderId: existingData ? existingData.orderId.split(',').concat(response.razorpay_order_id).join(',') : response.razorpay_order_id,
-                        paymentId: existingData ? existingData.paymentId.split(',').concat(response.razorpay_payment_id).join(',') : response.razorpay_payment_id,
+                        orderId: existingData?.orderId ? existingData.orderId.split(',').concat(response.razorpay_order_id).join(',') : response.razorpay_order_id,
+                        paymentId: existingData?.paymentId ? existingData.paymentId.split(',').concat(response.razorpay_payment_id).join(',') : response.razorpay_payment_id,
                         phone: formData.phone,
                         planName: selectedPlanData?.name,
                         planValue: selectedPlanData?.price,
@@ -355,7 +356,7 @@ export default function CinematicsPlans({ pujaData, planId }: { pujaData: any, p
                             instanceId={useId()}
                             options={pujaDataOptions}
                             placeholder="Select a Puja"
-                            onChange={(value: any) => setSelectedPuja(value?.value ?? null)}
+                            onChange={(value: any) => setSelectedPuja(value.value ?? null)}
                             className='w-full'
                             styles={{
                                 control: (base, state) => ({

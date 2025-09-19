@@ -4,14 +4,10 @@ import { getCollection } from "@/utils/fetch";
 import Tabs, { TabProps } from '@/components/tabs';
 import Info, { InfoItem } from '@/components/info';
 import {
-    jubilees,
-    preJubilees,
-    getYear,
-    getCelebrating,
     formatDate,
-    getDay,
     getDateByIndex,
     buildGoogleCalendarUrl,
+    extendPuja,
 } from "@/utils/functions";
 import schema from "@/utils/schema";
 import Link from "next/link";
@@ -38,7 +34,7 @@ import { metadata as metadataSchema } from "@/app/layout";
 import type { Metadata } from 'next'
 import cx from 'classix';
 import { format } from "date-fns";
-import type { Puja, PageProps, Global, Procession, SharedSchedule } from "@/types";
+import type { Puja, PageProps, Global, Procession, SharedSchedule, PujaExtended } from "@/types";
 
 // Exporting runtime for edge function if needed
 // export const runtime = 'edge';
@@ -101,45 +97,39 @@ export default async function Page({ params }: PageProps<Params>) {
         results[1].status === "fulfilled" ? results[1].value : { data: {} },
         results[2].status === "fulfilled" ? results[2].value : { data: [] }
     ]);
-    const pujas: Puja[] = pujasRes.data;
-    const siteData: Global = siteDataRes.data;
-    const processionData: Procession[] = processionRes.data;
-    const canShowProcession = processionData?.length > 0 && processionData?.every((item: Procession) => parseInt(item?.year) === queryYear);
+    const pujas: PujaExtended[] = pujasRes.data ? pujasRes.data.map((data: Puja) => extendPuja(data)) : [];
+    const siteData: Global = siteDataRes.data ?? null;
+    const processionData: Procession[] = processionRes.data ?? [];
+    const canShowProcession = processionData.length > 0 && processionData.every((item: Procession) => parseInt(item.year) === queryYear);
 
     const displayDate = getDateByIndex(siteData.schedules, 0);
     const dateIsCurrent = queryYear === displayDate.getFullYear();
-    const jubilee = pujas?.filter((data: Puja) => jubilees.includes(Number(getYear(data?.estd, queryYear))));
-    const prejubilee = pujas?.filter((data: Puja) => preJubilees.includes(Number(getYear(data?.estd, queryYear))));
+    const jubilee = pujas.filter((data: PujaExtended) => data.jubilee === true);
+    const prejubilee = pujas.filter((data: PujaExtended) => data.preJubilee === true);
 
-    const tabContent = (puja: Puja[]) => {
+    const tabContent = (puja: PujaExtended[]) => {
         const items: InfoItem[] = [
             {
                 title: "Total Committees",
-                description: puja?.length,
+                description: puja.length,
                 icon: <LuUsers />,
                 variant: "from-green-500 to-green-300"
             },
             {       
                 title: "Chandannagar",
-                description: puja?.filter((p: Puja) => p.zone === 'chandannagar')?.length,
+                description: puja.reduce((acc, p: PujaExtended) => acc + (p.zone === 'chandannagar' ? 1 : 0), 0),
                 icon: <LuBuilding2 />,
                 variant: "from-rose-500 to-rose-300"
             },
             {
                 title: "Bhadreswar",
-                description: puja?.filter((p: Puja) => p.zone === 'bhadreswar')?.length,
+                description: puja.reduce((acc, p: PujaExtended) => acc + (p.zone === 'bhadreswar' ? 1 : 0), 0),
                 icon: <LuBuilding />,
                 variant: "from-blue-500 to-blue-300"
             },
             {
                 title: "Adi Pujas",
-                description: puja?.filter((p: Puja) => {
-                    const y = getYear(p?.estd, queryYear);
-                    if (!y || Number(y) >= 150) {
-                        return true;
-                    }
-                    return false;
-                })?.length,
+                description: puja.reduce((acc, p: PujaExtended) => acc + (p.adi === true ? 1 : 0), 0),
                 icon: <LuCrown />,
                 variant: "from-purple-500 to-purple-300"
             }
@@ -161,32 +151,27 @@ export default async function Page({ params }: PageProps<Params>) {
                             </tr>
                         </thead>
                         <tbody>
-                            {puja?.map((item: Puja, index: number) => {
-                                const y = getYear(item?.estd, queryYear);
-                                const cel = getCelebrating(y);
-                                const adi = item?.tags?.includes('adi') ?? false;
-                                const popular = item?.tags?.includes('popular') ?? false;
-                                const formattedCel = cel.replaceAll(' ', '-').toLowerCase();
+                            {puja.map((item: PujaExtended, index: number) => {
                                 const celClass = cx(
                                     'px-2.5 py-1 text-xs font-medium rounded-md whitespace-nowrap',
-                                    !formattedCel.includes('pre') && formattedCel.includes('jubilee') && 'bg-rose-300/10 text-rose-700',
-                                    formattedCel.includes('pre') && formattedCel.includes('jubilee') && 'bg-blue-300/10 text-blue-500',
+                                    item.jubilee && 'bg-rose-300/10 text-rose-700',
+                                    item.preJubilee && 'bg-blue-300/10 text-blue-500',
                                 );
                                 return (
                                     <tr key={index} className="row">
                                         <td>{index + 1}</td>
                                         <td>
                                             <div className="flex items-center gap-2 whitespace-nowrap">
-                                                <span className="text-left hover:text-green-700 transition-colors">{item?.name}</span>
-                                                {(popular || adi) && (
+                                                <span className="text-left hover:text-green-700 transition-colors">{item.name}</span>
+                                                {(item.popular || item.adi) && (
                                                     <div className="flex gap-1">
-                                                        {popular && (
+                                                        {item.popular && (
                                                             <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium text-amber-700 bg-amber-100 rounded-md whitespace-nowrap">
                                                                 <LuMedal className="text-amber-500" />
                                                                 Popular
                                                             </span>
                                                         )}
-                                                        {adi && (
+                                                        {item.adi && (
                                                             <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium text-purple-700 bg-purple-100 rounded-md whitespace-nowrap">
                                                                 <LuAward className="text-purple-500" />
                                                                 Adi Puja
@@ -196,16 +181,16 @@ export default async function Page({ params }: PageProps<Params>) {
                                                 )}
                                             </div>
                                         </td>
-                                        <td>{item?.zone === 'bhadreswar' ? 'Bhadreswar' : 'Chandannagar'}</td>
+                                        <td>{item.psZone}</td>
                                         <td>
                                             <span className="inline-flex items-center justify-center px-2.5 py-1 text-xs font-medium bg-gray-100 rounded-md whitespace-nowrap">
-                                                {y}
+                                                {item.year}
                                             </span>
                                         </td>
-                                        <td><span className={celClass}>{cel}</span></td>
+                                        <td><span className={celClass}>{item.celebrating}</span></td>
                                         {dateIsCurrent && <td><Link
                                             className="btn btn-ghost btn-xs text-sky-600"
-                                            href={`/puja/${item?.slug}/${item?.referenceId}${new Date().getFullYear() !== queryYear ? `?y=${queryYear}` : ''}`}>
+                                            href={`/puja/${item.slug}/${item.referenceId}${new Date().getFullYear() !== queryYear ? `?y=${queryYear}` : ''}`}>
                                             View <LuChevronRight />
                                         </Link>
                                         </td>}
@@ -223,7 +208,7 @@ export default async function Page({ params }: PageProps<Params>) {
         const items: InfoItem[] = [
             {
                 title: "Festival Duration",
-                description: `${siteData?.schedules?.length} Days`,
+                description: `${siteData.schedules?.length ?? 0} Days`,
                 icon: <LuClock />,
                 variant: "from-orange-500 to-orange-300",
             },
@@ -261,18 +246,18 @@ export default async function Page({ params }: PageProps<Params>) {
                             </tr>
                         </thead>
                         <tbody>
-                            {siteData?.schedules?.map((item: SharedSchedule, index: number) => {
+                            {siteData.schedules?.map((item: SharedSchedule, index: number) => {
                                 return (
                                     <tr key={index} className='row'>
                                         <td>{index + 1}</td>
-                                        <td className="text-blue-800 whitespace-nowrap">{formatDate(item?.date)}</td>
-                                        <td className="text-gray-600">{getDay(item?.date)}</td>
+                                        <td className="text-blue-800 whitespace-nowrap">{formatDate(item.date, 'do MMMM yyyy')}</td>
+                                        <td className="text-gray-600">{formatDate(item.date, 'EEEE')}</td>
                                         <td>
-                                            <span className="px-2.5 py-1 text-sm rounded-md whitespace-nowrap bg-pink-300/10 text-pink-700">{item?.event}</span>
+                                            <span className="px-2.5 py-1 text-sm rounded-md whitespace-nowrap bg-pink-300/10 text-pink-700">{item.event}</span>
                                         </td>
                                         <td>
                                             <a className="btn btn-ghost btn-xs text-sky-600 bg-gray-100 rounded-md" target="_blank" href={buildGoogleCalendarUrl({
-                                                title: `${item.event} - Jagadhatri Puja ${new Date().getFullYear()}`,
+                                                title: `${item.event} - Jagadhatri Puja ${formatDate(item.date, 'yyyy')}`,
                                                 location: 'Chandannagar',
                                                 description: item.description
                                             }, item.date, '00:00:00', '23:59:59')} rel="noopener noreferrer">
@@ -290,11 +275,11 @@ export default async function Page({ params }: PageProps<Params>) {
     }
 
     const tabProcessionList = () => {
-        const totalVehicles = processionData?.reduce((sum: number, item: Procession) => sum + (parseInt(String(item?.truckCount)) || 0), 0) || 0;
+        const totalVehicles = processionData.reduce((sum: number, item: Procession) => sum + (parseInt(String(item.truckCount)) || 0), 0) || 0;
         const items: InfoItem[] = [
             {
                 title: "Total Procession",
-                description: processionData?.length,
+                description: processionData.length,
                 icon: <LuUsers />,
                 variant: "from-green-500 to-green-300"
             },
@@ -306,13 +291,13 @@ export default async function Page({ params }: PageProps<Params>) {
             },
             {
                 title: "Jubilee Celebrations",
-                description: jubilee?.length,
+                description: jubilee.length,
                 icon: <LuMedal />,
                 variant: "from-rose-500 to-rose-300"
             },
             {
                 title: "Pre Jubilee Celebrations",
-                description: prejubilee?.length,
+                description: prejubilee.length,
                 icon: <LuAward />,
                 variant: "from-blue-500 to-blue-300"
             }
@@ -334,41 +319,36 @@ export default async function Page({ params }: PageProps<Params>) {
                             </tr>
                         </thead>
                         <tbody>
-                            {processionData?.map((item: Procession, index: number) => {
-                                const puja = item?.puja ?? null;
-                                if (!puja) {
-                                    return null;
-                                }
-                                const y = getYear(puja.estd, queryYear);
-                                const cel = getCelebrating(y);
-                                const adi = puja?.tags?.includes('adi') ?? false;
-                                const popular = puja?.tags?.includes('popular') ?? false;
-                                const formattedCel = cel.replaceAll(' ', '-').toLowerCase();
+                            {processionData.map((item: Procession, index: number) => {
+                                const pujaItem = item.puja ?? null;
+                                if (!pujaItem) return null;
+
+                                const puja: PujaExtended = extendPuja(pujaItem);
                                 const celClass = cx(
                                     'px-2.5 py-1 text-xs font-medium rounded-md whitespace-nowrap',
-                                    !formattedCel.includes('pre') && formattedCel.includes('jubilee') && 'bg-rose-300/10 text-rose-700',
-                                    formattedCel.includes('pre') && formattedCel.includes('jubilee') && 'bg-blue-300/10 text-blue-500',
+                                    puja.jubilee && 'bg-rose-300/10 text-rose-700',
+                                    puja.preJubilee && 'bg-blue-300/10 text-blue-500',
                                 );
                                 const rowClass = cx(
                                     'row',
-                                    !formattedCel.includes('pre') && formattedCel.includes('jubilee') && 'text-rose-500 font-medium',
-                                    formattedCel.includes('pre') && formattedCel.includes('jubilee') && 'text-blue-500 font-medium',
+                                    puja.jubilee && 'text-rose-500 font-medium',
+                                    puja.preJubilee && 'text-blue-500 font-medium',
                                 );
                                 return (
                                     <tr key={index} className={rowClass}>
                                         <td>{index + 1}</td>
                                         <td>
                                             <div className="flex items-center gap-2 whitespace-nowrap">
-                                                <span className="text-left hover:text-green-700 transition-colors">{puja?.name}</span>
-                                                {(popular || adi) && (
+                                                <span className="text-left hover:text-green-700 transition-colors">{puja.name}</span>
+                                                {(puja.popular || puja.adi) && (
                                                     <div className="flex gap-1">
-                                                        {popular && (
+                                                        {puja.popular && (
                                                             <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium text-amber-700 bg-amber-100 rounded-md whitespace-nowrap">
                                                                 <LuMedal className="text-amber-500" />
                                                                 Popular
                                                             </span>
                                                         )}
-                                                        {adi && (
+                                                        {puja.adi && (
                                                             <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium text-purple-700 bg-purple-100 rounded-md whitespace-nowrap">
                                                                 <LuAward className="text-purple-500" />
                                                                 Adi Puja
@@ -378,11 +358,11 @@ export default async function Page({ params }: PageProps<Params>) {
                                                 )}
                                             </div>
                                         </td>
-                                        <td>{item?.truckCount == 1 ? 1 : item?.truckCount - 1 + ' + 1 = ' + item?.truckCount}</td>
-                                        <td>{item?.zone}</td>
-                                        <td>{y}</td>
-                                        <td><span className={celClass}>{cel}</span></td>
-                                        <td>{puja?.zone === 'bhadreswar' ? 'Bhadreswar' : 'Chandannagar'}</td>
+                                        <td>{item.truckCount == 1 ? 1 : item?.truckCount - 1 + ' + 1 = ' + item.truckCount}</td>
+                                        <td>{item.zone}</td>
+                                        <td>{puja.year}</td>
+                                        <td><span className={celClass}>{puja.celebrating}</span></td>
+                                        <td>{puja.psZone}</td>
                                     </tr>
                                 );
                             })}
@@ -395,12 +375,12 @@ export default async function Page({ params }: PageProps<Params>) {
 
     const tabs: TabProps[] = [
         {
-            title: <span key={queryYear} className="flex items-center gap-2">Jubilee List <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-300/10 text-blue-500">{jubilee?.length}</span></span>,
+            title: <span key={queryYear} className="flex items-center gap-2">Jubilee List <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-300/10 text-blue-500">{jubilee.length}</span></span>,
             icon: <LuList />,
             content: tabContent(jubilee),
         },
         {
-            title: <span key={queryYear} className="flex items-center gap-2">Pre Jubilee List <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-300/10 text-blue-500">{prejubilee?.length}</span></span>,
+            title: <span key={queryYear} className="flex items-center gap-2">Pre Jubilee List <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-300/10 text-blue-500">{prejubilee.length}</span></span>,
             icon: <LuList />,
             content: tabContent(prejubilee),
         }
@@ -427,7 +407,7 @@ export default async function Page({ params }: PageProps<Params>) {
 
         jsonLd["@graph"].push({
             "name": `${schemaData.title} - Jagadhatri Online™ | the #1 Popular Jagadhatri Puja Portal`,
-            "description": `Here are the Jubilee & Pre Jubilee List, Schedule, Puja Updates and Latest Information about Jagadhatri Puja ${queryYear} the great festival of Chandannagar & Bhadreswar.`,
+            "description": `Jubilee & Pre Jubilee List, Schedule, Puja Updates and Latest Information about Jagadhatri Puja ${queryYear} the great festival of Chandannagar & Bhadreswar.`,
             "@type": "Event",
             "eventStatus": "https://schema.org/EventScheduled",
             "eventAttendanceMode": "https://schema.org/MixedEventAttendanceMode",
@@ -461,8 +441,8 @@ export default async function Page({ params }: PageProps<Params>) {
                 "url": process.env.NEXT_PUBLIC_SITE_URL
             },
             "image": `${process.env.NEXT_PUBLIC_SITE_URL}/og-image.jpg`,
-            "startDate": format(getDateByIndex(siteData?.schedules, 0, "06:00:00"), "yyyy-MM-dd'T'HH:mm:ssXXX"),
-            "endDate": format(getDateByIndex(siteData?.schedules, 4, "23:59:59"), "yyyy-MM-dd'T'HH:mm:ssXXX"),
+            "startDate": format(getDateByIndex(siteData.schedules, 0, "06:00:00"), "yyyy-MM-dd'T'HH:mm:ssXXX"),
+            "endDate": format(getDateByIndex(siteData.schedules, 4, "23:59:59"), "yyyy-MM-dd'T'HH:mm:ssXXX"),
             "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}/#schema-${queryYear}`, // ensure unique ID
             "inLanguage": "en-IN",
             "mainEntityOfPage": {
@@ -473,7 +453,7 @@ export default async function Page({ params }: PageProps<Params>) {
 
     if (canShowProcession) {
         tabs.push({
-            title: <span key={queryYear} className="flex items-center gap-2">Procession List <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-300/10 text-blue-500">{processionData?.length}</span></span>,
+            title: <span key={queryYear} className="flex items-center gap-2">Procession List <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-300/10 text-blue-500">{processionData.length}</span></span>,
             icon: <LuPartyPopper  />,
             content: tabProcessionList(),
         });
@@ -531,7 +511,7 @@ export default async function Page({ params }: PageProps<Params>) {
                                 <h3 className="text-xl font-semibold text-blue-800">Festival Schedule</h3>
                             </div>
                             <p className="text-gray-700 leading-relaxed">
-                                In {queryYear}, the grand festival of Jagadhatri Puja will be celebrated with immense devotion and splendor beginning on <span className="font-semibold">{format(displayDate, "EEEE, 'the' do 'of' MMMM yyyy")}</span>, which marks the auspicious day of Jagadhatri Puja itself, and the festivities, cultural programs, and rituals will continue in full spirit and grandeur for several consecutive days until <span className="font-semibold">{format(getDateByIndex(siteData?.schedules, 4), "EEEE, 'the' do 'of' MMMM yyyy")}</span>, making this sacred occasion a five-day-long celebration filled with traditional worship, elaborate decorations, vibrant processions, and community gatherings that unite devotees and visitors alike in an atmosphere of joy, faith, and cultural harmony..
+                                In {queryYear}, the grand festival of Jagadhatri Puja will be celebrated with immense devotion and splendor beginning on <span className="font-semibold">{format(displayDate, "EEEE, 'the' do 'of' MMMM yyyy")}</span>, which marks the auspicious day of Jagadhatri Puja itself, and the festivities, cultural programs, and rituals will continue in full spirit and grandeur for several consecutive days until <span className="font-semibold">{format(getDateByIndex(siteData.schedules, 4), "EEEE, 'the' do 'of' MMMM yyyy")}</span>, making this sacred occasion a five-day-long celebration filled with traditional worship, elaborate decorations, vibrant processions, and community gatherings that unite devotees and visitors alike in an atmosphere of joy, faith, and cultural harmony..
                             </p>
                         </div>
                     )}

@@ -3,20 +3,9 @@
 import { useState } from 'react';
 import { YouTubeEmbed } from '@next/third-parties/google'
 import { LuPlay } from 'react-icons/lu';
+import { SharedVideo } from '@/types';
 
-interface VideoInfo {
-    id: string;
-    title: string;
-    description: string;
-    video: {
-        url: string;
-        provider: string;
-        providerUid: string;
-        privacyHash?: string;
-    }
-}
-
-export default function Videos({ videos }: { videos: VideoInfo[] }) {
+export default function Videos({ videos }: { videos: SharedVideo[] }) {
     const [videoId, setVideoId] = useState<string>(videos[0].video.providerUid);
     return (
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-0 lg:gap-5">

@@ -91,7 +91,7 @@ export default async function Page() {
                                                 {createElement(getPositionStyle(position.position).icon, { className: "text-lg" })}
                                                 {position.position}
                                             </div>
-                                            {position?.pujas?.map((puja: any, pujaIdx: any) => (
+                                            {position.pujas?.map((puja: any, pujaIdx: number) => (
                                                 <div key={pujaIdx} className="text-gray-700 pl-6">
                                                     &bull; <Link href={`/puja/${puja?.slug}/${puja?.referenceId}`}>
                                                         {puja.name}
@@ -111,11 +111,11 @@ export default async function Page() {
         )
     }
 
-    awards?.forEach((award: any) => {
-        const totalAwards = award?.categories?.reduce((total: number, category: any) => {
-            return total + category?.positions?.reduce((posTotal: number, position: any) => {
-                return posTotal + (position?.pujas?.length || 0);
-            }, 0);
+    awards.forEach((award: Award) => {
+        const totalAwards = award.categories?.reduce((total: number, category: AwardsCategory) => {
+            return total + (category.positions?.reduce((posTotal: number, position: AwardsPosition) => {
+                return posTotal + (position.pujas?.length || 0);
+            }, 0) || 0);
         }, 0) || 0;
 
         tabs.push({

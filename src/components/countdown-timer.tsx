@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react'
 
 interface CountdownTimerProps {
     className?: string;
-    targetDate: Date | number;
+    targetDate: Date;
 }
 
 const CountdownTimer: React.FC<CountdownTimerProps> = ({ className, targetDate }) => {
