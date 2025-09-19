@@ -487,10 +487,28 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
                                                     <button
                                                         onClick={(e) => {
                                                             e.preventDefault();
-                                                            // Share functionality can be implemented here
+                                                            e.stopPropagation();
+                                                            // Use Web Share API if available
+                                                            if (navigator.share) {
+                                                                navigator.share({
+                                                                    title: item.name,
+                                                                    text: `Check out ${item.name} Jagadhatri Puja${item.theme ? ` - ${item.theme}` : ''}`,
+                                                                    url: `${window.location.origin}/puja/${item.slug}/${item.referenceId}`
+                                                                }).catch((error) => console.log('Error sharing:', error));
+                                                            } else {
+                                                                // Fallback to copying URL to clipboard
+                                                                const url = `${window.location.origin}/puja/${item.slug}/${item.referenceId}`;
+                                                                navigator.clipboard.writeText(url).then(() => {
+                                                                    alert('Link copied to clipboard!');
+                                                                }).catch((error) => {
+                                                                    console.error('Failed to copy:', error);
+                                                                });
+                                                            }
                                                         }}
-                                                        className="p-2 rounded-full bg-gray-100 hover:bg-blue-100 text-gray-500 hover:text-blue-600 transition-colors touch-manipulation min-w-[40px] min-h-[40px] flex items-center justify-center"
+                                                        className="cursor-pointer p-2 rounded-full bg-gray-100 hover:bg-blue-100 text-gray-500 hover:text-blue-600 transition-colors touch-manipulation min-w-[40px] min-h-[40px] flex items-center justify-center"
                                                         aria-label="Share puja"
+                                                        title="Share this puja"
+                                                        data-prevent-progress={true}
                                                     >
                                                         <LuShare2 className="w-4 h-4" />
                                                     </button>
