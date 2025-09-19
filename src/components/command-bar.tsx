@@ -15,12 +15,13 @@ import {
 import { useEffect, useState, useMemo } from "react";
 import { useRouter } from '@bprogress/next/app'
 import { useDebouncedCallback } from "use-debounce";
-import { getYear, sanitizeSearchQuery } from '@/utils/functions';
+import { extendPuja, getYear, sanitizeSearchQuery } from '@/utils/functions';
 import { LuSearch, LuList, LuImage, LuZap, LuShoppingCart, LuTrophy, LuInfo, LuMapPin } from "react-icons/lu";
 import { MdOutline360 } from 'react-icons/md';
 import { useSearchParams } from "next/navigation";
 import { Suspense } from 'react'
 import { searchModels } from "@/app/actions/search";
+import { Puja, PujaExtended } from "@/types";
 
 interface CommandBarProps {
     children: React.ReactNode;
@@ -147,17 +148,17 @@ function DynamicActionsLoader({ onInput, onSearch }: DynamicActionsLoaderProps) 
         onSearch?.(true);
         try {
             const searchResults = await searchModels(currentRootActionId as string, search);
-            const dynamicActions = Array.isArray(searchResults) ? searchResults.map((item: any) => {
-                const y = getYear(item?.estd);
+            const dynamicActions = Array.isArray(searchResults) ? searchResults.map((pujaItem: Puja) => {
+                const item: PujaExtended = extendPuja(pujaItem);
                 return ({
-                    id: `puja-${item._o+1}`,
-                    name: `${item.name}${y === 'Not Known' ? '' : ` - ${y} Years`}`,
+                    id: `puja-${item.order+1}`,
+                    name: `${item.name}${item.year? ` - ${item.year} Years` : ''}`,
                     section: "Search Results",
-                    keywords: item?.slug,
+                    keywords: item.slug,
                     parent: "pujas",
                     icon: <LuZap />,
-                    subtitle: `${item?.location?.address || `${item?.zone === 'bhadreswar' ? 'Bhadreswar' : 'Chandannagar'}, Hooghly, West Bengal`}`,
-                    perform: () => router.push(`/puja/${item?.slug}/${item?.referenceId}`),
+                    subtitle: item.address,
+                    perform: () => router.push(`/puja/${item.slug}/${item.referenceId}`),
                 })
             }) : [];
 

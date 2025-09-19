@@ -12,7 +12,7 @@ export async function searchModels(model: string, query: string, params: Record<
             },
             ...params,
         });
-        return searchData?.data ?? null;
+        return searchData.data ?? null;
     } catch (error) {
         if (error instanceof Error && error.name !== 'TimeoutError') {
             console.error("API error:", error);
