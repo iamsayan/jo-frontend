@@ -1,6 +1,6 @@
 import { notFound, permanentRedirect } from 'next/navigation';
 import { getCollection } from "@/utils/fetch";
-import { capitalizeFirst, cn, getDateByIndex, stripHtmlAndLimit } from "@/utils/functions";
+import { capitalizeFirst, cn, extendPuja, getDateByIndex, stripHtmlAndLimit } from "@/utils/functions";
 import {
     LuArrowLeft,
     LuArrowRight,
@@ -15,8 +15,6 @@ import {
     LuMail,
     LuBuilding,
     LuImages,
-    LuMedal,
-    LuCrown,
 } from "react-icons/lu";
 import {
     FaFacebook,
@@ -27,8 +25,6 @@ import {
     FaGlobe,
 } from "react-icons/fa6";
 import {
-    getYear,
-    getCelebrating,
     formatDate,
 } from "@/utils/functions";
 import schema from "@/utils/schema";
@@ -41,39 +37,11 @@ import GallerySlider from '@/components/gallery-slider';
 import Markdown from '@/components/markdown';
 import { assetImageLoader } from '@/utils/transform';
 import { format } from "date-fns";
-import { Puja, SharedSchedule } from '@/types';
+import { Artist, Image, Puja, Global, PujaExtended, SharedLink, SharedSchedule, PageProps } from '@/types';
 
-interface PujaData {
-    referenceId: string;
-    name: string;
+interface Params {
     slug: string;
-    zone: string;
-    estd: string;
-    location?: {
-        address?: string;
-        coordinates?: {
-            lat?: number;
-            lng?: number;
-        };
-        geohash?: string;
-    };
-    theme?: string;
-    artists?: {
-        type: string;
-        name: string;
-        contact?: string;
-        email?: string;
-        businessName?: string;
-    };
-    info?: string;
-    tags?: string[];
-}
-
-interface PageProps {
-    params: Promise<{
-        slug: string;
-        id: string;
-    }>;
+    id: string;
 }
 
 export async function generateStaticParams() {
@@ -92,7 +60,7 @@ export async function generateStaticParams() {
     }));
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps<Params>): Promise<Metadata> {
     const { slug, id } = await params
 
     const pujaData = await getCollection('pujas', {
@@ -107,28 +75,28 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const currentPuja = data?.[0] ?? null;
 
     return {
-        title: `${currentPuja?.name} Sarbajanin, ${currentPuja?.zone === 'bhadreswar' ? 'Bhadreswar' : 'Chandannagar'}`,
+        title: `${currentPuja.name} Sarbajanin, ${currentPuja.zone === 'bhadreswar' ? 'Bhadreswar' : 'Chandannagar'}`,
         description: stripHtmlAndLimit(currentPuja.info ?? ''),
         openGraph: {
             ...metadataSchema.openGraph,
             url: `/puja/${slug}/${id}`,
-            images: currentPuja?.images?.slice(0, 3).map((item: any) => {
+            images: currentPuja.images?.slice(0, 3).map((item: Image) => {
                 return {
                     url: assetImageLoader({
-                        src: `${item?.year}/${currentPuja?.referenceId}/${item?.name}`,
+                        src: `${item.year}/${currentPuja.referenceId}/${item.name}`,
                         quality: 70
                     }),
-                    alt: currentPuja?.name
+                    alt: currentPuja.name
                 }
             })
         },
         alternates: {
-            canonical: currentPuja?.links?.find((link: any) => link.title === 'website')?.url ?? `/puja/${slug}/${id}`
+            canonical: currentPuja.links?.find((link: SharedLink) => link.title === 'website')?.url ?? `/puja/${slug}/${id}`
         },
     }
 }
 
-export default async function Page({ params }: PageProps) {
+export default async function Page({ params }: PageProps<Params>) {
     const { slug, id } = await params
     const queryYear = new Date().getFullYear()
 
@@ -146,44 +114,39 @@ export default async function Page({ params }: PageProps) {
         results[0].status === "fulfilled" ? results[0].value : { data: [] },
         results[1].status === "fulfilled" ? results[1].value : { data: {} },
     ]);
-    const pujas = pujasRes.data;
-    const siteData = siteDataRes.data;
+    const pujas: PujaExtended[] = pujasRes.data ? pujasRes.data.map((data: Puja) => extendPuja(data)) : [];
+    const siteData: Global = siteDataRes.data ?? null;
 
-    const currentPuja = pujas.find((item: any) => item?.referenceId === id) ?? null;
+    const currentPuja = pujas.find((item: PujaExtended) => item.referenceId === id) ?? null;
 
     if (!currentPuja) {
         notFound();
     }
 
-    if (slug !== currentPuja?.slug) {
-        permanentRedirect(`/puja/${currentPuja?.slug}/${currentPuja?.referenceId}`);
+    if (slug !== currentPuja.slug) {
+        permanentRedirect(`/puja/${currentPuja.slug}/${currentPuja.referenceId}`);
     }
 
-    const pujaImages = currentPuja?.images?.map((item: any) => {
+    const pujaImages = currentPuja?.images?.map((item: Image) => {
         return {
-            src: `${item?.year}/${currentPuja?.referenceId}/${item?.name}`,
-            thumb: `${item?.year}/${currentPuja?.referenceId}/${item?.name}`,
-            alt: currentPuja?.name,
-            subHtml: `<p>By: ${item?.uploadedBy.trim().split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')}</p>`,
+            src: `${item?.year}/${currentPuja.referenceId}/${item.name}`,
+            thumb: `${item?.year}/${currentPuja.referenceId}/${item.name}`,
+            alt: currentPuja.name,
+            subHtml: `<p>By: ${capitalizeFirst(item?.uploadedBy)}</p>`,
         }
     });
 
-    let array: PujaData[] = [];
-    pujas?.forEach((item: PujaData, index: number) => {
-        if (item?.referenceId === id) {
+    let array: PujaExtended[] = [];
+    pujas.forEach((item: PujaExtended, index: number) => {
+        if (item.referenceId === id) {
             array.push(pujas?.[0 < index ? index - 1 : pujas?.length - 1])
             array.push(pujas?.[pujas?.length - 1 > index ? index + 1 : 0])
         }
     });
 
-    const y = getYear(currentPuja?.estd);
-    const cel = getCelebrating(y);
-    const adi = currentPuja?.tags?.includes('adi') ?? false;
-    const popular = currentPuja?.tags?.includes('popular') ?? false;
-    const zone = currentPuja?.zone === 'bhadreswar' ? 'Bhadreswar' : 'Chandannagar';
-    const gMapLink = currentPuja?.location?.coordinates?.lat && currentPuja?.location?.coordinates?.lng ? `https://www.google.com/maps/search/?api=1&query=${currentPuja?.location?.coordinates?.lat},${currentPuja?.location?.coordinates?.lng}(${currentPuja?.name}+Jagadhatri+Puja+${zone})` : `https://www.google.com/maps/search/?api=1&query=${currentPuja?.name}+Jagadhatri+Puja+${zone},+Hooghly,+West+Bengal`
-    const truckCount = currentPuja?.procession?.truckCount ?? null;
-    const showProcession = currentPuja?.procession && parseInt(currentPuja?.procession?.year) === queryYear;
+    const gMapLink = currentPuja.location.coordinates.lat && currentPuja.location.coordinates.lng ? `https://www.google.com/maps/search/?api=1&query=${currentPuja.location.coordinates.lat},${currentPuja.location?.coordinates.lng}(${currentPuja.name}+Jagadhatri+Puja+${currentPuja.psZone})` : `https://www.google.com/maps/search/?api=1&query=${currentPuja.name}+Jagadhatri+Puja+${currentPuja.zone},+Hooghly,+West+Bengal`
+    const truckCount = currentPuja.procession?.truckCount ?? null;
+    const showProcession = currentPuja.procession && parseInt(currentPuja.procession?.year) === queryYear;
     
     const artistTypes = [
         { type: 'idol', icon: <LuBrush className="text-xl text-purple-600" />, title: 'Idol Artist' },
@@ -192,8 +155,8 @@ export default async function Page({ params }: PageProps) {
         { type: 'theme', icon: <LuBrush className="text-xl text-purple-600" />, title: 'Theme Artist' },
     ];
 
-    const artistsByType = (currentPuja?.artists || []).reduce((acc: Record<string, string[]>, artist: any) => {
-        if (artist?.type && artist?.name) {
+    const artistsByType = (currentPuja?.artists || []).reduce((acc: Record<string, string[]>, artist: Artist) => {
+        if (artist.type && artist.name) {
             acc[artist.type] = acc[artist.type] || [];
             acc[artist.type].push(artist.name);
         }
@@ -204,7 +167,7 @@ export default async function Page({ params }: PageProps) {
         {
             icon: <LuPencil className="text-xl text-purple-600" />,
             title: 'Puja Theme',
-            value: currentPuja?.theme
+            value: currentPuja.theme
         },
         ...artistTypes.map(({ type, icon, title }) => ({
             icon,
@@ -241,48 +204,48 @@ export default async function Page({ params }: PageProps) {
     ].map((item: any) => {
         return {
             ...item,
-            link: currentPuja?.links?.find((link: any) => link.title === item.type)?.url ?? '#'
+            link: currentPuja.links?.find((link: SharedLink) => link.title === item.type)?.url ?? '#'
         }
     }).filter(item => item.link !== '#');
 
     const schemaData = {
-        path: `puja/${currentPuja?.slug}/${currentPuja?.referenceId}`,
-        title: `Details of ${currentPuja?.name} Sarbajanin`,
+        path: `puja/${currentPuja.slug}/${currentPuja.referenceId}`,
+        title: `Details of ${currentPuja.name} Sarbajanin`,
         parents: [
             {
                 title: 'Jagadhatri Puja Committee List',
                 slug: 'puja-committee-list'
             }
         ],
-        dates: {
-            published: currentPuja?.createdAt,
-            modified: currentPuja?.updatedAt,
-        }
+        // dates: {
+        //     published: currentPuja.createdAt,
+        //     modified: currentPuja.updatedAt,
+        // }
     }
     const jsonLd = schema(schemaData);
     jsonLd["@graph"].push({
-        "name": `${cel != '--' ? cel : y === 'Not Known' ? 'Jagadhatri Puja' : `${y} Years`} Celebration of ${currentPuja?.name} Sarbajanin`,
-        "description": `Jagadhatri Puja ${queryYear} celebration by ${currentPuja?.name} Sarbajanin, ${zone}`,
+        "name": `${(currentPuja.jubilee || currentPuja.preJubilee) ? currentPuja.celebrating : currentPuja.year ? `${currentPuja.year} Years`  : 'Jagadhatri Puja'} Celebration of ${currentPuja.name} Sarbajanin`,
+        "description": `Jagadhatri Puja ${queryYear} celebration by ${currentPuja?.name} Sarbajanin, ${currentPuja.psZone}`,
         "@type": "Event",
         "eventStatus": "https://schema.org/EventScheduled",
         "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
         "location": {
             "@type": "Place",
-            "name": zone,
-            "url": `https://en.wikipedia.org/wiki/${currentPuja?.zone === 'bhadreswar' ? 'Bhadreswar,_Hooghly' : 'Chandannagar'}`,
+            "name": currentPuja.psZone,
+            "url": `https://en.wikipedia.org/wiki/${currentPuja.zone === 'bhadreswar' ? 'Bhadreswar,_Hooghly' : 'Chandannagar'}`,
             "address": {
                 "@type": "PostalAddress",
-                "name": `${currentPuja?.name} Puja Premises`,
-                "streetAddress": `${currentPuja?.location?.address || `${zone}, Hooghly, West Bengal`}`,
-                "addressLocality": zone,
+                "name": `${currentPuja.name} Puja Premises`,
+                "streetAddress": currentPuja.address,
+                "addressLocality": currentPuja.psZone,
                 "addressRegion": "West Bengal",
                 "addressCountry": "IN"
             },
-            ...(currentPuja?.location?.coordinates?.lat && currentPuja?.location?.coordinates?.lng ? {
+            ...(currentPuja.location.coordinates.lat && currentPuja.location.coordinates.lng ? {
                 "geo": {
                     "@type": "GeoCoordinates",
-                    "latitude": currentPuja?.location?.coordinates?.lat,
-                    "longitude": currentPuja?.location?.coordinates?.lng
+                    "latitude": currentPuja.location.coordinates.lat,
+                    "longitude": currentPuja.location.coordinates.lng
                 },
             } : {}),
             "hasMap": gMapLink
@@ -292,13 +255,15 @@ export default async function Page({ params }: PageProps) {
             "name": currentPuja.name,
             "url": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}`
         },
-        "image": pujaImages.map((item: any) => assetImageLoader({
-            src: item.src,
-            quality: 70
-        })),
+        ...(pujaImages ? {
+            "image": pujaImages?.map((item: any) => assetImageLoader({
+                src: item.src,
+                quality: 70
+            })),
+        } : {}),
         "startDate": `${format(getDateByIndex(siteData.schedules, 0, "06:00:00"), "yyyy-MM-dd'T'HH:mm:ssXXX")}`,
         "endDate": `${format(getDateByIndex(siteData.schedules, 4, "23:59:59"), "yyyy-MM-dd'T'HH:mm:ssXXX")}`,
-        "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}/#schema-${currentPuja?.order+1}`, // ensure unique ID
+        "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}/#schema-${currentPuja.order+1}`, // ensure unique ID
         "inLanguage": "en-IN",
         "mainEntityOfPage": {
             "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}/#webpage`
@@ -382,9 +347,9 @@ export default async function Page({ params }: PageProps) {
                         <div className="relative">
                             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 tracking-tight text-center flex flex-col xl:flex-row items-center gap-2">
                                 <span className="text-shadow-xl text-shadow-grey-900">
-                                    {currentPuja?.name}
+                                    {currentPuja.name}
                                 </span>
-                                {popular && (
+                                {currentPuja.popular && (
                                     <div className="relative inline-flex items-center tracking-normal">
                                         {/* <span className="absolute -inset-2">
                                             <div className="w-full h-full max-w-sm mx-auto rotate-2 blur-sm bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 opacity-30 animate-pulse" />
@@ -407,7 +372,7 @@ export default async function Page({ params }: PageProps) {
                             <div className="flex items-center justify-center gap-3 px-6 py-3 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
                                 <span className="size-4"><LuMapPin className="text-purple-400" /></span>
                                 <a href={gMapLink} target="_blank" className="text-xs md:text-sm text-white/90">
-                                    {currentPuja?.location?.address || `${zone}, Hooghly, West Bengal`}
+                                    {currentPuja.address}
                                 </a>
                             </div>
                             {/* Decorative dots */}
@@ -425,20 +390,20 @@ export default async function Page({ params }: PageProps) {
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 mb-12">
                             {[
                                 {
-                                    text: y === 'Not Known' ? '300+' : y,
-                                    description: 'Years of ' + (adi || Number(y) >= 50 ? 'Legacy' : 'Tradition'),
+                                    text: currentPuja.year ? currentPuja.year : '300+',
+                                    description: 'Years of ' + (currentPuja.adi || Number(currentPuja.year) >= 50 ? 'Legacy' : 'Tradition'),
                                     after: <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
                                 },
                                 {
-                                    text: currentPuja?.estd === '0' ? 'Not Known' : currentPuja?.estd,
+                                    text: currentPuja.estd === 0 ? 'Not Known' : currentPuja.estd,
                                     description: 'Established Year'
                                 },
                                 {
-                                    text: adi ? 'Adi Puja' : 'Traditional',
+                                    text: currentPuja.adi ? 'Adi Puja' : 'Traditional',
                                     description: 'Puja Category'
                                 },
                                 {
-                                    text: String(currentPuja?.order + 1).padStart(2, '0'),
+                                    text: String(currentPuja.order + 1).padStart(2, '0'),
                                     description: 'Serial Number'
                                 }
                             ].map((item, index) => (
@@ -488,8 +453,8 @@ export default async function Page({ params }: PageProps) {
                                         <LuHistory className="text-2xl text-purple-600" />
                                     </div>
                                     <div>
-                                        <div className="text-xl md:text-2xl font-bold text-gray-800 mb-1">{cel != '--' ? cel : y === 'Not Known' ? '300+' : y}</div>
-                                        <div className="text-xs md:text-sm text-gray-600">{cel != '--' ? `Be the part of ${y === 'Not Known' ? '300+' : y} years' celebration` : 'Years of Celebration'}</div>
+                                        <div className="text-xl md:text-2xl font-bold text-gray-800 mb-1">{currentPuja.celebrating ? currentPuja.celebrating : currentPuja.year ? currentPuja.year : '300+'}</div>
+                                        <div className="text-xs md:text-sm text-gray-600">{currentPuja.celebrating ? `Be the part of ${currentPuja.year} years' celebration` : 'Years of Celebration'}</div>
                                     </div>
                                 </div>
                             </div>
@@ -504,7 +469,7 @@ export default async function Page({ params }: PageProps) {
                                     </div>
                                 </div>
                             </div>
-                            {showProcession && (
+                            {showProcession && truckCount && (
                                 <div className="bg-white rounded-2xl p-5 shadow-xl shadow-purple-100/50 hover:shadow-2xl hover:shadow-purple-100/50 transition-all duration-300">
                                     <div className="flex items-center gap-4">
                                         <div className="p-3 rounded-xl bg-purple-100">
@@ -532,7 +497,7 @@ export default async function Page({ params }: PageProps) {
                                     Celebrating Culture & Tradition
                                 </h2>
                                 <p className="text-gray-600 text-base md:text-lg">
-                                    {currentPuja?.estd === '0' ? 'A Legacy of Tradition' : `Since the year ${currentPuja?.estd}`}
+                                    {currentPuja.estd === 0 ? 'A Legacy of Tradition' : `Since the year ${currentPuja.estd}`}
                                 </p>
                             </div>
                             <div className="bg-white rounded-3xl p-6 md:p-8 border border-purple-100 shadow-xl shadow-purple-100/50 relative overflow-hidden">
@@ -540,8 +505,8 @@ export default async function Page({ params }: PageProps) {
                                 <div className="absolute bottom-0 left-0 w-32 h-32 bg-purple-100/50 rounded-full blur-3xl -ml-16 -mb-16" />
                                 <div className="relative">
                                     <div className="prose prose-lg prose-purple max-w-none space-y-2 text-justify">
-                                        {currentPuja?.info && <Markdown content={currentPuja?.info} className="space-y-2" />}
-                                        {cel != '--' && (
+                                        {currentPuja.info && <Markdown content={currentPuja.info} className="space-y-2" />}
+                                        {currentPuja.celebrating && (
                                             <div className="my-8 p-6 rounded-2xl bg-gradient-to-r from-purple-50 to-amber-50 border border-amber-100 relative overflow-hidden">
                                                 <div className="absolute top-0 right-0 w-40 h-40 bg-yellow-100/70 rounded-full blur-3xl -mr-20 -mt-20 opacity-70" />
                                                 <div className="absolute bottom-0 left-0 w-40 h-40 bg-purple-100/70 rounded-full blur-3xl -ml-20 -mb-20 opacity-70" />
@@ -549,21 +514,21 @@ export default async function Page({ params }: PageProps) {
                                                 <div className="relative flex flex-col md:flex-row items-center gap-6">
                                                     <div className="flex-shrink-0 w-24 h-24 md:w-28 md:h-28 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-200/50">
                                                         <div className="text-white font-bold text-2xl md:text-3xl">
-                                                            {y}
+                                                            {currentPuja.year}
                                                         </div>
                                                     </div>
                                                     <div className="text-center md:text-left">
                                                         <h3 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-700 via-amber-600 to-amber-700 bg-clip-text text-transparent mb-2">
-                                                            Celebrating {cel} Year!
+                                                            Celebrating {currentPuja.celebrating} Year!
                                                         </h3>
                                                         <p className="text-gray-700">
-                                                            {cel == 'Silver Jubilee' && "Silver Jubilee: A quarter century of devotion and community celebration."}
-                                                            {cel == 'Golden Jubilee' && "Golden Jubilee: Half a century of preserving our cultural heritage."}
-                                                            {cel == 'Diamond Jubilee' && "Diamond Jubilee: Sixty years of unwavering faith and tradition."}
-                                                            {cel == 'Platinum Jubilee' && "Platinum Jubilee: A seventy-five years of spiritual journey and community bonding."}
-                                                            {cel == 'Centennial Jubilee' && "Centennial Jubilee: A hundred years of spiritual journey and community bonding."}
-                                                            {cel == 'Jubilee' && "Jubilee: Celebrating a significant milestone in our spiritual journey, tradition and community bonding."}
-                                                            {cel.includes('Pre') && `${cel}: Celebrating a significant milestone in our spiritual journey and community bonding.`}
+                                                            {currentPuja.celebrating === 'Silver Jubilee' && "Silver Jubilee: A quarter century of devotion and community celebration."}
+                                                            {currentPuja.celebrating === 'Golden Jubilee' && "Golden Jubilee: Half a century of preserving our cultural heritage."}
+                                                            {currentPuja.celebrating === 'Diamond Jubilee' && "Diamond Jubilee: Sixty years of unwavering faith and tradition."}
+                                                            {currentPuja.celebrating === 'Platinum Jubilee' && "Platinum Jubilee: A seventy-five years of spiritual journey and community bonding."}
+                                                            {currentPuja.celebrating === 'Centennial Jubilee' && "Centennial Jubilee: A hundred years of spiritual journey and community bonding."}
+                                                            {currentPuja.celebrating === 'Jubilee' && "Jubilee: Celebrating a significant milestone in our spiritual journey, tradition and community bonding."}
+                                                            {currentPuja.celebrating.includes('Pre') && `${currentPuja.celebrating}: Celebrating a significant milestone in our spiritual journey and community bonding.`}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -606,7 +571,7 @@ export default async function Page({ params }: PageProps) {
                     </div>
                 </div>
           
-                {currentPuja?.images?.length > 0 && (
+                {pujaImages && (
                     <div id="gallery" className="py-20 bg-gradient-to-br from-white via-amber-50/30 to-orange-50/30">
                         <div className="text-center mb-16">
                             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-100 text-amber-700 font-medium mb-4">

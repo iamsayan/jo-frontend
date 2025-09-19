@@ -4,6 +4,7 @@ import Image, { ImageLoaderProps, ImageProps } from 'next/image';
 import { useInView } from 'react-intersection-observer';
 import { cn } from '@/utils/functions';
 import { useState, useCallback, useMemo } from 'react';
+import placeholder from '@/public/circle-logo.png'
 
 type TransformParams = {
     src: string;
@@ -92,11 +93,22 @@ export default function TransformedImage({
             ref={ref}
             className={cn(
                 'w-full h-full relative bg-gray-200',
-                lazy && isLoading && 'blur-sm grayscale',
                 error && 'bg-red-100',
                 containerClassName
             )}
         >
+            {lazy && isLoading && (
+                <div className="relative w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+                    <div className="w-16 h-16 mb-3 bg-white rounded-full flex items-center justify-center shadow-lg">
+                        <Image
+                            src={placeholder}
+                            alt="Image placeholder"
+                            className="w-10 h-10 opacity-60"
+                            priority={false}
+                        />
+                    </div>
+                </div>
+            )}
             {shouldRenderImage && (
                 <Image
                     {...rest}

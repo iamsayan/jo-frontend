@@ -37,7 +37,7 @@ export function getCelebrating(year: number | string): string {
         ? populateCel(parsedYear)
         : preJubilees.includes(parsedYear)
             ? populateCel(parsedYear, true)
-            : '--';
+            : '';
 }
 
 export function populateCel(year: number, pre: boolean = false): string {
