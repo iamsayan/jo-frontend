@@ -32,14 +32,13 @@ export function extendPuja(puja: Puja, year?: number): PujaExtended {
 }
 
 export function getCelebrating(year: number | string): string {
-    const parsedYear = parseInt(year as string);
-    if (jubilees.includes(parsedYear)) {
-        return populateCel(parsedYear);
-    } else if (preJubilees.includes(parsedYear)) {
-        return populateCel(parsedYear, true);
-    }
-    return '--';
-};
+    const parsedYear = typeof year === 'string' ? parseInt(year) : year;
+    return jubilees.includes(parsedYear) 
+        ? populateCel(parsedYear)
+        : preJubilees.includes(parsedYear)
+            ? populateCel(parsedYear, true)
+            : '--';
+}
 
 export function populateCel(year: number, pre: boolean = false): string {
     const adjustedYear = pre ? year + 1 : year;
@@ -67,10 +66,9 @@ export function populateCel(year: number, pre: boolean = false): string {
     return name ? name + " Jubilee" : "Jubilee";
 };
 
-export function getYear(estd: number | string, year?: number): string {
-    const parsedEstd = parseInt(estd as string);
-    const currentYear = year ?? new Date().getFullYear();
-    return parsedEstd ? (currentYear - parsedEstd + 1).toString() : 'Not Known';
+export function getYear(estd: number | string, year: number = new Date().getFullYear()): number {
+    const parsedEstd = typeof estd === 'string' ? parseInt(estd) : estd;
+    return parsedEstd ? (year - parsedEstd + 1) : 0;
 };
 
 export const setTime = (date: Date, time?: string): Date => {

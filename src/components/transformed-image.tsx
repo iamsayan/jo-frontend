@@ -12,6 +12,7 @@ type TransformParams = {
     fit?: 'cover' | 'contain';
     format?: 'jpeg' | 'png' | 'webp' | 'gif' | 'auto';
     lazy?: boolean;
+    containerClassName?: string;
 };
 
 type TransformedImageProps = Omit<ImageProps, 'loader' | 'src' | 'unoptimized'> & TransformParams;
@@ -29,6 +30,7 @@ export default function TransformedImage({
     fit,
     format,
     lazy = true,
+    containerClassName,
     ...rest
 }: TransformedImageProps) {
     const [isLoading, setIsLoading] = useState(true);
@@ -91,7 +93,8 @@ export default function TransformedImage({
             className={cn(
                 'w-full h-full relative bg-gray-200',
                 lazy && isLoading && 'blur-sm grayscale',
-                error && 'bg-red-100'
+                error && 'bg-red-100',
+                containerClassName
             )}
         >
             {shouldRenderImage && (

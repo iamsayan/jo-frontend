@@ -4,7 +4,7 @@ export interface PageProps<TParams = {}, TSearchParams = {}> {
 }
 
 export interface PujaExtended extends Puja {
-  year: string;
+  year: number;
   celebrating: string;
   popular: boolean;
   adi: boolean;
