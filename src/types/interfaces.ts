@@ -1,4 +1,3 @@
-
 export interface AwardsCategory {
   id?: number;
   category: string;
