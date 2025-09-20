@@ -1,4 +1,4 @@
-import type { Puja } from '@/types/interfaces';
+import type { Puja } from '@/types/interfaces-gen';
 
 export interface PageProps<TParams = {}, TSearchParams = {}> {
   params: Promise<TParams>;
@@ -16,4 +16,4 @@ export interface PujaExtended extends Puja {
   address: string;
 }
 
-export * from "@/types/interfaces";
+export * from "@/types/interfaces-gen";
