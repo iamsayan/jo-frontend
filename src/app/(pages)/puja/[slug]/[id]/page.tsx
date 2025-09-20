@@ -50,7 +50,7 @@ export async function generateStaticParams() {
             page: 1,
             pageSize: 200
         },
-        sort: ['order:asc']
+        sort: ['sortOrder:asc']
     });
     const data: Puja[] = pujaData.data ?? [];
 

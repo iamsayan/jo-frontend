@@ -36,9 +36,6 @@ import cx from 'classix';
 import { format } from "date-fns";
 import type { Puja, PageProps, Global, Procession, SharedSchedule, PujaExtended } from "@/types";
 
-// Exporting runtime for edge function if needed
-// export const runtime = 'edge';
-
 interface Params {
     year: string;
 }
@@ -86,16 +83,11 @@ export default async function Page({ params }: PageProps<Params>) {
         },
         sort: ['sortOrder:asc']
     })
-    const processionReq = getCollection('processions', {
-        populate: '*',
-        sort: ['sortOrder:asc']
-    })
     const siteDataReq = getCollection('global', { populate: '*' });
 
-    const [pujasRes, siteDataRes, processionRes] = await Promise.allSettled([pujasReq, siteDataReq, processionReq]).then(results => [
+    const [pujasRes, siteDataRes] = await Promise.allSettled([pujasReq, siteDataReq]).then(results => [
         results[0].status === "fulfilled" ? results[0].value : { data: [] },
-        results[1].status === "fulfilled" ? results[1].value : { data: {} },
-        results[2].status === "fulfilled" ? results[2].value : { data: [] }
+        results[1].status === "fulfilled" ? results[1].value : { data: {} }
     ]);
     const pujas: PujaExtended[] = pujasRes.data ? pujasRes.data.map((data: Puja) => extendPuja(data)) : [];
     const siteData: Global = siteDataRes.data ?? null;
