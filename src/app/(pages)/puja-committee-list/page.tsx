@@ -66,7 +66,7 @@ export default async function Page() {
             page: 1,
             pageSize: 200
         },
-        sort: ['order:asc']
+        sort: ['sortOrder:asc']
     });
     const data: PujaExtended[] = pujaData.data ? pujaData.data.map((data: Puja) => extendPuja(data)) : [];
     const cgr: PujaExtended[] = data.filter((data: PujaExtended) => data.zone === 'chandannagar');

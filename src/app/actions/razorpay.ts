@@ -44,7 +44,7 @@ export async function createRazorpayOrder(formData: RazorpayFormData) {
             orderId: order.id,
         };
     } catch (error) {
-        console.error('Error creating order:', error);
+        console.error('Error creating sortOrder:', error);
 
         return {
             success: false,

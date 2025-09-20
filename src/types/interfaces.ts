@@ -1,3 +1,4 @@
+
 export interface AwardsCategory {
   id?: number;
   category: string;
@@ -86,6 +87,7 @@ export interface Global {
   updatedAt?: Date | string;
   publishedAt?: Date | string;
   locale?: string | null;
+  processionListPublished?: boolean;
   schedules?: SharedSchedule[] | null;
   videos?: SharedVideo[] | null;
   achievements: SharedAchievement[] | null;
@@ -137,10 +139,9 @@ export interface Procession {
   locale?: string | null;
   title?: string;
   puja?: Puja | null;
-  year: string;
   zone: "A" | "B" | "C" | "D";
   truckCount: number;
-  order?: number;
+  sortOrder: number;
 };
 
 export interface Puja {
@@ -163,7 +164,7 @@ export interface Puja {
   links?: SharedLink[] | null;
   virtualTours?: VirtualTour[] | null;
   slug: string;
-  order: number;
+  sortOrder: number;
   referenceId: string;
   partnerships?: Partnership[] | null;
 };

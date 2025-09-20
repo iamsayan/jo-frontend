@@ -84,11 +84,11 @@ export default async function Page({ params }: PageProps<Params>) {
             page: 1,
             pageSize: 200
         },
-        sort: ['order:asc']
+        sort: ['sortOrder:asc']
     })
     const processionReq = getCollection('processions', {
         populate: '*',
-        sort: ['order:asc']
+        sort: ['sortOrder:asc']
     })
     const siteDataReq = getCollection('global', { populate: '*' });
 

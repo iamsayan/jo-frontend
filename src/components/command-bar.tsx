@@ -151,7 +151,7 @@ function DynamicActionsLoader({ onInput, onSearch }: DynamicActionsLoaderProps) 
             const dynamicActions = Array.isArray(searchResults) ? searchResults.map((pujaItem: Puja) => {
                 const item: PujaExtended = extendPuja(pujaItem);
                 return ({
-                    id: `puja-${item.order+1}`,
+                    id: `puja-${item.sortOrder+1}`,
                     name: `${item.name}${item.year? ` - ${item.year} Years` : ''}`,
                     section: "Search Results",
                     keywords: item.slug,

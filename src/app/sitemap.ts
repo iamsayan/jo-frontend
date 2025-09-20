@@ -8,7 +8,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             page: 1,
             pageSize: 200
         },
-        sort: ['order:asc']
+        sort: ['sortOrder:asc']
     });
     const data: Puja[] = pujaData.data ?? [];
 

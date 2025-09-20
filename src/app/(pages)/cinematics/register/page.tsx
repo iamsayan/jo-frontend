@@ -30,7 +30,7 @@ export default async function Page({ searchParams }: PageProps<{}, SearchParams>
             page: 1,
             pageSize: 200
         },
-        sort: ['order:asc']
+        sort: ['sortOrder:asc']
     });
 
     const pujas: PujaExtended[] = pujasData.data ? pujasData.data.map((data: Puja) => extendPuja(data)) : [];
