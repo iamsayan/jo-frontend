@@ -6,7 +6,6 @@ import { getCollection } from "@/utils/fetch";
 import { metadata as metadataSchema } from "@/app/layout";
 import { notFound } from "next/navigation";
 import type { Metadata } from 'next'
-import { Suspense } from 'react'
 import { assetImageLoader } from "@/utils/transform";
 import type { Image, PageProps } from "@/types";
 

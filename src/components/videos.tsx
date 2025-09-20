@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { YouTubeEmbed } from '@next/third-parties/google'
 import { LuPlay } from 'react-icons/lu';
-import { SharedVideo } from '@/types';
+import type { SharedVideo } from '@/types';
 
 export default function Videos({ videos }: { videos: SharedVideo[] }) {
     const [videoId, setVideoId] = useState<string>(videos[0].video.providerUid);

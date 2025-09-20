@@ -2,7 +2,7 @@ import cx, { ClassName } from 'classix';
 import { twMerge } from 'tailwind-merge';
 import { parseISO, isDate, format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz'
-import { Puja, PujaExtended } from '@/types';
+import type { Puja, PujaExtended } from '@/types';
 
 type MaybeDates<T> = T[] | null | undefined;
 

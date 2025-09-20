@@ -17,7 +17,7 @@ import { metadata as metadataSchema } from "@/app/layout";
 import Tabs, { TabProps } from '@/components/tabs';
 import Link from 'next/link';
 import { createElement } from 'react';
-import { Award, AwardsCategory, AwardsPosition } from '@/types';
+import type { Award, AwardsCategory, AwardsPosition } from '@/types';
 
 export const metadata: Metadata = {
     title: 'Amie Srestho Hoimantika Somman',

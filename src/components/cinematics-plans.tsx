@@ -11,7 +11,7 @@ import { BiLoaderAlt } from "react-icons/bi";
 import { createRazorpayOrder } from "@/app/actions/razorpay";
 import { submitModel } from "@/app/actions/model";
 import { loadRazorpayScript } from "@/utils/load-razorpay";
-import { Partnership, PujaExtended } from "@/types";
+import type { Partnership, PujaExtended } from "@/types";
 
 declare global {
     interface Window {

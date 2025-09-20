@@ -28,7 +28,7 @@ import { buildGoogleCalendarUrl, cn, formatDate, getDateByIndex } from "@/utils/
 import { paytoneOne } from "@/fonts";
 import { getCollection } from "@/utils/fetch";
 import { PiConfettiThin } from "react-icons/pi";
-import { Global, SharedSchedule } from "@/types";
+import type { Global, SharedSchedule } from "@/types";
 
 const imagesPath = [
     '20241107-044545.jpg',

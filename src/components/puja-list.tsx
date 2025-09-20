@@ -22,7 +22,7 @@ import {
 } from 'react-icons/lu';
 import TransformedImage from '@/components/transformed-image';
 import { useDebounce } from 'use-debounce';
-import { Puja, PujaExtended } from '@/types';
+import type { PujaExtended } from '@/types';
 
 import placeholder from '@/public/circle-logo.png'
 

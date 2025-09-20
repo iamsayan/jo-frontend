@@ -9,7 +9,7 @@ import { getCollection } from "@/utils/fetch";
 import { capitalizeFirst } from "@/utils/functions";
 import { metadata as metadataSchema } from "@/app/layout";
 import { assetImageLoader } from "@/utils/transform";
-import { Image } from "@/types";
+import type { Image } from "@/types";
 
 export const metadata = {
     title: 'Photo Gallery',

@@ -21,7 +21,7 @@ import { MdOutline360 } from 'react-icons/md';
 import { useSearchParams } from "next/navigation";
 import { Suspense } from 'react'
 import { searchModels } from "@/app/actions/search";
-import { Puja, PujaExtended } from "@/types";
+import type { Puja, PujaExtended } from "@/types";
 
 interface CommandBarProps {
     children: React.ReactNode;
