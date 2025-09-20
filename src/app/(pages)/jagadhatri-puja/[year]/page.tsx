@@ -99,13 +99,12 @@ export default async function Page({ params }: PageProps<Params>) {
     ]);
     const pujas: PujaExtended[] = pujasRes.data ? pujasRes.data.map((data: Puja) => extendPuja(data)) : [];
     const siteData: Global = siteDataRes.data ?? null;
-    const processionData: Procession[] = processionRes.data ?? [];
-    const canShowProcession = processionData.length > 0 && processionData.every((item: Procession) => parseInt(item.year) === queryYear);
 
     const displayDate = getDateByIndex(siteData.schedules, 0);
     const dateIsCurrent = queryYear === displayDate.getFullYear();
-    const jubilee = pujas.filter((data: PujaExtended) => data.jubilee === true);
-    const prejubilee = pujas.filter((data: PujaExtended) => data.preJubilee === true);
+    const jubilee: PujaExtended[] = pujas.filter((data: PujaExtended) => data.jubilee === true);
+    const prejubilee: PujaExtended[] = pujas.filter((data: PujaExtended) => data.preJubilee === true);
+    const pujaWithProcessions: PujaExtended[] = pujas.filter((data: PujaExtended) => data.procession);
 
     const tabContent = (puja: PujaExtended[]) => {
         const items: InfoItem[] = [
@@ -275,11 +274,11 @@ export default async function Page({ params }: PageProps<Params>) {
     }
 
     const tabProcessionList = () => {
-        const totalVehicles = processionData.reduce((sum: number, item: Procession) => sum + (parseInt(String(item.truckCount)) || 0), 0) || 0;
+        const totalVehicles = pujaWithProcessions.reduce((sum: number, item: PujaExtended) => sum + (parseInt(String(item.procession?.truckCount)) || 0), 0) || 0;
         const items: InfoItem[] = [
             {
                 title: "Total Procession",
-                description: processionData.length,
+                description: pujaWithProcessions.length,
                 icon: <LuUsers />,
                 variant: "from-green-500 to-green-300"
             },
@@ -319,11 +318,9 @@ export default async function Page({ params }: PageProps<Params>) {
                             </tr>
                         </thead>
                         <tbody>
-                            {processionData.map((item: Procession, index: number) => {
-                                const pujaItem = item.puja ?? null;
-                                if (!pujaItem) return null;
-
-                                const puja: PujaExtended = extendPuja(pujaItem);
+                            {pujaWithProcessions.map((puja: PujaExtended, index: number) => {
+                                const procession = puja.procession as Procession ?? null;
+                                if (!procession) return null;
                                 const celClass = cx(
                                     'px-2.5 py-1 text-xs font-medium rounded-md whitespace-nowrap',
                                     puja.jubilee && 'bg-rose-300/10 text-rose-700',
@@ -358,10 +355,10 @@ export default async function Page({ params }: PageProps<Params>) {
                                                 )}
                                             </div>
                                         </td>
-                                        <td>{item.truckCount == 1 ? 1 : item?.truckCount - 1 + ' + 1 = ' + item.truckCount}</td>
-                                        <td>{item.zone}</td>
+                                        <td>{procession.truckCount == 1 ? 1 : procession?.truckCount - 1 + ' + 1 = ' + procession.truckCount}</td>
+                                        <td>{procession.zone}</td>
                                         <td>{puja.year}</td>
-                                        <td><span className={celClass}>{puja.celebrating}</span></td>
+                                        <td><span className={celClass}>{puja.celebrating ? puja.celebrating : '-'}</span></td>
                                         <td>{puja.psZone}</td>
                                     </tr>
                                 );
@@ -451,9 +448,9 @@ export default async function Page({ params }: PageProps<Params>) {
         });
     }
 
-    if (canShowProcession) {
+    if (siteData.processionListPublished && pujaWithProcessions) {
         tabs.push({
-            title: <span key={queryYear} className="flex items-center gap-2">Procession List <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-300/10 text-blue-500">{processionData.length}</span></span>,
+            title: <span key={queryYear} className="flex items-center gap-2">Procession List <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-300/10 text-blue-500">{pujaWithProcessions.length}</span></span>,
             icon: <LuPartyPopper  />,
             content: tabProcessionList(),
         });

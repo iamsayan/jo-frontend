@@ -106,7 +106,7 @@ export default async function Page({ params }: PageProps<Params>) {
             page: 1,
             pageSize: 200
         },
-        sort: ['order:asc']
+        sort: ['sortOrder:asc']
     })
     const siteDataReq = getCollection('global', { populate: '*' });
 
@@ -145,8 +145,6 @@ export default async function Page({ params }: PageProps<Params>) {
     });
 
     const gMapLink = currentPuja.location.coordinates.lat && currentPuja.location.coordinates.lng ? `https://www.google.com/maps/search/?api=1&query=${currentPuja.location.coordinates.lat},${currentPuja.location?.coordinates.lng}(${currentPuja.name}+Jagadhatri+Puja+${currentPuja.psZone})` : `https://www.google.com/maps/search/?api=1&query=${currentPuja.name}+Jagadhatri+Puja+${currentPuja.zone},+Hooghly,+West+Bengal`
-    const truckCount = currentPuja.procession?.truckCount ?? null;
-    const showProcession = currentPuja.procession && parseInt(currentPuja.procession?.year) === queryYear;
     
     const artistTypes = [
         { type: 'idol', icon: <LuBrush className="text-xl text-purple-600" />, title: 'Idol Artist' },
@@ -263,7 +261,7 @@ export default async function Page({ params }: PageProps<Params>) {
         } : {}),
         "startDate": `${format(getDateByIndex(siteData.schedules, 0, "06:00:00"), "yyyy-MM-dd'T'HH:mm:ssXXX")}`,
         "endDate": `${format(getDateByIndex(siteData.schedules, 4, "23:59:59"), "yyyy-MM-dd'T'HH:mm:ssXXX")}`,
-        "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}/#schema-${currentPuja.order+1}`, // ensure unique ID
+        "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}/#schema-${currentPuja.sortOrder+1}`, // ensure unique ID
         "inLanguage": "en-IN",
         "mainEntityOfPage": {
             "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}/#webpage`
@@ -403,7 +401,7 @@ export default async function Page({ params }: PageProps<Params>) {
                                     description: 'Puja Category'
                                 },
                                 {
-                                    text: String(currentPuja.order + 1).padStart(2, '0'),
+                                    text: String(currentPuja.sortOrder + 1).padStart(2, '0'),
                                     description: 'Serial Number'
                                 }
                             ].map((item, index) => (
@@ -446,7 +444,7 @@ export default async function Page({ params }: PageProps<Params>) {
             <div className="w-full bg-gradient-to-br from-purple-50/50 via-white to-purple-50/50">
                 <div className="px-4 pattern-dots">
                     <div className="container px-2 lg:px-0 mx-auto relative -mt-10 mb-16">
-                        <div className={cn(`grid grid-cols-1 gap-4 md:gap-8 justify-center items-center mx-auto`, showProcession && 'lg:grid-cols-3 max-w-screen-xl', !showProcession && 'lg:grid-cols-2 max-w-screen-lg')}>
+                        <div className={cn(`grid grid-cols-1 gap-4 md:gap-8 justify-center items-center mx-auto`, currentPuja.procession && 'lg:grid-cols-3 max-w-screen-xl', !currentPuja.procession && 'lg:grid-cols-2 max-w-screen-lg')}>
                             <div className="bg-white rounded-2xl p-5 shadow-xl shadow-purple-100/50 hover:shadow-2xl hover:shadow-purple-100/50 transition-all duration-300">
                                 <div className="flex items-center gap-4">
                                     <div className="p-3 rounded-xl bg-purple-100">
@@ -469,7 +467,7 @@ export default async function Page({ params }: PageProps<Params>) {
                                     </div>
                                 </div>
                             </div>
-                            {showProcession && truckCount && (
+                            {currentPuja.procession?.truckCount && (
                                 <div className="bg-white rounded-2xl p-5 shadow-xl shadow-purple-100/50 hover:shadow-2xl hover:shadow-purple-100/50 transition-all duration-300">
                                     <div className="flex items-center gap-4">
                                         <div className="p-3 rounded-xl bg-purple-100">
@@ -478,7 +476,7 @@ export default async function Page({ params }: PageProps<Params>) {
                                         <div>
                                             <div className="text-xl md:text-2xl font-bold text-gray-800 mb-1">Participating</div>
                                             <div className="text-xs md:text-sm text-gray-600">
-                                                {`With ${truckCount} Vehicle${truckCount > 1 ? 's' : ''} in Procession`}
+                                                {`With ${currentPuja.procession?.truckCount} Vehicle${currentPuja.procession?.truckCount > 1 ? 's' : ''} in Procession`}
                                             </div>
                                         </div>
                                     </div>
