@@ -50,7 +50,7 @@ export const metadata: Metadata = {
         },
     },
     facebook: {
-        appId: process.env.NEXT_PUBLIC_FB_APP_ID!,
+        appId: process.env.AUTH_FACEBOOK_ID!,
     },
     other: {
         'p:domain_verify': '17e6e3cc4fa6744677baf74c22411d8d',
