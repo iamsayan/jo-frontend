@@ -27,7 +27,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 })
                 const data = await response.json();
                 if (!response.ok || !data?.jwt) {
-                    // Invalid credentials
                     return null;
                 }
 
@@ -37,6 +36,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     name: data.user.username || data.user.email,
                     username: data.user.username,
                     token: data.jwt,
+                    refreshToken: data.refreshToken,
                 };
             },
         }),
@@ -51,6 +51,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     token.jwt = user.token;
                     token.id = user.id;
                     token.username = user.username;
+                    token.refreshToken = user.refreshToken;
                 } else {
                     try {
                         const response = await fetch(
@@ -63,6 +64,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                         }
 
                         token.jwt = data.jwt;
+                        token.refreshToken = data.refreshToken;
                         token.id = data.user.id;
                         token.username = data.user.username;
                     } catch (error) {
@@ -77,6 +79,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         async session({ session, token }) {
             if (token) {
                 session.token = token.jwt as string;
+                session.refreshToken = token.refreshToken as string;
                 session.provider = token.provider as string;
                 session.user.id = token.id as string;
                 session.user.username = token.username as string;
