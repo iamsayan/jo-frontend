@@ -96,7 +96,7 @@ export default async function Page({ params }: PageProps<Params>) {
     const dateIsCurrent = queryYear === displayDate.getFullYear();
     const jubilee: PujaExtended[] = pujas.filter((data: PujaExtended) => data.jubilee === true);
     const prejubilee: PujaExtended[] = pujas.filter((data: PujaExtended) => data.preJubilee === true);
-    const pujaWithProcessions: PujaExtended[] = pujas.filter((data: PujaExtended) => data.procession);
+    const pujaWithProcessions: PujaExtended[] = pujas.filter((data: PujaExtended) => data.procession && data.procession.truckCount > 0).sort((a: PujaExtended, b: PujaExtended) => (a?.procession?.sortOrder ?? 0) - (b.procession?.sortOrder ?? 0));
 
     const tabContent = (puja: PujaExtended[]) => {
         const items: InfoItem[] = [
