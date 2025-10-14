@@ -68,7 +68,7 @@ const addons: Addon[] = [
     { id: 3, title: "Nabami or Dashami Full-Day Shoot", price: 4000, applicableTo: "basic", basicPrice: 6000 },
     { id: 4, title: "Nabami or Dashami Half-Day Shoot", price: 2000, applicableTo: "basic", basicPrice: 3000 },
     { id: 5, title: "Idol Lifting + Immersion (Drone)", price: 4000, applicableTo: "basic" },
-    { id: 6, title: "Immeraion Drone Shoot", price: 1000, applicableTo: "basic" },
+    { id: 6, title: "Immersion Drone Shoot", price: 1000, applicableTo: "basic" },
     { id: 7, title: "Procession Drone Shoot", price: 1000, applicableTo: "basic" },
     { id: 8, title: "Pre-Puja Event Coverage", price: 1000, applicableTo: "basic" },
     { id: 9, title: "Idol Lifting (Drone Only)", price: 3000, applicableTo: "both" },
