@@ -114,7 +114,7 @@ export default async function Page({ params }: PageProps<Params>) {
         results[0].status === "fulfilled" ? results[0].value : { data: [] },
         results[1].status === "fulfilled" ? results[1].value : { data: {} },
     ]);
-    const pujas: PujaExtended[] = pujasRes.data ? pujasRes.data.map((data: Puja) => extendPuja(data)) : [];
+    const pujas: PujaExtended[] = pujasRes.data ? pujasRes.data.map((data: Puja) => extendPuja(data, queryYear)) : [];
     const siteData: Global = siteDataRes.data ?? null;
 
     const currentPuja = pujas.find((item: PujaExtended) => item.referenceId === id) ?? null;

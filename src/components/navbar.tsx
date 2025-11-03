@@ -1,15 +1,16 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import logo from '@/public/logo.png';
 import circleLogo from '@/public/circle-logo.png';
-import { cn } from '@/utils/functions';
+import { cn, getDateByIndex } from '@/utils/functions';
 import { useKBar } from 'kbar';
 import { LuAlignLeft, LuSearch, LuShoppingBag, LuGift } from 'react-icons/lu';
 import { sendGTMEvent } from '@next/third-parties/google'
+import { useSiteData } from '@/contexts/siteDataContext';
 
 interface MenuItem {
     name: string;
@@ -24,6 +25,7 @@ const Navbar: React.FC = () => {
     const { query } = useKBar();
     const [isScrolled, setIsScrolled] = useState<boolean>(false);
     const [isInitialized, setIsInitialized] = useState<boolean>(false);
+    const siteData = useSiteData();
 
     useEffect(() => {
         sendGTMEvent({ event: 'page_view', value: pathname });
@@ -41,6 +43,8 @@ const Navbar: React.FC = () => {
         return () => controller.abort();
     }, [pathname]);
 
+    const currentYear = useMemo(() => getDateByIndex(siteData?.schedules, 0)?.getFullYear() || new Date().getFullYear(), [siteData?.schedules]);
+
     const items: MenuItem[] = [
         { name: 'Home', path: '/' },
         { name: 'History', path: '/puja-history' },
@@ -55,8 +59,8 @@ const Navbar: React.FC = () => {
         { 
             name: 'Jagadhatri Puja', 
             path: '/jagadhatri-puja',
-            subMenu: Array.from({ length: 6 }, (_, i) => {
-                const year = new Date().getFullYear() - i;
+            subMenu: Array.from({ length: 3 }, (_, i) => {
+                const year = currentYear - i;
                 return {
                     name: year.toString(),
                     path: `/jagadhatri-puja/${year}`
@@ -70,7 +74,7 @@ const Navbar: React.FC = () => {
             subMenu: [
                 { name: 'Achievements', path: '/achievements' },
                 { name: 'Hoimontika Somman', path: '/hoimontika-somman' },
-                { name: `JO Cinematics ${new Date().getFullYear()}`, path: '/cinematics' },
+                { name: `JO Cinematics ${currentYear}`, path: '/cinematics' },
                 // { name: '360° Virtual Tours', path: 'https://vr.jagadhatrionline.co.in/', target: '_blank' }
             ],
             className: 'w-52',

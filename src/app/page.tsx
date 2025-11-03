@@ -131,9 +131,9 @@ export default async function Home() {
     const stats: StatsItem[] = [
         {
             title: 'Followers',
-            stat: '65.5K',
+            stat: '76.1K',
             icon: <FaFacebook className="inline-block size-8 stroke-current" />,
-            statDesc: '1K+',
+            statDesc: '6K+',
             description: 'new followers in last 30 days'
         },
         {
@@ -154,9 +154,9 @@ export default async function Home() {
         },
         {
             title: 'Subscribers',
-            stat: '4.34K',
+            stat: '4.58K',
             icon: <FaYoutube className="inline-block size-8 stroke-current" />,
-            statDesc: '500+',
+            statDesc: '600+',
             description: 'new followers in last 1 year',
             class: 'text-green-600'
         },

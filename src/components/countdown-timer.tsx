@@ -27,19 +27,19 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ className, targetDate }
         const timer = [
             {
                 label: 'Days',
-                data: days
+                value: days
             },
             {
                 label: 'Hours',
-                data: hours
+                value: hours
             },
             {
                 label: 'Minutes',
-                data: minutes
+                value: minutes
             },
             {
                 label: 'Seconds',
-                data: seconds
+                value: seconds
             }
         ];
 
@@ -50,8 +50,8 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ className, targetDate }
                 <div className={`grid grid-flow-col gap-3 justify-center text-center auto-cols-max ${classes}`}>
                     {timer.map((item, index) => (
                         <div className="flex flex-col gap-2 border-slate-800 border-2 p-3 sm:p-4 md:p-5 rounded-sm bg-gray-100" key={index}>
-                            <span className={`countdown text-2xl sm:text-4xl md:text-5xl text-yellow-500 ${paytoneOne.className}`}>
-                                <span style={{ "--value": item.data } as React.CSSProperties}></span>
+                            <span className={`countdown text-2xl sm:text-4xl md:text-5xl text-yellow-500 font-bold`}>
+                                <span style={{ "--value": item.value, "--digits": 2 } as React.CSSProperties} aria-live="polite" aria-label={String(item.value)}>{item.value}</span>
                             </span>
                             <span className="countdown-label text-sm sm:text-base md:text-md">
                                 {item.label}

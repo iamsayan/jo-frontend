@@ -1,17 +1,13 @@
 'use client';
 
-import { useEffect } from 'react';
 import { ProgressProvider } from '@bprogress/next/app';
-import runOneSignal from '@/lib/onesignal';
 import CommandBar from '@/components/command-bar';
+import { SiteDataProvider } from '@/contexts/siteDataContext';
+import { Global } from '@/types';
 
-const Providers = ({ children }: { children: React.ReactNode }) => {
-  useEffect(() => {
-    runOneSignal();
-  }, []);
-
+const Providers = ({ children, siteData }: { children: React.ReactNode, siteData: Global }) => {
   return (
-    <>
+    <SiteDataProvider siteData={siteData}>
       <ProgressProvider
         options={{ showSpinner: false }}
         disableStyle
@@ -20,7 +16,7 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
           {children}
         </CommandBar>
       </ProgressProvider>
-    </>
+    </SiteDataProvider>
   );
 };
 

@@ -18,6 +18,15 @@ export interface SharedAchievement {
   details: string;
 };
 
+export interface SharedAshsParticipant {
+  id?: number;
+  title: string;
+  puja?: Puja | null;
+  details: Record<string, any>;
+  voteCount: number;
+  voteDetails: Record<string, any>;
+};
+
 export interface SharedLink {
   id?: number;
   title: string;
@@ -54,6 +63,17 @@ export interface Artist {
   contact?: string;
   email?: string;
   pujas?: Puja[] | null;
+};
+
+export interface AshsEntry {
+  id?: number;
+  documentId?: string;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  publishedAt?: Date | string;
+  locale?: string | null;
+  year: number;
+  entries?: SharedAshsParticipant[] | null;
 };
 
 export interface Award {

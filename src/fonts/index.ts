@@ -10,7 +10,7 @@ export const livvic = Livvic({
     display: 'swap',
 })
 
-export const paytoneOne= Paytone_One({
+export const paytoneOne = Paytone_One({
     weight: '400',
     subsets: ['latin'],
     display: 'swap',

@@ -5,6 +5,8 @@ import { GoogleTagManager } from '@next/third-parties/google'
 import Providers from '@/app/providers';
 import '@/app/globals.sass'
 import '@bprogress/core/css';
+import { getCollection } from '@/utils/fetch';
+import { Global } from '@/types';
 
 export const revalidate = 604800 // 1 week
 
@@ -63,7 +65,10 @@ interface RootLayoutProps {
     children: React.ReactNode;
 }
 
-export default function RootLayout({ children }: RootLayoutProps) {
+export default async function RootLayout({ children }: RootLayoutProps) {
+    const siteDataReq = await getCollection('global', { populate: '*' });
+    const siteData: Global = siteDataReq.data ?? null;
+
     return (
         <html lang="en" data-theme="light" suppressHydrationWarning={process.env.NODE_ENV === 'production'}>
             {process.env.NODE_ENV === 'production' &&
@@ -86,7 +91,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                 </>
             }
             <body className={`${livvic.className} antialiased overflow-x-hidden text-sm md:text-base ${livvic.variable}`}>
-                <Providers>
+                <Providers siteData={siteData}>
                     {children}
                 </Providers>
             </body>

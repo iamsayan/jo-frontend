@@ -1,8 +1,14 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { FaYoutube, FaFacebookF, FaInstagram, FaXTwitter, FaPinterestP, FaWhatsapp, FaEnvelope, FaHeart, FaThreads } from "react-icons/fa6";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import ScrollTop from "@/components/scroll-top";
+import { useSiteData } from '@/contexts/siteDataContext';
+import { getDateByIndex } from '@/utils/functions';
+import { useMemo } from 'react';
+import { format } from 'date-fns';
 
 interface NavItem {
     name: string;
@@ -24,6 +30,8 @@ interface ContactInfo {
 }
 
 export default function Footer() {
+    const siteData = useSiteData();
+
     const navigationItems: NavItem[] = [
         { name: 'About Us', path: '/about-us' },
         { name: 'Contact', path: '/contact-us' },
@@ -51,7 +59,9 @@ export default function Footer() {
         { icon: FaEnvelope, text: 'info@jagadhatrionline.co.in', link: 'mailto:info@jagadhatrionline.co.in' },
     ];
 
-    const currentYear = new Date().getFullYear();
+    const startDate = useMemo(() => getDateByIndex(siteData?.schedules, 0), [siteData?.schedules]);
+    const endDate = useMemo(() => getDateByIndex(siteData?.schedules, 'last'), [siteData?.schedules]);
+    const pujaYear = useMemo(() => startDate.getFullYear() || new Date().getFullYear(), [startDate]);
 
     return (
         <footer className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-slate-200 overflow-hidden">
@@ -186,14 +196,14 @@ export default function Footer() {
                         <h4 className="text-lg font-semibold text-white mb-6">Upcoming Events</h4>
                         <div className="space-y-4">
                             <div className="bg-slate-700/30 rounded-lg p-3">
-                                <div className="text-orange-400 text-xs font-medium uppercase">Oct - Nov 2025</div>
+                                <div className="text-orange-400 text-xs font-medium uppercase">Celebration {pujaYear}</div>
                                 <div className="text-white text-xs md:text-sm font-medium mt-1">Jagadhatri Puja</div>
-                                <div className="text-slate-300 text-xs">Annual celebration from 28th October to 1st November</div>
+                                <div className="text-slate-300 text-xs">Annual celebration from {format(startDate, 'do MMMM')} to {format(endDate, 'do MMMM')}</div>
                             </div>
                             <div className="bg-slate-700/30 rounded-lg p-3">
-                                <div className="text-orange-400 text-xs font-medium uppercase">Nov 2025</div>
+                                <div className="text-orange-400 text-xs font-medium uppercase">{format(endDate, 'MMM yyyy')}</div>
                                 <div className="text-white text-xs md:text-sm font-medium mt-1">Grand Procession</div>
-                                <div className="text-slate-300 text-xs">Grand procession starts on 1st November, from 6:00 PM onwards</div>
+                                <div className="text-slate-300 text-xs">Grand procession starts on {format(endDate, 'do MMMM')}, from 6:00 PM onwards</div>
                             </div>
                         </div>
                     </div>
@@ -203,7 +213,7 @@ export default function Footer() {
                 <div className="border-t border-slate-700/50 mt-12 pt-8">
                     <div className="text-center">
                         <div className="text-slate-400 text-sm mb-4">
-                            <p>Copyright © 2016 - {currentYear} Jagadhatri Online. All Rights Reserved.</p>
+                            <p>Copyright © 2016 - {new Date().getFullYear()} Jagadhatri Online. All Rights Reserved.</p>
                             <p className="mt-1 text-xs">
                                 Developed with <FaHeart className="inline-block text-red-400 mx-0.5 animate-pulse" /> by{' '}
                                 <a 
