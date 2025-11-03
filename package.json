@@ -25,7 +25,6 @@
     "kbar": "^0.1.0-beta.48",
     "lightgallery": "^2.9.0",
     "next": "^15.5.6",
-    "next-auth": "^5.0.0-beta.29",
     "pluralize": "^8.0.0",
     "qs": "^6.14.0",
     "razorpay": "^2.9.6",
