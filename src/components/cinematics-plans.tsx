@@ -81,7 +81,7 @@ export default function CinematicsPlans({ pujaData, planId }: { pujaData: PujaEx
     const [selectedAddons, setSelectedAddons] = useState<number[]>([]);
     const [success, setSuccess] = useState<{ paymentId: string } | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [processing, setProcessing] = useState(false);
+    const [processing, setProcessing] = useState<boolean>(false);
     const [formData, setFormData] = useState<FormData>({
         pujaName: '',
         name: '',

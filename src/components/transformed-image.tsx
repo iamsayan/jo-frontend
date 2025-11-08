@@ -34,7 +34,7 @@ export default function TransformedImage({
     containerClassName,
     ...rest
 }: TransformedImageProps) {
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<boolean>(false);
     
     const { ref, inView } = useInView({

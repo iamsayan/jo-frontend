@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { YouTubeEmbed } from '@next/third-parties/google'
 import { LuPlay } from 'react-icons/lu';
 import type { SharedVideo } from '@/types';
 
 export default function Videos({ videos }: { videos: SharedVideo[] }) {
+    const [isPending, startTransition] = useTransition();
     const [videoId, setVideoId] = useState<string>(videos[0].video.providerUid);
     return (
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-0 lg:gap-5">
@@ -27,7 +28,7 @@ export default function Videos({ videos }: { videos: SharedVideo[] }) {
                                     <div className="truncate uppercase" title={info.title}>{info.title}</div>
                                     <div className="text-xs opacity-60 truncate" title={info.description}>{info.description}</div>
                                 </div>
-                                <button className="btn btn-square btn-ghost" onClick={() => setVideoId(info.video.providerUid)}>
+                                <button className="btn btn-square btn-ghost" onClick={() => startTransition(() => setVideoId(info.video.providerUid))} disabled={isPending}>
                                     <LuPlay />
                                 </button>
                             </li>

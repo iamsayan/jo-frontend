@@ -4,15 +4,26 @@ import React, { useEffect, useState } from "react"
 import { LuArrowUp } from "react-icons/lu";
 
 const ScrollToTopButton: React.FC = () => {
-    const [isVisible, setIsVisible] = useState(false)
+    const [isVisible, setIsVisible] = useState<boolean>(false)
 
     useEffect(() => {
         const controller = new AbortController();
+
+        let ticking = false;
         const onScroll = () => {
-            setIsVisible(document.documentElement.scrollTop >= 20);
+            if (!ticking) {
+                ticking = true;
+                requestAnimationFrame(() => {
+                    const next = window.scrollY >= 20;
+                    setIsVisible(next);
+                    ticking = false;
+                });
+            }
         };
+
         onScroll();
-        document.addEventListener("scroll", onScroll, { signal: controller.signal });
+        window.addEventListener("scroll", onScroll, { signal: controller.signal, passive: true });
+
         return () => controller.abort();
     }, []);
 
