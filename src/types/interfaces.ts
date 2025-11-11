@@ -52,9 +52,9 @@ export interface SharedVideo {
 
 export interface Artist {
   id?: number;
-  documentId?: string;
-  createdAt?: Date | string;
-  updatedAt?: Date | string;
+  documentId: string;
+  createdAt: string;
+  updatedAt: string;
   publishedAt?: Date | string;
   locale?: string | null;
   name: string;
@@ -67,9 +67,9 @@ export interface Artist {
 
 export interface AshsEntry {
   id?: number;
-  documentId?: string;
-  createdAt?: Date | string;
-  updatedAt?: Date | string;
+  documentId: string;
+  createdAt: string;
+  updatedAt: string;
   publishedAt?: Date | string;
   locale?: string | null;
   year: number;
@@ -78,9 +78,9 @@ export interface AshsEntry {
 
 export interface Award {
   id?: number;
-  documentId?: string;
-  createdAt?: Date | string;
-  updatedAt?: Date | string;
+  documentId: string;
+  createdAt: string;
+  updatedAt: string;
   publishedAt?: Date | string;
   locale?: string | null;
   year: number;
@@ -90,9 +90,9 @@ export interface Award {
 
 export interface Contact {
   id?: number;
-  documentId?: string;
-  createdAt?: Date | string;
-  updatedAt?: Date | string;
+  documentId: string;
+  createdAt: string;
+  updatedAt: string;
   publishedAt?: Date | string;
   locale?: string | null;
   name: string;
@@ -102,9 +102,9 @@ export interface Contact {
 
 export interface Global {
   id?: number;
-  documentId?: string;
-  createdAt?: Date | string;
-  updatedAt?: Date | string;
+  documentId: string;
+  createdAt: string;
+  updatedAt: string;
   publishedAt?: Date | string;
   locale?: string | null;
   processionListPublished?: boolean;
@@ -115,9 +115,9 @@ export interface Global {
 
 export interface Image {
   id?: number;
-  documentId?: string;
-  createdAt?: Date | string;
-  updatedAt?: Date | string;
+  documentId: string;
+  createdAt: string;
+  updatedAt: string;
   publishedAt?: Date | string;
   locale?: string | null;
   puja?: Puja | null;
@@ -130,9 +130,9 @@ export interface Image {
 
 export interface Partnership {
   id?: number;
-  documentId?: string;
-  createdAt?: Date | string;
-  updatedAt?: Date | string;
+  documentId: string;
+  createdAt: string;
+  updatedAt: string;
   publishedAt?: Date | string;
   locale?: string | null;
   puja?: Puja | null;
@@ -152,9 +152,9 @@ export interface Partnership {
 
 export interface Procession {
   id?: number;
-  documentId?: string;
-  createdAt?: Date | string;
-  updatedAt?: Date | string;
+  documentId: string;
+  createdAt: string;
+  updatedAt: string;
   publishedAt?: Date | string;
   locale?: string | null;
   title?: string;
@@ -166,9 +166,9 @@ export interface Procession {
 
 export interface Puja {
   id?: number;
-  documentId?: string;
-  createdAt?: Date | string;
-  updatedAt?: Date | string;
+  documentId: string;
+  createdAt: string;
+  updatedAt: string;
   publishedAt?: Date | string;
   locale?: string | null;
   name: string;
@@ -191,9 +191,9 @@ export interface Puja {
 
 export interface VirtualTour {
   id?: number;
-  documentId?: string;
-  createdAt?: Date | string;
-  updatedAt?: Date | string;
+  documentId: string;
+  createdAt: string;
+  updatedAt: string;
   publishedAt?: Date | string;
   locale?: string | null;
   puja?: Puja | null;
@@ -239,16 +239,16 @@ export interface User {
   provider?: string;
   confirmed?: boolean;
   blocked?: boolean;
-  createdAt?: Date | string;
-  updatedAt?: Date | string;
+  createdAt: string;
+  updatedAt: string;
   role: Role | null | number;
 };
 
 export interface Role {
   id?: number;
-  documentId?: string;
-  createdAt?: Date | string;
-  updatedAt?: Date | string;
+  documentId: string;
+  createdAt: string;
+  updatedAt: string;
   name: string;
   description: string;
   type: string;

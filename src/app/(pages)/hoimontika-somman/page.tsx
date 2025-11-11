@@ -2,22 +2,22 @@ import type { Metadata } from 'next'
 import MainLayout from '@/components/main-layout';
 import Section from '@/components/section';
 import schema from "@/utils/schema";
-import { 
-    LuTrophy, 
-    LuLightbulb, 
-    LuUsers, 
-    LuHistory, 
-    LuRibbon, 
-    LuStar, 
-    LuAward, 
-    LuMedal 
+import {
+    LuTrophy,
+    LuLightbulb,
+    LuUsers,
+    LuHistory,
+    LuRibbon,
+    LuStar,
+    LuAward,
+    LuMedal
 } from 'react-icons/lu';
-import { getCollection } from '@/utils/fetch';
+import { cms } from '@/lib/cms';
 import { metadata as metadataSchema } from "@/app/layout";
 import Tabs, { TabProps } from '@/components/tabs';
 import Link from 'next/link';
 import { createElement } from 'react';
-import type { Award, AwardsCategory, AwardsPosition } from '@/types';
+import type { Award, AwardsCategory, AwardsPosition, APIResponseCollection } from '@/types';
 
 export const metadata: Metadata = {
     title: 'Amie Srestho Hoimantika Somman',
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
 }
 
 const getPositionStyle = (position: string) => {
-    switch(position) {
+    switch (position) {
         case 'First':
             return { icon: LuTrophy, color: 'text-yellow-500' };
         case 'Second':
@@ -47,7 +47,8 @@ const getPositionStyle = (position: string) => {
 };
 
 export default async function Page() {
-    const awardsData = await getCollection('awards', {
+    const articles = cms.collection('awards');
+    const awardsData = await articles.find({
         sort: ['year:desc'],
         populate: {
             categories: {
@@ -62,8 +63,9 @@ export default async function Page() {
                 }
             }
         }
-    })
-    let awards: Award[] = awardsData?.data ?? null
+    }) as APIResponseCollection<Award>;
+
+    let awards: Award[] = awardsData?.data ?? [];
 
     let tabs: TabProps[] = []
 
@@ -74,7 +76,7 @@ export default async function Page() {
                 {(award.categories && award.categories.length > 0) ? (
                     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                         {award.categories.map((category: AwardsCategory, idx: number) => (
-                            <div 
+                            <div
                                 key={idx}
                                 className="group hover:scale-105 transition-all duration-300 delay-300 ease-in-out hover:shadow-lg border rounded-xl border-neutral-200 bg-gradient-to-br from-white to-neutral-50 flex gap-5"
                             >
@@ -83,7 +85,7 @@ export default async function Page() {
                                         {category.category}
                                     </h3>
                                 </div>
-                                
+
                                 <div className="flex flex-col gap-3 py-4 pr-4">
                                     {category.positions && category.positions.map((position: AwardsPosition, posIdx: number) => (
                                         <div key={posIdx}>
@@ -180,9 +182,9 @@ export default async function Page() {
                             <LuHistory className="text-yellow-500" />
                             Archives
                         </h2>
-                        <Tabs tabs={tabs} 
-                            className="border border-base-300" 
-                            tabPanelClassName="bg-gray-50" 
+                        <Tabs tabs={tabs}
+                            className="border border-base-300"
+                            tabPanelClassName="bg-gray-50"
                             tabListClassName="bg-gray-30 border-b border-base-300 pattern-dots"
                             tabClassName="py-4 px-6 border-b-2 border-transparent bg-gray-50 w-full"
                             tabSelectedClassName="border-b-2 !border-blue-700 bg-white"
