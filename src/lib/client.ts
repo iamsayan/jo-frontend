@@ -1,5 +1,4 @@
 import { strapi, type Config } from '@strapi/client';
-import pluralize from 'pluralize';
 
 export type NextInit = RequestInit & {
   next?: {
@@ -74,7 +73,6 @@ export default function strapiNext(config: Config): StrapiNextClient {
 
   const baseCollection = client.collection.bind(client);
   client.collection = ((name: string) => {
-    name = pluralize.isPlural(name) ? pluralize.singular(name) : name;
     const tagName = client.__next_group ? `${client.__next_group}:${name}` : name;
     const scoped = client.tag(tagName);
     return baseCollection.call(scoped, name);
@@ -82,7 +80,6 @@ export default function strapiNext(config: Config): StrapiNextClient {
 
   const baseSingle = client.single.bind(client);
   client.single = ((name: string) => {
-    name = pluralize.isPlural(name) ? pluralize.singular(name) : name;
     const tagName = client.__next_group ? `${client.__next_group}:${name}` : name;
     const scoped = client.tag(tagName);
     return baseSingle.call(scoped, name);
