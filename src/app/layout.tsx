@@ -3,10 +3,11 @@ import Script from "next/script"
 import { livvic } from "@/fonts"
 import { GoogleTagManager } from '@next/third-parties/google'
 import Providers from '@/app/providers';
+import { cms } from '@/lib/cms';
+import { APIResponse, Global } from '@/types';
+
 import '@/app/globals.sass'
 import '@bprogress/core/css';
-import { getCollection } from '@/utils/fetch';
-import { Global } from '@/types';
 
 export const revalidate = 604800 // 1 week
 
@@ -66,7 +67,10 @@ interface RootLayoutProps {
 }
 
 export default async function RootLayout({ children }: RootLayoutProps) {
-    const siteDataReq = await getCollection('global', { populate: '*' });
+    const globalClient = cms.tag('global').single('global');
+    const siteDataReq = await globalClient.find({
+        populate: '*',
+    }) as APIResponse<Global>;
     const siteData: Global = siteDataReq.data ?? null;
 
     return (

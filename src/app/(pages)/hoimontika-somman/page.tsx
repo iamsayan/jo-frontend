@@ -17,7 +17,7 @@ import { metadata as metadataSchema } from "@/app/layout";
 import Tabs, { TabProps } from '@/components/tabs';
 import Link from 'next/link';
 import { createElement } from 'react';
-import type { Award, AwardsCategory, AwardsPosition, APIResponseCollection } from '@/types';
+import type { APIResponseCollection, Award, AwardsCategory, AwardsPosition } from '@/types';
 
 export const metadata: Metadata = {
     title: 'Amie Srestho Hoimantika Somman',
@@ -47,8 +47,8 @@ const getPositionStyle = (position: string) => {
 };
 
 export default async function Page() {
-    const articles = cms.collection('awards');
-    const awardsData = await articles.find({
+    const awardsClient = cms.tag('award').collection('awards');
+    const awardsData = await awardsClient.find({
         sort: ['year:desc'],
         populate: {
             categories: {
@@ -89,9 +89,9 @@ export default async function Page() {
                                 <div className="flex flex-col gap-3 py-4 pr-4">
                                     {category.positions && category.positions.map((position: AwardsPosition, posIdx: number) => (
                                         <div key={posIdx}>
-                                            <div className={`flex items-center gap-2 ${getPositionStyle(position.position).color} font-semibold mb-1`}>
-                                                {createElement(getPositionStyle(position.position).icon, { className: "text-lg" })}
-                                                {position.position}
+                                            <div className={`flex items-center gap-2 ${getPositionStyle(position.position || '').color} font-semibold mb-1`}>
+                                                {createElement(getPositionStyle(position.position || '').icon, { className: "text-lg" })}
+                                                {position.position || ''}
                                             </div>
                                             {position.pujas?.map((puja: any, pujaIdx: number) => (
                                                 <div key={pujaIdx} className="text-gray-700 pl-6">

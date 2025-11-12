@@ -1,10 +1,8 @@
 import cx, { ClassName } from 'classix';
 import { twMerge } from 'tailwind-merge';
-import { parseISO, isDate, format } from 'date-fns';
+import { parseISO, format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz'
-import type { Puja, PujaExtended } from '@/types';
-
-type MaybeDates<T> = T[] | null | undefined;
+import type { Puja, PujaExtended, SharedSchedule } from '@/types';
 
 export function cn(...classes: ClassName[]) {
     return twMerge(cx(...classes));
@@ -66,7 +64,7 @@ export function populateCel(year: number, pre: boolean = false): string {
     return name ? name + " Jubilee" : "Jubilee";
 };
 
-export function getYear(estd: number | string, year: number = new Date().getFullYear()): number {
+export function getYear(estd: number | string | null, year: number = new Date().getFullYear()): number {
     const parsedEstd = typeof estd === 'string' ? parseInt(estd) : estd;
     return parsedEstd ? (year - parsedEstd + 1) : 0;
 };
@@ -79,25 +77,27 @@ export const setTime = (date: Date, time?: string): Date => {
     return date;
 }
 
-export function createDate(date: Date | string, time?: string): Date;
-export function createDate(date: Date | string, time: string | undefined, dateFormat: string): string;
-export function createDate(date: Date | string, time?: string, dateFormat?: string): Date | string {
-    let baseDate = isDate(date) ? date : parseISO(date);
+export function createDate(date: string, time?: string): Date;
+export function createDate(date: string, time: string | undefined, dateFormat: string): string;
+export function createDate(date: string, time?: string, dateFormat?: string): Date | string {
+    let baseDate = parseISO(date);
     if (time) baseDate = setTime(baseDate, time);
     return dateFormat ? format(baseDate, dateFormat) : baseDate;
 }
 
-export function formatDate(date: string | Date): Date;
-export function formatDate(date: string | Date, dateFormat: string): string;
-export function formatDate(date: string | Date, dateFormat?: string): Date | string {
+export function formatDate(date: string): Date;
+export function formatDate(date: string, dateFormat: string): string;
+export function formatDate(date: string, dateFormat?: string): Date | string {
     return dateFormat ? createDate(date, undefined, dateFormat) : createDate(date);
 };
 
-export function getDateByIndex<T extends { date: string | Date }>(dates: MaybeDates<T>, index: number | "last", time?: string, addDays: number = 0): Date {
+export function getDateByIndex(dates: SharedSchedule[] | undefined, index: number | "last", time?: string, addDays: number = 0): Date {
     if (!dates || dates.length === 0) return setTime(new Date(), time);
 
     const resolvedIndex = index === 'last' ? Math.max(dates.length - 1, 0) : index;
     const raw = dates[resolvedIndex].date;
+    if (!raw) return setTime(new Date(), time);
+    
     const date = createDate(raw, time);
 
     if (addDays !== 0) date.setDate(date.getDate() + addDays);
@@ -110,7 +110,7 @@ export function buildGoogleCalendarUrl({
     description = "",
     location = "",
 },
-    date: string | Date,
+    date: string,
     startTime: string,
     endTime: string,
 ): string {

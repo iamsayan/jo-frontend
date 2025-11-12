@@ -12,78 +12,65 @@ export type StrapiNextClient = ReturnType<typeof strapi> & {
   tag(tag: string): StrapiNextClient;
   tags(tags: string[]): StrapiNextClient;
   revalidate(seconds: number): StrapiNextClient;
-  group(name: string): StrapiNextClient;
   noStore(): StrapiNextClient;
-  // internal tags and group for next.js cache invalidation
+
+  // internal state carried on the instance
   __next_tags?: string[];
-  __next_group?: string;
 };
 
 export default function strapiNext(config: Config): StrapiNextClient {
   const client = strapi(config) as StrapiNextClient;
 
-  client.with = (scoped: NextInit): StrapiNextClient => {
-    const clone = Object.create(client) as StrapiNextClient;
-    const baseFetch = client.fetch.bind(client);
+  client.with = function withScoped(this: StrapiNextClient, scoped: NextInit): StrapiNextClient {
+    const clone = Object.create(this) as StrapiNextClient;
+    const baseFetch = this.fetch.bind(this);
 
-    clone.__next_tags = scoped.next?.tags ?? client.__next_tags ?? [];
-    clone.__next_group = client.__next_group;
+    const parentTags = this.__next_tags ?? [];
+    const incoming = scoped.next?.tags ?? [];
+    clone.__next_tags = Array.from(new Set([...parentTags, ...incoming]));
 
-    clone.fetch = (url: string, init: RequestInit = {}) => baseFetch(url, {
-      ...init,
-      next: {
-        ...(scoped.next ?? {}),
-        ...(init as any).next ?? {},
-      },
-      cache: init.cache ?? scoped.cache,
-      headers: {
-        ...(scoped.headers as any),
-        ...(init.headers as any),
-      } as HeadersInit,
-    } as NextInit);
+    clone.fetch = (url: string, init: RequestInit = {}) => {
+      const callNext = (init as any).next ?? {};
+      const callTags = Array.isArray(callNext.tags) ? callNext.tags : [];
+      const merged = Array.from(new Set([...(clone.__next_tags ?? []), ...callTags]));
+
+      return baseFetch(url, {
+        ...init,
+        next: {
+          ...(scoped.next ?? {}),
+          ...callNext,
+          tags: merged,
+        },
+        cache: init.cache ?? scoped.cache,
+        headers: {
+          ...(scoped.headers ?? {}),
+          ...(init.headers ?? {}),
+        } as HeadersInit,
+      } as NextInit);
+    };
 
     return clone;
   };
 
-  client.tag = (tag: string) => {
-    const current = client.__next_tags ?? [];
-    const merged = Array.from(new Set([...current, tag]));
-    const c = client.with({ next: { tags: merged } });
-    c.__next_tags = merged; // persist on returned client
-    return c;
+  client.tag = function (this: StrapiNextClient, tag: string) {
+    return this.tags([tag]);
   };
 
-  client.tags = (tags: string[]) => {
-    const current = client.__next_tags ?? [];
+  client.tags = function (this: StrapiNextClient, tags: string[]) {
+    const current = this.__next_tags ?? [];
     const merged = Array.from(new Set([...current, ...tags]));
-    const c = client.with({ next: { tags: merged } });
+    const c = this.with({ next: { tags: merged } });
     c.__next_tags = merged;
     return c;
   };
 
-  client.revalidate = (seconds: number) => client.with({ next: { revalidate: seconds } });
-
-  client.group = (name: string) => {
-    const c = client.tag(`group:${name}`);
-    c.__next_group = name;
-    return c;
+  client.revalidate = function (this: StrapiNextClient, seconds: number) {
+    return this.with({ next: { revalidate: seconds } });
   };
 
-  client.noStore = () => client.with({ cache: 'no-store' });
-
-  const baseCollection = client.collection.bind(client);
-  client.collection = ((name: string) => {
-    const tagName = client.__next_group ? `${client.__next_group}:${name}` : name;
-    const scoped = client.tag(tagName);
-    return baseCollection.call(scoped, name);
-  }) as typeof client.collection;
-
-  const baseSingle = client.single.bind(client);
-  client.single = ((name: string) => {
-    const tagName = client.__next_group ? `${client.__next_group}:${name}` : name;
-    const scoped = client.tag(tagName);
-    return baseSingle.call(scoped, name);
-  }) as typeof client.single;
+  client.noStore = function (this: StrapiNextClient) {
+    return this.with({ cache: 'no-store' });
+  };
 
   return client;
 }

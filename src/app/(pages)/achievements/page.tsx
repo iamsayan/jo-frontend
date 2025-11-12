@@ -3,10 +3,10 @@ import MainLayout from '@/components/main-layout';
 import Markdown from '@/components/markdown';
 import Section from '@/components/section';
 import schema from "@/utils/schema";
-import { getCollection } from "@/utils/fetch";
+import { cms } from '@/lib/cms';
 import { metadata as metadataSchema } from "@/app/layout";
 import { LuCircleCheck } from 'react-icons/lu';
-import type { Global, SharedAchievement } from '@/types';
+import type { APIResponse, Global, SharedAchievement } from '@/types';
 
 export const metadata: Metadata = {
     title: 'Achievements',
@@ -21,7 +21,10 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-    const siteData = await getCollection('global', { populate: 'achievements' });
+    const globalClient = cms.tag('global').single('global');
+    const siteData = await globalClient.find({
+        populate: '*',
+    }) as APIResponse<Global>;
     const data: Global = siteData.data ?? null
 
     const jsonLd = schema({
@@ -45,7 +48,7 @@ export default async function Page() {
                             <div className={`flex flex-col gap-2 timeline-box ${index % 2 !== 0 ? 'timeline-start md:text-end' : 'timeline-end md:text-start'}`}>
                                 <time className="font-mono italic">{item.year}</time>
                                 <div className="text-lg font-bold text-green-600">{item.title}</div>
-                                <Markdown className="text-sm leading-6" content={item.details} />
+                                {item.details && <Markdown className="text-sm leading-6" content={item.details} />}
                             </div>
                             {data.achievements && index !== data.achievements.length-1 && <hr className="bg-success"/>}
                         </li>

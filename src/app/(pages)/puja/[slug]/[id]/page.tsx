@@ -144,7 +144,9 @@ export default async function Page({ params }: PageProps<Params>) {
         }
     });
 
-    const gMapLink = currentPuja.location.coordinates.lat && currentPuja.location.coordinates.lng ? `https://www.google.com/maps/search/?api=1&query=${currentPuja.location.coordinates.lat},${currentPuja.location?.coordinates.lng}(${currentPuja.name}+Jagadhatri+Puja+${currentPuja.psZone})` : `https://www.google.com/maps/search/?api=1&query=${currentPuja.name}+Jagadhatri+Puja+${currentPuja.zone},+Hooghly,+West+Bengal`
+    const gMapLink = currentPuja.location?.coordinates?.lat && currentPuja.location?.coordinates?.lng
+        ? `https://www.google.com/maps/search/?api=1&query=${currentPuja.location.coordinates.lat},${currentPuja.location.coordinates.lng}(${currentPuja.name}+Jagadhatri+Puja+${currentPuja.psZone})`
+        : `https://www.google.com/maps/search/?api=1&query=${currentPuja.name}+Jagadhatri+Puja+${currentPuja.zone},+Hooghly,+West+Bengal`
     
     const artistTypes = [
         { type: 'idol', icon: <LuBrush className="text-xl text-purple-600" />, title: 'Idol Artist' },
@@ -239,7 +241,7 @@ export default async function Page({ params }: PageProps<Params>) {
                 "addressRegion": "West Bengal",
                 "addressCountry": "IN"
             },
-            ...(currentPuja.location.coordinates.lat && currentPuja.location.coordinates.lng ? {
+            ...(currentPuja.location?.coordinates?.lat && currentPuja.location?.coordinates?.lng ? {
                 "geo": {
                     "@type": "GeoCoordinates",
                     "latitude": currentPuja.location.coordinates.lat,

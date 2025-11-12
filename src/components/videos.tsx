@@ -7,7 +7,8 @@ import type { SharedVideo } from '@/types';
 
 export default function Videos({ videos }: { videos: SharedVideo[] }) {
     const [isPending, startTransition] = useTransition();
-    const [videoId, setVideoId] = useState<string>(videos[0].video.providerUid);
+    const [videoId, setVideoId] = useState<string>(videos[0]?.video?.providerUid || '');
+
     return (
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-0 lg:gap-5">
             <div className="md:col-span-3">
@@ -21,14 +22,14 @@ export default function Videos({ videos }: { videos: SharedVideo[] }) {
                 <div className="flex flex-col justify-between gap-2">
                     <ul className="list bg-base-100 border border-neutral-200 text-left">
                         <li className="p-4 pb-2 text-xs opacity-60 tracking-wide">Most played videos this week</li>
-                        {videos.map((info) => (
-                            <li key={info.video.providerUid} className="list-row">
-                                <div><img className="size-10 rounded-box object-cover" alt={`Video ${info.description}`} loading="lazy" fetchPriority="low" src={`https://i3.ytimg.com/vi/${info.video.providerUid}/maxresdefault.jpg`} /></div>
+                        {videos.map((info: SharedVideo, index: number) => (
+                            <li key={info?.video?.providerUid || index} className="list-row">
+                                <div><img className="size-10 rounded-box object-cover" alt={`Video ${info.description}`} loading="lazy" fetchPriority="low" src={`https://i3.ytimg.com/vi/${info?.video?.providerUid}/maxresdefault.jpg`} /></div>
                                 <div className="list-col-grow overflow-hidden">
                                     <div className="truncate uppercase" title={info.title}>{info.title}</div>
                                     <div className="text-xs opacity-60 truncate" title={info.description}>{info.description}</div>
                                 </div>
-                                <button className="btn btn-square btn-ghost" onClick={() => startTransition(() => setVideoId(info.video.providerUid))} disabled={isPending}>
+                                <button className="btn btn-square btn-ghost" onClick={() => startTransition(() => setVideoId(info?.video?.providerUid || ''))} disabled={isPending}>
                                     <LuPlay />
                                 </button>
                             </li>

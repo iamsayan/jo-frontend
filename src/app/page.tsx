@@ -24,11 +24,11 @@ import {
     FaFacebook, 
     FaYoutube 
 } from "react-icons/fa";
+import { cms } from "@/lib/cms";
 import { buildGoogleCalendarUrl, cn, formatDate, getDateByIndex } from "@/utils/functions";
 import { paytoneOne } from "@/fonts";
-import { getCollection } from "@/utils/fetch";
 import { PiConfettiThin } from "react-icons/pi";
-import type { Global, SharedSchedule } from "@/types";
+import type { APIResponse, Global, SharedSchedule } from "@/types";
 
 const imagesPath = [
     '20241107-044545.jpg',
@@ -71,7 +71,10 @@ interface ShopItem {
 }
 
 export default async function Home() {
-    const siteData = await getCollection('global', { populate: '*' });
+    const globalClient = cms.tag('global').single('global');
+    const siteData = await globalClient.find({
+        populate: '*',
+    }) as APIResponse<Global>;
     const data: Global = siteData.data ?? null;
     const year = getDateByIndex(data.schedules, 0).getFullYear();
     const curYear = new Date().getFullYear();
