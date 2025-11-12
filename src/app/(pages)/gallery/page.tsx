@@ -5,11 +5,13 @@ import Gallery from "@/components/gallery";
 import schema from "@/utils/schema";
 import TransformedImage from "@/components/transformed-image";
 import Link from "next/link";
-import { getCollection } from "@/utils/fetch";
+import { cms } from "@/lib/cms";
 import { capitalizeFirst } from "@/utils/functions";
 import { metadata as metadataSchema } from "@/app/layout";
 import { assetImageLoader } from "@/utils/transform";
-import type { Image } from "@/types";
+import type { APIResponseCollection, Image } from "@/types";
+
+const client = cms.tag('image').collection('images');
 
 export const metadata = {
     title: 'Photo Gallery',
@@ -24,7 +26,7 @@ export const metadata = {
 }
 
 export default async function Page() {
-    const allImagesData = await getCollection('images', {
+    const allImagesData = await client.find({
         populate: {
             puja: {
                 fields: ['name', 'referenceId']
@@ -40,7 +42,7 @@ export default async function Page() {
             } 
         },
         sort: ['updatedAt:desc'],
-    });
+    }) as APIResponseCollection<Image>;
     const allImages: Image[] = allImagesData.data ?? [];
     const availableYears = [...new Set(allImages.map((img: Image) => img.year))].sort((a: number, b: number) => b - a);
 

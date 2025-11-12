@@ -2,12 +2,12 @@ import MainLayout from "@/components/main-layout";
 import Section from "@/components/section";
 import schema from "@/utils/schema";
 import GalleryPaginate from "@/components/gallery-paginate";
-import { getCollection } from "@/utils/fetch";
+import { cms } from "@/lib/cms";
 import { metadata as metadataSchema } from "@/app/layout";
 import { notFound } from "next/navigation";
 import type { Metadata } from 'next'
 import { assetImageLoader } from "@/utils/transform";
-import type { Image, PageProps } from "@/types";
+import type { APIResponseCollection, Image, PageProps } from "@/types";
 
 interface Params {
     year: string;
@@ -18,12 +18,13 @@ interface SearchParams {
 }
 
 const itemsPerPage = 36;
+const client = cms.tag('image').collection('images');
 
 export async function generateMetadata({ params, searchParams }: PageProps<Params, SearchParams>): Promise<Metadata> {
     const { year } = await params
     const { page } = await searchParams
 
-    const imagesData = await getCollection('images', {
+    const images = await client.find({
         filters: {
             category: { $in: ['puja', 'procession', 'immersion'] },
             year: year
@@ -38,10 +39,9 @@ export async function generateMetadata({ params, searchParams }: PageProps<Param
             start: (Number(page ?? 1) - 1) * itemsPerPage,
             limit: itemsPerPage,
         }
-    })
-    let images = imagesData ?? []
+    }) as APIResponseCollection<Image>;
 
-    const pageCount = Math.ceil(images?.meta?.pagination.total / itemsPerPage);
+    const pageCount = Math.ceil((images?.meta?.pagination?.total ?? 0) / itemsPerPage);
     const currentPage = Number(page ?? 0)
     
     return {
@@ -74,7 +74,7 @@ export default async function Page({ params, searchParams }: PageProps<Params, S
     const { year } = await params
     const { page } = await searchParams
 
-    const imagesData = await getCollection('images', {
+    const imagesObject = await client.find({
         filters: {
             category: { $in: ['puja', 'procession', 'immersion'] },
             year: year
@@ -85,8 +85,7 @@ export default async function Page({ params, searchParams }: PageProps<Params, S
             start: (Number(page ?? 1) - 1) * itemsPerPage,
             limit: itemsPerPage,
         }
-    })
-    const imagesObject = imagesData ?? []
+    }) as APIResponseCollection<Image>;
     const images: Image[] = imagesObject.data ?? []
 
     if (images.length < 1) {
@@ -107,7 +106,7 @@ export default async function Page({ params, searchParams }: PageProps<Params, S
     return (
         <MainLayout title={`Photo Gallery ${year}`} jsonLd={jsonLd}>
             <Section title="View Jagadhatri Puja" description={`Photo Gallery ${year}`}>
-                <GalleryPaginate key={year} total={imagesObject.meta.pagination.total} images={images} itemsPerPage={itemsPerPage} />
+                <GalleryPaginate key={year} total={imagesObject.meta?.pagination?.total ?? 0} images={images} itemsPerPage={itemsPerPage} />
             </Section>
         </MainLayout>
     )

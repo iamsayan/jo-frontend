@@ -2,13 +2,15 @@ import type { Metadata } from 'next'
 import Link from 'next/link';
 import MainLayout from '@/components/main-layout';
 import Section from '@/components/section';
-import { getCollection } from "@/utils/fetch";
+import { cms } from '@/lib/cms';
 import schema from "@/utils/schema";
 import { metadata as metadataSchema } from "@/app/layout";
 import { LuCalendar, LuHistory, LuMapPin, LuUsers } from 'react-icons/lu';
 import Info from '@/components/info';
 import { getDateByIndex } from '@/utils/functions';
-import type { Global } from '@/types';
+import type { APIResponse, Global } from '@/types';
+
+const globalClient = cms.tag('global').single('global');
    
 export const metadata: Metadata = {
     title: 'Jagadhatri Puja Jubilee, Pre Jubilee List, Schedule',
@@ -23,7 +25,9 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-    const siteData = await getCollection('global', { populate: '*' });
+    const siteData = await globalClient.find({
+        populate: '*',
+    }) as APIResponse<Global>;
     const data: Global = siteData.data ?? null;
 
     const uptoYear = getDateByIndex(data.schedules, 0).getFullYear();

@@ -1,15 +1,18 @@
+import { cms } from '@/lib/cms';
 import type { MetadataRoute } from 'next'
-import { getCollection } from "@/utils/fetch";
-import type { Puja } from '@/types';
+import type { APIResponseCollection, Puja } from '@/types';
+
+const client = cms.tag('puja').collection('pujas');
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const pujaData = await getCollection('pujas', {
+    const pujaData = await client.find({
+        populate: ['partnerships'],
         pagination: {
             page: 1,
             pageSize: 200
         },
         sort: ['sortOrder:asc']
-    });
+    }) as APIResponseCollection<Puja>;
     const data: Puja[] = pujaData.data ?? [];
 
     const sitemaps: MetadataRoute.Sitemap = [

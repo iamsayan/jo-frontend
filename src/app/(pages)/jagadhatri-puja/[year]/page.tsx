@@ -1,6 +1,6 @@
 import MainLayout from "@/components/main-layout";
 import Section from "@/components/section";
-import { getCollection } from "@/utils/fetch";
+import { cms } from "@/lib/cms";
 import Tabs, { TabProps } from '@/components/tabs';
 import Info, { InfoItem } from '@/components/info';
 import {
@@ -34,11 +34,14 @@ import { metadata as metadataSchema } from "@/app/layout";
 import type { Metadata } from 'next'
 import cx from 'classix';
 import { format } from "date-fns";
-import type { Puja, PageProps, Global, Procession, SharedSchedule, PujaExtended } from "@/types";
+import type { Puja, PageProps, Global, Procession, SharedSchedule, PujaExtended, APIResponseCollection, APIResponse } from "@/types";
 
 interface Params {
     year: string;
 }
+
+const client = cms.tag('puja').collection('pujas');
+const globalClient = cms.tag('global').single('global');
 
 export async function generateStaticParams() {
     return Array.from({ length: 100 }, (_, i) => ({
@@ -49,7 +52,9 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<Params>): Promise<Metadata> {
     const { year } = await params
     const queryYear = parseInt(year);
-    const siteDataRes = await getCollection('global', { populate: '*' });
+    const siteDataRes = await globalClient.find({
+        populate: '*',
+    }) as APIResponse<Global>;
     const siteData: Global = siteDataRes.data ?? null;
     const displayDate = getDateByIndex(siteData.schedules, 0);
     const dateIsCurrent = queryYear === displayDate.getFullYear();
@@ -74,23 +79,29 @@ export async function generateMetadata({ params }: PageProps<Params>): Promise<M
 export default async function Page({ params }: PageProps<Params>) {
     const { year } = await params
     const queryYear = Number(year);
-    
-    const pujasReq = getCollection('pujas', {
+
+    const pujasReq = client.find({
         populate: '*',
         pagination: {
             page: 1,
             pageSize: 200
         },
         sort: ['sortOrder:asc']
-    })
-    const siteDataReq = getCollection('global', { populate: '*' });
+    });
+
+    const siteDataReq = globalClient.find({
+        populate: '*',
+    });
 
     const [pujasRes, siteDataRes] = await Promise.allSettled([pujasReq, siteDataReq]).then(results => [
-        results[0].status === "fulfilled" ? results[0].value : { data: [] },
-        results[1].status === "fulfilled" ? results[1].value : { data: {} }
+        results[0].status === "fulfilled" ? results[0].value as APIResponseCollection<Puja> : { data: [] },
+        results[1].status === "fulfilled" ? results[1].value as APIResponse<Global> : { data: {} },
     ]);
-    const pujas: PujaExtended[] = pujasRes.data ? pujasRes.data.map((data: Puja) => extendPuja(data, queryYear)) : [];
-    const siteData: Global = siteDataRes.data ?? null;
+
+    const pujas: PujaExtended[] = Array.isArray(pujasRes.data) && pujasRes.data.length > 0
+        ? pujasRes.data.map((data: Puja) => extendPuja(data, queryYear))
+        : [];
+    const siteData: Global = (siteDataRes.data as Global) ?? null;
 
     const displayDate = getDateByIndex(siteData.schedules, 0);
     const dateIsCurrent = queryYear === displayDate.getFullYear();
