@@ -1,10 +1,11 @@
 'use server'
 
-import { getCollection } from "@/utils/fetch";
+import { admin } from "@/lib/cms";
 
 export async function searchModels(model: string, query: string, params: Record<string, any> = {}) {
     try {
-        const searchData = await getCollection(model, {
+        const client = admin.collection(model);
+        const searchData = await client.find({
             filters: {
                 name: {
                     $contains: query,

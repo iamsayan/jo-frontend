@@ -22,13 +22,16 @@ import {
 } from "react-icons/lu";
 import { 
     FaFacebook, 
-    FaYoutube 
+    FaYoutube,
+    FaInstagram,
+    FaWhatsapp
 } from "react-icons/fa";
 import { cms } from "@/lib/cms";
 import { buildGoogleCalendarUrl, cn, formatDate, getDateByIndex } from "@/utils/functions";
 import { paytoneOne } from "@/fonts";
 import { PiConfettiThin } from "react-icons/pi";
 import type { APIResponse, Global, SharedSchedule } from "@/types";
+import type { IconType } from "react-icons/lib";
 
 const imagesPath = [
     '20241107-044545.jpg',
@@ -50,7 +53,7 @@ const imagesPath = [
 interface StatsItem {
     title: string;
     stat: string;
-    icon: React.ReactNode;
+    icon: IconType;
     statDesc: string;
     description: string;
     class?: string;
@@ -59,14 +62,14 @@ interface StatsItem {
 interface MenuItem {
     title: string;
     description: string;
-    icon: React.ReactNode;
+    icon: IconType;
     link: string;
 }
 
 interface ShopItem {
     title: string;
     description: string;
-    icon: React.ReactNode;
+    icon: IconType;
     comingSoon?: boolean;
 }
 
@@ -89,17 +92,17 @@ export default async function Home() {
         {
             title: 'Stationery',
             description: 'High-quality notebooks, pens, and other stationery items for your daily needs',
-            icon: <LuPencil className="size-8 text-yellow-500" />,
+            icon: LuPencil,
         },
         {
             title: 'T-Shirts',
             description: 'Comfortable and stylish t-shirts with unique designs',
-            icon: <LuShirt className="size-8 text-yellow-500" />,
+            icon: LuShirt,
         },
         {
             title: 'Hoodies',
             description: 'Stay warm and fashionable with our premium hoodies',
-            icon: <LuShoppingBag className="size-8 text-yellow-500" />,
+            icon: LuShoppingBag,
             comingSoon: true,
         },
     ];
@@ -108,25 +111,25 @@ export default async function Home() {
         {
             title: 'History',
             description: 'When the entire Bengal, nay India, was under the British rule, inspite of being under the French',
-            icon: <LuHistory className="size-6 sm:size-8 md:size-10 text-yellow-500" />,
+            icon: LuHistory,
             link: '/puja-history'
         },
         {
             title: 'Gallery',
             description: 'Latest Online Photo Gallery for Chandannagar, Mankundu and Bhadreswar Jagadhatri Puja.',
-            icon: <LuImages className="size-6 sm:size-8 md:size-10 text-yellow-500" />,
+            icon: LuImages,
             link: '/gallery'
         },
         {
             title: 'Videos',
             description: 'Here are the latest Online Video Gallery for Chandannagar Jagadhatri Puja.',
-            icon: <FaYoutube className="size-6 sm:size-8 md:size-10 text-yellow-500" />,
+            icon: LuVideo,
             link: 'https://www.youtube.com/c/JagadhatriOnline'
         },
         {
             title: 'Location',
             description: 'Explore the Grand Festival of Chandannagar with CGR Utsav Android App.',
-            icon: <LuMapPin className="size-6 sm:size-8 md:size-10 text-yellow-500" />,
+            icon: LuMapPin,
             link: 'https://play.google.com/store/apps/details?id=com.cgr.utsav',
         }
     ];
@@ -135,42 +138,51 @@ export default async function Home() {
         {
             title: 'Followers',
             stat: '76.1K',
-            icon: <FaFacebook className="inline-block size-8 stroke-current" />,
-            statDesc: '6K+',
-            description: 'new followers in last 30 days'
+            icon: FaFacebook,
+            statDesc: '7K+',
+            description: 'new followers in last 30 days',
+            class: 'text-[#1877F2]'
+        },
+        {
+            title: 'Followers',
+            stat: '8.1K',
+            icon: FaInstagram,
+            statDesc: '38%',
+            description: 'more than last month',
+            class: 'text-[#E1306C]'
+        },
+        {
+            title: 'Followers',
+            stat: '8.1K',
+            icon: FaWhatsapp,
+            statDesc: '5%',
+            description: 'more than last month',
+            class: 'text-[#25D366]'
+        },
+        {
+            title: 'Subscribers',
+            stat: '4.59K',
+            icon: FaYoutube,
+            statDesc: '600+',
+            description: 'new subs in last 1 year',
+            class: 'text-[#FF0000]'
         },
         {
             title: 'Post Reach',
             stat: '1.8M',
-            icon: <LuHistory className="inline-block size-8 stroke-current" />,
+            icon: LuHistory,
             statDesc: '85%',
             description: 'more than last month',
             class: 'text-secondary'
         },
-        {
-            title: 'Post Engagement',
-            stat: '58.4K',
-            icon: <LuVideo className="inline-block size-8 stroke-current" />,
-            statDesc: '38%',
-            description: 'more than last month',
-            class: 'text-blue-500'
-        },
-        {
-            title: 'Subscribers',
-            stat: '4.58K',
-            icon: <FaYoutube className="inline-block size-8 stroke-current" />,
-            statDesc: '600+',
-            description: 'new followers in last 1 year',
-            class: 'text-green-600'
-        },
-        {
-            title: 'Website Visitors',
-            stat: '37.5K',
-            icon: <LuGlobe className="inline-block size-8 stroke-current" />,
-            statDesc: '14%',
-            description: 'more than last month',
-            class: 'text-pink-500'
-        },
+        // {
+        //     title: 'Website Visitors',
+        //     stat: '37.5K',
+        //     icon: LuGlobe,
+        //     statDesc: '14%',
+        //     description: 'more than last month',
+        //     class: 'text-pink-500'
+        // },
     ];
 
     const jsonLd = {
@@ -312,7 +324,7 @@ export default async function Home() {
                     <div className="stats stats-vertical lg:stats-horizontal text-left shadow-sm container">
                         {stats.map((item: StatsItem, index) => (
                             <div className="stat bg-white !border-gray-200" key={index}>
-                                <div className={`${cn('stat-figure text-primary', item?.class)}`}>{item.icon}</div>
+                                <div className={`${cn('stat-figure text-primary', item?.class)}`}>{<item.icon className="inline-block size-8 stroke-current" />}</div>
                                 <div className="stat-title">{item.title}</div>
                                 <div className={`${cn('stat-value text-primary', item?.class)}`}>{item.stat}</div>
                                 <div className="stat-desc">
@@ -363,7 +375,7 @@ export default async function Home() {
                                 target={item.link.includes('https') ? '_blank' : '_self'}
                                 className="flex flex-col gap-2 items-center"
                             >
-                                <span className="p-5 border border-gray-200 rounded-full">{item.icon}</span>
+                                <span className="p-5 border border-gray-200 rounded-full">{<item.icon className="size-6 sm:size-8 md:size-10 text-yellow-500" />}</span>
                                 <span className="text-xl font-bold uppercase">{item.title}</span>
                                 <span className="">{item.description}</span>
                             </Link>
@@ -390,7 +402,7 @@ export default async function Home() {
                             >
                                 <div className="flex flex-col items-center text-center gap-4">
                                     <div className="p-4 bg-gray-50 rounded-full">
-                                        {item.icon}
+                                        {<item.icon className="size-8 text-yellow-500" />}
                                     </div>
                                     <h3 className="text-xl font-bold">
                                         {item.title}

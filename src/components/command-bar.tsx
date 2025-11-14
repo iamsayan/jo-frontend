@@ -147,7 +147,7 @@ function DynamicActionsLoader({ onInput, onSearch }: DynamicActionsLoaderProps) 
 
         onSearch?.(true);
         try {
-            const searchResults = await searchModels(currentRootActionId as string, search);
+            const searchResults = await searchModels(currentRootActionId as string, search) as Puja[];
             const dynamicActions = Array.isArray(searchResults) ? searchResults.map((pujaItem: Puja) => {
                 const item: PujaExtended = extendPuja(pujaItem);
                 return ({

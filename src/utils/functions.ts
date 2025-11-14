@@ -25,7 +25,7 @@ export function extendPuja(puja: Puja, year?: number): PujaExtended {
         jubilee: jubilees.includes(Number(y)),
         preJubilee: preJubilees.includes(Number(y)),
         psZone: zone,
-        address: puja.location?.address ?? `${zone}, Hooghly, West Bengal`,
+        address: puja.location?.address || `${zone}, Hooghly, West Bengal`,
     }
 }
 

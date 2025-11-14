@@ -1,6 +1,5 @@
 import { revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
-import pluralize from 'pluralize';
 
 export async function POST(request: NextRequest) {
     try {
@@ -19,12 +18,11 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const tag = `collection-${model}`;
-        revalidateTag(tag);
+        revalidateTag(model);
 
         return NextResponse.json({
             revalidated: true,
-            tag: tag,
+            tag: model,
             timestamp: Date.now(),
         });
     } catch (err) {
