@@ -139,21 +139,21 @@ export default async function Home() {
             title: 'Followers',
             stat: '76.1K',
             icon: FaFacebook,
-            statDesc: '7K+',
-            description: 'new followers in last 30 days',
+            statDesc: '5.6M',
+            description: 'views in last 30 days',
             class: 'text-[#1877F2]'
         },
         {
             title: 'Followers',
             stat: '8.1K',
             icon: FaInstagram,
-            statDesc: '38%',
-            description: 'more than last month',
+            statDesc: '7.7L',
+            description: 'views in last 30 days',
             class: 'text-[#E1306C]'
         },
         {
             title: 'Followers',
-            stat: '8.1K',
+            stat: '1.01K',
             icon: FaWhatsapp,
             statDesc: '5%',
             description: 'more than last month',
@@ -168,21 +168,13 @@ export default async function Home() {
             class: 'text-[#FF0000]'
         },
         {
-            title: 'Post Reach',
-            stat: '1.8M',
-            icon: LuHistory,
-            statDesc: '85%',
-            description: 'more than last month',
-            class: 'text-secondary'
+            title: 'Website Visitors',
+            stat: '12.5K',
+            icon: LuGlobe,
+            statDesc: '710K',
+            description: 'impressions in last 30 days',
+            class: 'text-pink-500'
         },
-        // {
-        //     title: 'Website Visitors',
-        //     stat: '37.5K',
-        //     icon: LuGlobe,
-        //     statDesc: '14%',
-        //     description: 'more than last month',
-        //     class: 'text-pink-500'
-        // },
     ];
 
     const jsonLd = {

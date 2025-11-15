@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import Script from "next/script"
-import { livvic } from "@/fonts"
+import { rubik } from "@/fonts"
 import { GoogleTagManager } from '@next/third-parties/google'
 import Providers from '@/app/providers';
 import { cms } from '@/lib/cms';
@@ -94,7 +94,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                     <Script src="https://www.statcounter.com/counter/counter.js" async={true} />
                 </>
             }
-            <body className={`${livvic.className} antialiased overflow-x-hidden text-sm md:text-base ${livvic.variable}`}>
+            <body className={`${rubik.className} ${rubik.variable} antialiased overflow-x-hidden text-sm md:text-base`}>
                 <Providers siteData={siteData}>
                     {children}
                 </Providers>
