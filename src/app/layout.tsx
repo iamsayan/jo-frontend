@@ -4,6 +4,7 @@ import { rubik } from "@/fonts"
 import { GoogleTagManager } from '@next/third-parties/google'
 import Providers from '@/app/providers';
 import { cms } from '@/lib/cms';
+import { headers } from 'next/headers'
 import { APIResponse, Global } from '@/types';
 
 import '@/app/globals.sass'
@@ -72,18 +73,19 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         populate: '*',
     }) as APIResponse<Global>;
     const siteData: Global = siteDataReq.data ?? null;
+    const nonce = (await headers()).get('x-nonce') ?? '';
 
     return (
         <html lang="en" data-theme="light" suppressHydrationWarning={process.env.NODE_ENV === 'production'}>
             {process.env.NODE_ENV === 'production' &&
                 <>
-                    <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GA4_ID!} dataLayer={{
+                    <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GA4_ID!} nonce={nonce} dataLayer={{
                         cookie_prefix: "JoGtag",
                         cookie_domain: process.env.NEXT_PUBLIC_SITE_URL!,
                         cookie_flags: "samesite=none;secure",
                         allow_google_signals: true
                     }} />
-                    <Script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID}`} crossOrigin="anonymous" strategy="afterInteractive" />
+                    <Script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID}`} crossOrigin="anonymous" nonce={nonce} strategy="afterInteractive" />
                     <Script id="statcounter">
                         {`
                             var sc_project=11108007; 
@@ -91,7 +93,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                             var sc_security="13b4e93a"; 
                         `}
                     </Script>
-                    <Script src="https://www.statcounter.com/counter/counter.js" async={true} />
+                    <Script src="https://www.statcounter.com/counter/counter.js" nonce={nonce} async={true} />
                 </>
             }
             <body className={`${rubik.className} ${rubik.variable} antialiased overflow-x-hidden text-sm md:text-base`}>
