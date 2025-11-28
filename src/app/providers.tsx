@@ -3,9 +3,9 @@
 import { ProgressProvider } from '@bprogress/next/app';
 import CommandBar from '@/components/command-bar';
 import { SiteDataProvider } from '@/contexts/siteDataContext';
-import { Global } from '@/types';
+import type { GlobalSite } from '@/types';
 
-const Providers = ({ children, siteData }: { children: React.ReactNode, siteData: Global }) => {
+const Providers = ({ children, siteData }: { children: React.ReactNode, siteData: GlobalSite }) => {
   return (
     <SiteDataProvider siteData={siteData}>
       <ProgressProvider

@@ -237,7 +237,7 @@ export interface Contact extends API.Document {
   contact: string
 }
 
-export interface Global extends API.Document {
+export interface GlobalSite extends API.Document {
   id: number
   processionListPublished?: boolean
   schedules?: SharedSchedule[]

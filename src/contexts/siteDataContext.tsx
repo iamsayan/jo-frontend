@@ -1,10 +1,10 @@
 'use client';
 
 import { createContext, useContext, ReactNode } from 'react';
-import { Global } from '@/types';
+import type { GlobalSite } from '@/types';
 
 // Create the context for siteData
-export const SiteDataContext = createContext<Global | null>(null);
+export const SiteDataContext = createContext<GlobalSite | null>(null);
 
 // Provider component
 export const SiteDataProvider = ({ 
@@ -12,7 +12,7 @@ export const SiteDataProvider = ({
   siteData 
 }: { 
   children: ReactNode, 
-  siteData: Global 
+  siteData: GlobalSite 
 }) => {
   return (
     <SiteDataContext.Provider value={siteData}>

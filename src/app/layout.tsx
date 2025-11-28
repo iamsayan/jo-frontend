@@ -5,7 +5,7 @@ import { GoogleTagManager } from '@next/third-parties/google'
 import Providers from '@/app/providers';
 import { cms } from '@/lib/cms';
 import { headers } from 'next/headers'
-import { APIResponse, Global } from '@/types';
+import type { APIResponse, GlobalSite } from '@/types';
 
 import '@/app/globals.sass'
 import '@bprogress/core/css';
@@ -71,8 +71,8 @@ export default async function RootLayout({ children }: RootLayoutProps) {
     const globalClient = cms.tag('global').single('global');
     const siteDataReq = await globalClient.find({
         populate: '*',
-    }) as APIResponse<Global>;
-    const siteData: Global = siteDataReq.data ?? null;
+    }) as APIResponse<GlobalSite>;
+    const siteData: GlobalSite = siteDataReq.data ?? null;
     const nonce = (await headers()).get('x-nonce') ?? '';
 
     return (

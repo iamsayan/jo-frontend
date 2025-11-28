@@ -34,7 +34,7 @@ import { metadata as metadataSchema } from "@/app/layout";
 import type { Metadata } from 'next'
 import cx from 'classix';
 import { format } from "date-fns";
-import type { Puja, PageProps, Global, Procession, SharedSchedule, PujaExtended, APIResponseCollection, APIResponse } from "@/types";
+import type { Puja, PageProps, GlobalSite, Procession, SharedSchedule, PujaExtended, APIResponseCollection, APIResponse } from "@/types";
 
 interface Params {
     year: string;
@@ -54,8 +54,8 @@ export async function generateMetadata({ params }: PageProps<Params>): Promise<M
     const queryYear = parseInt(year);
     const siteDataRes = await globalClient.find({
         populate: '*',
-    }) as APIResponse<Global>;
-    const siteData: Global = siteDataRes.data ?? null;
+    }) as APIResponse<GlobalSite>;
+    const siteData: GlobalSite = siteDataRes.data ?? null;
     const displayDate = getDateByIndex(siteData.schedules, 0);
     const dateIsCurrent = queryYear === displayDate.getFullYear();
 
@@ -95,13 +95,13 @@ export default async function Page({ params }: PageProps<Params>) {
 
     const [pujasRes, siteDataRes] = await Promise.allSettled([pujasReq, siteDataReq]).then(results => [
         results[0].status === "fulfilled" ? results[0].value as APIResponseCollection<Puja> : { data: [] },
-        results[1].status === "fulfilled" ? results[1].value as APIResponse<Global> : { data: {} },
+        results[1].status === "fulfilled" ? results[1].value as APIResponse<GlobalSite> : { data: {} },
     ]);
 
     const pujas: PujaExtended[] = Array.isArray(pujasRes.data) && pujasRes.data.length > 0
         ? pujasRes.data.map((data: Puja) => extendPuja(data, queryYear))
         : [];
-    const siteData: Global = (siteDataRes.data as Global) ?? null;
+    const siteData: GlobalSite = (siteDataRes.data as GlobalSite) ?? null;
 
     const displayDate = getDateByIndex(siteData.schedules, 0);
     const dateIsCurrent = queryYear === displayDate.getFullYear();

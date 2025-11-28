@@ -6,7 +6,7 @@ import schema from "@/utils/schema";
 import { cms } from '@/lib/cms';
 import { metadata as metadataSchema } from "@/app/layout";
 import { LuCircleCheck } from 'react-icons/lu';
-import type { APIResponse, Global, SharedAchievement } from '@/types';
+import type { APIResponse, GlobalSite, SharedAchievement } from '@/types';
 
 export const metadata: Metadata = {
     title: 'Achievements',
@@ -24,8 +24,8 @@ export default async function Page() {
     const globalClient = cms.tag('global').single('global');
     const siteData = await globalClient.find({
         populate: '*',
-    }) as APIResponse<Global>;
-    const data: Global = siteData.data ?? null
+    }) as APIResponse<GlobalSite>;
+    const data: GlobalSite = siteData.data ?? null
 
     const jsonLd = schema({
         path: 'achievements',

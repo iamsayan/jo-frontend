@@ -37,7 +37,7 @@ import GallerySlider from '@/components/gallery-slider';
 import Markdown from '@/components/markdown';
 import { assetImageLoader } from '@/utils/transform';
 import { format } from "date-fns";
-import { Artist, Image, Puja, Global, PujaExtended, SharedLink, SharedSchedule, PageProps, APIResponseCollection, APIResponse } from '@/types';
+import type { Artist, Image, Puja, GlobalSite, PujaExtended, SharedLink, SharedSchedule, PageProps, APIResponseCollection, APIResponse } from '@/types';
 
 interface Params {
     slug: string;
@@ -118,13 +118,13 @@ export default async function Page({ params }: PageProps<Params>) {
 
     const [pujasRes, siteDataRes] = await Promise.allSettled([pujasReq, siteDataReq]).then(results => [
         results[0].status === "fulfilled" ? results[0].value as APIResponseCollection<Puja> : { data: [] },
-        results[1].status === "fulfilled" ? results[1].value as APIResponse<Global> : { data: {} },
+        results[1].status === "fulfilled" ? results[1].value as APIResponse<GlobalSite> : { data: {} },
     ]);
 
     const pujas: PujaExtended[] = Array.isArray(pujasRes.data) && pujasRes.data.length > 0
         ? pujasRes.data.map((data: Puja) => extendPuja(data, queryYear))
         : [];
-    const siteData: Global = (siteDataRes.data as Global) ?? null;
+    const siteData: GlobalSite = (siteDataRes.data as GlobalSite) ?? null;
     const currentPuja = pujas.find((item: PujaExtended) => item.referenceId === id) ?? null;
 
     if (!currentPuja) {

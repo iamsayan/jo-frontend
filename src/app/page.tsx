@@ -30,7 +30,7 @@ import { cms } from "@/lib/cms";
 import { buildGoogleCalendarUrl, cn, formatDate, getDateByIndex } from "@/utils/functions";
 import { paytoneOne } from "@/fonts";
 import { PiConfettiThin } from "react-icons/pi";
-import type { APIResponse, Global, SharedSchedule } from "@/types";
+import type { APIResponse, GlobalSite, SharedSchedule } from "@/types";
 import type { IconType } from "react-icons/lib";
 
 const imagesPath = [
@@ -77,8 +77,8 @@ export default async function Home() {
     const globalClient = cms.tag('global').single('global');
     const siteData = await globalClient.find({
         populate: '*',
-    }) as APIResponse<Global>;
-    const data: Global = siteData.data ?? null;
+    }) as APIResponse<GlobalSite>;
+    const data: GlobalSite = siteData.data ?? null;
     const year = getDateByIndex(data.schedules, 0).getFullYear();
     const curYear = new Date().getFullYear();
     const btnYear = curYear > year ? curYear : year;
