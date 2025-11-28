@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
@@ -158,10 +158,10 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
                     {[...Array(8)].map((_, index) => (
                         <div
                             key={index}
-                            className="bg-white rounded-2xl shadow-lg overflow-hidden"
+                            className="bg-white rounded-2xl border border-gray-200/60 overflow-hidden"
                             style={{ animationDelay: `${index * 100}ms` }}
                         >
-                            <div className="skeleton aspect-[3/2] w-full"></div>
+                            <div className="skeleton rounded-b-none aspect-[3/2] w-full"></div>
                             <div className="p-6 space-y-4">
                                 <div className="flex justify-between items-start">
                                     <div className="flex-1 space-y-2">
@@ -195,7 +195,7 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
                             type="text"
                             placeholder="Search by name, year, theme, address..."
                             value={search}
-                            className="w-full pl-12 pr-12 py-3 sm:py-4 rounded-xl border border-gray-200/60 focus:border-blue-400 focus:ring-2 focus:ring-blue-200/50 transition-all duration-200 text-gray-700 placeholder-gray-400 bg-white/95 backdrop-blur-sm text-base touch-manipulation shadow-sm"
+                            className="w-full px-5 py-3 sm:py-4 rounded-xl border border-gray-200/60 focus:border-blue-400 focus-visible:border-blue-400 transition-all duration-200 text-gray-700 placeholder-gray-400 bg-white/95 backdrop-blur-sm text-base touch-manipulation"
                             onChange={(e) => setSearch(e.target.value)}
                             aria-label="Search pujas by name, year, theme, or address"
                             aria-describedby="search-help"
@@ -233,10 +233,10 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
                             <button
                                 key={option.value}
                                 onClick={() => setFilter(option.value as Filter)}
-                                className={`px-4 py-3 rounded-full text-sm font-medium transition-all duration-200 touch-manipulation min-h-[44px] flex items-center gap-2 ${filter === option.value
-                                    ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-200/50 ring-2 ring-blue-200/30'
-                                    : 'bg-white/80 backdrop-blur-sm text-gray-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700 shadow-sm border border-gray-200/50'
-                                    }`}
+                                className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 touch-manipulation flex items-center gap-2 cursor-pointer ${filter === option.value
+                                    ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white'
+                                    : 'bg-white/80 backdrop-blur-sm text-gray-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700 border border-gray-200/50'
+                                }`}
                                 aria-pressed={filter === option.value}
                                 aria-label={`Filter by ${option.label}${filter === option.value ? ' (currently active)' : ''}`}
                             >
@@ -253,7 +253,7 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
                             id="sort-select"
                             value={sortBy}
                             onChange={(e) => setSortBy(e.target.value as SortOption)}
-                            className="px-3 py-3 rounded-lg border border-gray-200/60 focus:border-blue-400 focus:ring-2 focus:ring-blue-200/50 text-sm bg-white/95 backdrop-blur-sm touch-manipulation min-h-[44px] shadow-sm"
+                            className="px-3 py-2 rounded-lg border border-gray-200/60 text-sm bg-white/95 backdrop-blur-sm touch-manipulation"
                             aria-label="Sort pujas by"
                         >
                             <option value="name">Name</option>
@@ -263,7 +263,7 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
                         </select>
                         <button
                             onClick={() => setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc')}
-                            className="p-2 rounded-lg border border-gray-200/60 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:border-blue-200 transition-all duration-200 touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center bg-white/95 backdrop-blur-sm shadow-sm"
+                            className="p-2 rounded-lg border border-gray-200/60 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:border-blue-200 transition-all duration-200 touch-manipulation flex items-center justify-center bg-white/95 backdrop-blur-sm"
                             aria-label={`Sort ${sortDirection === 'asc' ? 'descending' : 'ascending'}`}
                             title={`Currently sorting ${sortDirection === 'asc' ? 'ascending' : 'descending'}. Click to change.`}
                         >
@@ -363,7 +363,7 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
                             </div>
                             <Link
                                 href={`/puja/${item.slug}/${item.referenceId}`}
-                                className="block bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-2xl hover:shadow-blue-200/20 transition-all duration-300 border border-gray-100/60 hover:border-blue-200 overflow-hidden group-hover:-translate-y-2 transform focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 touch-manipulation"
+                                className="block bg-white/95 backdrop-blur-sm rounded-2xl transition-all duration-300 border border-gray-200/60 hover:border-blue-200 overflow-hidden group-hover:-translate-y-2 transform focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 touch-manipulation"
                                 aria-label={`View details for ${item.name} puja`}
                             >
                                 <div className="relative aspect-[3/2] overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
@@ -539,8 +539,8 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
                             </button>
 
                             {/* Preview Image */}
-                            <div className="relative aspect-[2/1] bg-gradient-to-br from-gray-100 to-gray-200">
-                                {previewItem.images?.[0] ? (
+                            {previewItem.images?.[0] && (
+                                <div className="relative aspect-[2/1] bg-gradient-to-br from-gray-100 to-gray-200">
                                     <div className="relative w-full h-full">
                                         <TransformedImage
                                             src={`${previewItem.images[0].year}/${previewItem.referenceId}/${previewItem.images[0].name}`}
@@ -553,23 +553,8 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
                                         {/* Gradient Overlay */}
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                                     </div>
-                                ) : (
-                                    <div className="relative w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-                                        <div className="w-16 h-16 mb-3 bg-white rounded-full flex items-center justify-center shadow-lg">
-                                            <Image
-                                                src={placeholder}
-                                                alt="placeholder"
-                                                className="w-10 h-10 opacity-60"
-                                                priority={false}
-                                            />
-                                        </div>
-                                        {/* <div className="text-center px-4">
-                                            <p className="text-gray-500 text-sm font-medium">No Image Available</p>
-                                            <p className="text-gray-400 text-xs mt-1">Coming Soon</p>
-                                        </div> */}
-                                    </div>
-                                )}
-                            </div>
+                                </div>
+                            )}
 
                             {/* Preview Content */}
                             <div className="p-6">
