@@ -35,7 +35,7 @@ import Main from '@/components/main';
 import Breadcrumbs from '@/components/breadcrumbs';
 import GallerySlider from '@/components/gallery-slider';
 import Markdown from '@/components/markdown';
-import { assetImageLoader } from '@/utils/transform';
+import imageUrl from '@/utils/transform';
 import { format } from "date-fns";
 import type { Artist, Image, Puja, GlobalSite, PujaExtended, SharedLink, SharedSchedule, PageProps, APIResponseCollection, APIResponse } from '@/types';
 
@@ -84,10 +84,7 @@ export async function generateMetadata({ params }: PageProps<Params>): Promise<M
             url: `/puja/${slug}/${id}`,
             images: currentPuja.images?.slice(0, 3).map((item: Image) => {
                 return {
-                    url: assetImageLoader({
-                        src: `${item.year}/${currentPuja.referenceId}/${item.name}`,
-                        quality: 70
-                    }),
+                    url: imageUrl(`${item.year}/${currentPuja.referenceId}/${item.name}`, { quality: 60 }),
                     alt: currentPuja.name
                 }
             })
@@ -264,10 +261,7 @@ export default async function Page({ params }: PageProps<Params>) {
             "url": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}`
         },
         ...(pujaImages ? {
-            "image": pujaImages?.map((item: any) => assetImageLoader({
-                src: item.src,
-                quality: 70
-            })),
+            "image": pujaImages?.map((item: any) => imageUrl(item.src)),
         } : {}),
         "startDate": `${format(getDateByIndex(siteData.schedules, 0, "06:00:00"), "yyyy-MM-dd'T'HH:mm:ssXXX")}`,
         "endDate": `${format(getDateByIndex(siteData.schedules, 4, "23:59:59"), "yyyy-MM-dd'T'HH:mm:ssXXX")}`,

@@ -6,7 +6,7 @@ import { cms } from "@/lib/cms";
 import { metadata as metadataSchema } from "@/app/layout";
 import { notFound } from "next/navigation";
 import type { Metadata } from 'next'
-import { assetImageLoader } from "@/utils/transform";
+import imageUrl from "@/utils/transform";
 import type { APIResponseCollection, Image, PageProps } from "@/types";
 
 interface Params {
@@ -52,10 +52,7 @@ export async function generateMetadata({ params, searchParams }: PageProps<Param
             url: currentPage === 0 ? `/gallery/${year}` : `/gallery/${year}?page=${currentPage}`,
             images: images?.data?.slice(0, 3)?.map((item: Image) => {
                 return {
-                    url: assetImageLoader({
-                        src: `${item.year}/${item.puja?.referenceId}/${item.name}`,
-                        quality: 70
-                    }),
+                    url: imageUrl(`${item.year}/${item.puja?.referenceId}/${item.name}`, { quality: 60 }),
                     alt: item.puja?.name ?? item.name
                 }
             })

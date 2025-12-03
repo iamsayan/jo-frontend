@@ -1,7 +1,8 @@
 'use client'
 
 import React, { useState, useEffect, ReactNode } from 'react';
-import TransformedImage from '@/components/transformed-image';
+import SmartImage from '@/components/smart-image';
+import imageUrl from '@/utils/transform';
 
 const images = [
     //{ src: 'static/20241107-042519.jpg', alt: 'Mankundu' },
@@ -36,15 +37,13 @@ const HeroSlider: React.FC<ImageSliderProps> = ({ children }) => {
                         key={index}
                         className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out bg-cover bg-center ${index === currentImageIndex ? 'opacity-100' : 'opacity-0'}`}
                     >
-                        <TransformedImage
-                            src={image.src}
+                        <SmartImage
+                            src={imageUrl(image.src, { quality: 90 })}
                             alt={image.alt}
-                            height={800}
-                            width={1000}
-                            priority={index === 0}
+                            fill={true}
                             quality={90}
                             lazy={false}
-                            className="object-cover h-full w-full"
+                            className="object-cover"
                         />
                         <div className="absolute inset-0 bg-black/60"></div>
                     </div>

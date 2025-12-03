@@ -1,14 +1,14 @@
 'use client';
 
-import React, { useCallback, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import { useSearchParams, useParams } from 'next/navigation';
 import { useRouter } from '@bprogress/next/app';
-import TransformedImage from '@/components/transformed-image';
 import { capitalizeFirst, cn } from '@/utils/functions';
 import Gallery from "@/components/gallery";
+import SmartImage from '@/components/smart-image';
 import ReactPaginate from 'react-paginate';
 import { LuCamera, LuChevronLeft, LuChevronRight } from 'react-icons/lu';
-import { assetImageLoader } from '@/utils/transform';
+import imageUrl from '@/utils/transform';
 import { renderToString } from "react-dom/server";
 import type { Image } from "@/types";
 
@@ -53,9 +53,7 @@ function GalleryPaginate({ className, images, itemsPerPage, total }: GalleryPagi
     }
 
     const dynamicEl = images.map((item: Image, index: number) => {
-        const imagePath = assetImageLoader({
-            src: `${item.year}/${item.puja?.referenceId}/${item.name}`,
-        });
+        const imagePath = imageUrl(`${item.year}/${item.puja?.referenceId}/${item.name}`);
         return {
             key: item.documentId ?? index,
             src: imagePath,
@@ -70,14 +68,11 @@ function GalleryPaginate({ className, images, itemsPerPage, total }: GalleryPagi
             <Gallery elementClassNames="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-2 md:gap-3 lg:gap-4 mt-2" speed={500} thumbnail={true} slideShowAutoplay={true} onInit={onInit} fullScreen={true} dynamicEl={dynamicEl} dynamic={true}>
                 {images.map((item: Image, index: number) => (
                     <div key={item.documentId ?? index} className="relative aspect-[4/5] overflow-hidden rounded-2xl group cursor-pointer" onClick={() => lightGallery.current.openGallery(index)}>
-                        <TransformedImage
+                        <SmartImage
                             key={item.documentId ?? index}
-                            src={`${item.year}/${item.puja?.referenceId}/${item.name}`}
-                            width={500}
-                            height={300}
-                            className="object-cover w-full h-full pointer-events-none text-transparent transform transition-all duration-700 group-hover:scale-110"
-                            priority={true}
-                            quality={70}
+                            src={imageUrl(`${item.year}/${item.puja?.referenceId}/${item.name}`)}
+                            fill={true}
+                            className="object-cover pointer-events-none text-transparent transform transition-all duration-700 group-hover:scale-110"
                             alt={item.puja?.name ?? item.name}
                         />
                         {/* <span className="absolute bottom-0 left-0 right-0 text-center bg-yellow-500 p-1.5 text-xs">{item?.puja_entry_id?.puja_name}</span> */}

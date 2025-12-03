@@ -20,11 +20,12 @@ import {
     LuEye,
     LuMapPin,
 } from 'react-icons/lu';
-import TransformedImage from '@/components/transformed-image';
+import SmartImage from '@/components/smart-image';
 import { useDebounce } from 'use-debounce';
 import type { PujaExtended } from '@/types';
 
 import placeholder from '@/public/circle-logo.png'
+import imageUrl from '@/utils/transform';
 
 type Filter = 'all' | 'popular' | 'jubilee' | 'preJubilee' | 'adi' | 'favorites';
 type SortOption = 'name' | 'year' | 'estd' | 'popular';
@@ -385,13 +386,11 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
 
                                     {image ? (
                                         <div className="relative w-full h-full">
-                                            <TransformedImage
-                                                src={`${image.year}/${item.referenceId}/${image.name}`}
-                                                fill
+                                            <SmartImage
+                                                src={imageUrl(`${image.year}/${item.referenceId}/${image.name}`)}
+                                                fill={true}
                                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                                 className="object-cover transition-transform duration-500 group-hover:scale-110"
-                                                priority={index < 8}
-                                                quality={80}
                                                 alt={item.name}
                                             />
                                             {/* Gradient Overlay */}
@@ -542,9 +541,9 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
                             {previewItem.images?.[0] && (
                                 <div className="relative aspect-[2/1] bg-gradient-to-br from-gray-100 to-gray-200">
                                     <div className="relative w-full h-full">
-                                        <TransformedImage
-                                            src={`${previewItem.images[0].year}/${previewItem.referenceId}/${previewItem.images[0].name}`}
-                                            fill
+                                        <SmartImage
+                                            src={imageUrl(`${previewItem.images[0].year}/${previewItem.referenceId}/${previewItem.images[0].name}`)}
+                                            fill={true}
                                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                             className="object-cover transition-transform duration-500 group-hover:scale-110"
                                             quality={80}

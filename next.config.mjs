@@ -11,9 +11,7 @@ const nextConfig = {
     },
     images: {
         qualities: [25, 50, 70, 80, 90, 100],
-        formats: ['image/webp'],
-        contentDispositionType: 'attachment',
-        contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+        formats: ['image/avif', 'image/webp'],
         remotePatterns: [
             {
                 protocol: 'https',

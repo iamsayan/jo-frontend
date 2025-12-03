@@ -1,5 +1,4 @@
-type AssetImageLoaderParams = {
-    src: string;
+type Params = {
     width?: number;
     quality?: number;
     height?: number;
@@ -7,19 +6,25 @@ type AssetImageLoaderParams = {
     blur?: number;
     grayscale?: boolean;
     format?: 'webp' | 'jpeg' | 'png' | 'auto';
-};
+    transform?: boolean;
+}
 
-export function assetImageLoader({
-    src,
-    width,
-    height,
-    quality = 80,
-    fit,
-    blur,
-    grayscale,
-    format = 'auto',
-}: AssetImageLoaderParams): string {
-    const url = new URL(process.env.NEXT_PUBLIC_IMAGE_TRANSFORM_SERVICE_URL!);
+export default function imageUrl(src: string, params?: Params): string {
+    const {
+        width,
+        height,
+        quality = 80,
+        fit,
+        blur,
+        grayscale,
+        format = 'auto',
+        transform = true,
+    } = params || {};
+
+    const baseUrl = 'https://assets.jagadhatrionline.co.in/images';
+    if (!transform) return `${baseUrl}/${src}`;
+
+    const url = new URL(`${baseUrl}/transform`);
 
     url.searchParams.set('src', src);
     if (width) url.searchParams.set('w', width.toString());

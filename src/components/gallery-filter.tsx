@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useCallback, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import { useState } from 'react';
-import TransformedImage from '@/components/transformed-image';
+import SmartImage from '@/components/smart-image';
 import { cn } from '@/utils/functions';
 import Gallery from "@/components/gallery";
 import ReactPaginate from 'react-paginate';
-import { assetImageLoader } from '@/utils/transform';
+import imageUrl from '@/utils/transform';
 
 interface GalleryFilterProps {
     className?: string;
@@ -40,9 +40,7 @@ function GalleryFilter({ className, images }: GalleryFilterProps) {
     }, []);
 
     const dynamicEl = paginatedImages.map((item: any, index: number) => {
-        const imagePath = assetImageLoader({
-            src: `${item?.year}/${item?.reference_id}/${item?.image_name}`,
-        });
+        const imagePath = imageUrl(`${item?.year}/${item?.reference_id}/${item?.image_name}`);
         return {
             src: imagePath,
             thumb: imagePath,
@@ -79,15 +77,11 @@ function GalleryFilter({ className, images }: GalleryFilterProps) {
             <Gallery elementClassNames="flex flex-row gap-2 md:gap-3 mt-2 justify-center" speed={500} thumbnail={true} slideShowAutoplay={true} onInit={onInit} fullScreen={true} dynamicEl={dynamicEl} dynamic={true}>
                 {paginatedImages.map((item: any, index: number) => (
                     <div key={item?._id + index} className="relative aspect-[4/5] overflow-hidden rounded-2xl group cursor-pointer" onClick={() => lightGallery.current.openGallery(index)}>
-                        <TransformedImage
+                        <SmartImage
                             key={item?._id + index + selectedYear}
                             src={`${item?.year}/${item?.reference_id}/${item?.image_name}`}
-                            width={500}
-                            height={300}
+                            fill={true}
                             className="object-cover w-full h-full pointer-events-none text-transparent transform transition-all duration-700 group-hover:scale-110"
-                            loading="lazy"
-                            quality={70}
-                            priority={false}
                             alt={item?.puja_entry_id?.puja_name}
                         />
                         {/* <span className="absolute bottom-0 left-0 right-0 text-center bg-yellow-500 p-1.5 text-xs">{item?.puja_entry_id?.puja_name}</span> */}

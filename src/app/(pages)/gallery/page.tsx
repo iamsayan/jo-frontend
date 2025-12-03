@@ -1,14 +1,13 @@
-import React from "react";
+import Link from "next/link";
 import MainLayout from "@/components/main-layout";
 import Section from "@/components/section";
 import Gallery from "@/components/gallery";
 import schema from "@/utils/schema";
-import TransformedImage from "@/components/transformed-image";
-import Link from "next/link";
+import SmartImage from "@/components/smart-image";
 import { cms } from "@/lib/cms";
 import { capitalizeFirst } from "@/utils/functions";
 import { metadata as metadataSchema } from "@/app/layout";
-import { assetImageLoader } from "@/utils/transform";
+import imageUrl from "@/utils/transform";
 import type { APIResponseCollection, Image } from "@/types";
 
 const client = cms.tag('image').collection('images');
@@ -66,21 +65,16 @@ export default async function Page() {
                     >
                         {allImages.slice(0, 12).map((image: Image, index: number) => (
                             <a 
-                                href={assetImageLoader({
-                                    src: `${image.year}/${image.puja?.referenceId}/${image.name}`,
-                                })}
+                                href={imageUrl(`${image.year}/${image.puja?.referenceId}/${image.name}`)}
                                 data-disable-progress={true}
                                 key={index}
                                 className="relative aspect-[3/4] overflow-hidden rounded-lg group cursor-pointer"
                                 data-sub-html={`<h4>${image.puja?.name}</h4><p>By: ${capitalizeFirst(image.uploadedBy)}</p>`}
                             >
-                                <TransformedImage
-                                    src={`${image.year}/${image.puja?.referenceId}/${image.name}`}
-                                    width={500}
-                                    height={300}
-                                    className="object-cover w-full h-full pointer-events-none text-transparent transition-transform duration-500 group-hover:scale-110"
-                                    loading="lazy"
-                                    priority={false}
+                                <SmartImage
+                                    src={imageUrl(`${image.year}/${image.puja?.referenceId}/${image.name}`)}
+                                    fill={true}
+                                    className="object-cover pointer-events-none text-transparent transition-transform duration-500 group-hover:scale-110"
                                     quality={70}
                                     alt={image.puja?.name ?? image.name}
                                 />
@@ -109,17 +103,13 @@ export default async function Page() {
                                     href={`/gallery/${year}`}
                                     className="relative aspect-[3/4] md:aspect-square overflow-hidden rounded-lg group cursor-pointer"
                                 >
-                                    <TransformedImage
-                                        src={`${randomImage.year}/${randomImage.puja?.referenceId}/${randomImage.name}`}
-                                        width={500}
-                                        height={300}
-                                        className="object-cover w-full h-full pointer-events-none text-transparent transition-transform duration-500 group-hover:scale-110"
-                                        loading="lazy"
-                                        priority={false}
-                                        placeholder="blur"
-                                        quality={70}
-                                        blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wcAAt8B9zvLyE8AAAAASUVORK5CYII="
+                                    <SmartImage
+                                        src={imageUrl(`${randomImage.year}/${randomImage.puja?.referenceId}/${randomImage.name}`)}
+                                        fill={true}
+                                        className="object-cover pointer-events-none text-transparent transition-transform duration-500 group-hover:scale-110"
                                         alt={`Gallery ${year}`}
+                                        loading="lazy"
+                                        lazy={false}
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                                     <div className="absolute inset-0 flex items-center justify-center">
