@@ -47,7 +47,7 @@ const getPositionStyle = (position: string) => {
 };
 
 export default async function Page() {
-    const awardsData = await getCollection<Award>('awards', {
+    const { data: awards = [] } = await getCollection<Award>('awards', {
         sort: ['year:desc'],
         populate: {
             categories: {
@@ -63,8 +63,6 @@ export default async function Page() {
             }
         }
     });
-
-    let awards: Award[] = awardsData?.data ?? [];
 
     let tabs: TabProps[] = []
 

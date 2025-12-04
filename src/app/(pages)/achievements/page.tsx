@@ -21,10 +21,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-    const siteData = await getSingle<GlobalSite>('global', {
-        populate: '*',
-    });
-    const data: GlobalSite = siteData.data ?? null
+    const { data } = await getSingle<GlobalSite>('global', { populate: '*' });
 
     const jsonLd = schema({
         path: 'achievements',
@@ -39,7 +36,7 @@ export default async function Page() {
                     <p>Through tireless efforts and the support of our vibrant community, we’ve achieved remarkable milestones—from pioneering virtual puja experiences and launching mobile apps to organizing prestigious award ceremonies and expanding our digital reach beyond borders. Each accomplishment represents a step toward preserving our rich cultural heritage while embracing the possibilities of the digital age. Here’s a snapshot of some of our proudest and most impactful achievements along this incredible journey:</p>
                 </div>
                 <ul className="timeline timeline-snap-icon max-md:timeline-compact timeline-vertical">
-                    {data.achievements && data.achievements.map((item: SharedAchievement, index: number) => (
+                    {data?.achievements && data.achievements.map((item: SharedAchievement, index: number) => (
                         <li key={index}>
                             <div className="timeline-middle">
                                 <LuCircleCheck className="size-5 text-success" />

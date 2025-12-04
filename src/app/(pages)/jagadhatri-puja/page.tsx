@@ -23,12 +23,9 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-    const siteData = await getSingle<GlobalSite>('global', {
-        populate: '*',
-    });
-    const data: GlobalSite = siteData.data ?? null;
-
-    const uptoYear = getDateByIndex(data.schedules, 0).getFullYear();
+    const { data = null } = await getSingle<GlobalSite>('global', { populate: '*' });
+    
+    const uptoYear = getDateByIndex(data?.schedules, 0)?.getFullYear() ?? 0;
     const yearsArray: number[] = [];
 
     for (let year = uptoYear - 12; year <= uptoYear - 1; year++) {

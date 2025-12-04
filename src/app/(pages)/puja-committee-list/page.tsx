@@ -60,7 +60,7 @@ const getZoneDescription = (zone: PujaExtended['zone']) => {
 };
 
 export default async function Page() {
-    const pujaData = await getCollection<Puja>('pujas', {
+    const { data: pujas = [] } = await getCollection<Puja>('pujas', {
         populate: ['procession', 'images'],
         pagination: {
             page: 1,
@@ -68,7 +68,7 @@ export default async function Page() {
         },
         sort: ['sortOrder:asc']
     });
-    const data: PujaExtended[] = pujaData.data ? pujaData.data.map((data: Puja) => extendPuja(data)) : [];
+    const data: PujaExtended[] = pujas.map((data: Puja) => extendPuja(data));
     const cgr: PujaExtended[] = data.filter((data: PujaExtended) => data.zone === 'chandannagar');
     const bhr: PujaExtended[] = data.filter((data: PujaExtended) => data.zone === 'bhadreswar');
 

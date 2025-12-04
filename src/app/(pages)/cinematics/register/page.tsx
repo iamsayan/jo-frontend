@@ -25,7 +25,7 @@ interface SearchParams {
 export default async function Page({ searchParams }: PageProps<{}, SearchParams>) {
     const { plan } = await searchParams;
 
-    const pujasData = await getCollection<Puja>('pujas', {
+    const { data: pujasData = [] } = await getCollection<Puja>('pujas', {
         populate: ['partnerships'],
         pagination: {
             page: 1,
@@ -34,7 +34,7 @@ export default async function Page({ searchParams }: PageProps<{}, SearchParams>
         sort: ['sortOrder:asc']
     });
 
-    const pujas: PujaExtended[] = pujasData.data ? pujasData.data.map((data: Puja) => extendPuja(data)) : [];
+    const pujas: PujaExtended[] = pujasData.map((data: Puja) => extendPuja(data));
     return (
         <div className="pt-1 flex items-center flex-col">
             <CinematicsPlans pujaData={pujas} planId={plan} />

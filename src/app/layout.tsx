@@ -1,10 +1,10 @@
-import type { Metadata, Viewport } from 'next'
 import Script from "next/script"
 import { headers } from 'next/headers'
 import { rubik } from "@/fonts"
 import { GoogleTagManager } from '@next/third-parties/google'
 import Providers from '@/app/providers';
 import { getSingle } from '@/utils/fetch';
+import type { Metadata, Viewport } from 'next';
 import type { GlobalSite } from '@/types';
 
 import '@/app/globals.sass'
@@ -68,10 +68,7 @@ interface RootLayoutProps {
 }
 
 export default async function RootLayout({ children }: RootLayoutProps) {
-    const siteDataReq = await getSingle<GlobalSite>('global', {
-        populate: '*',
-    });
-    const siteData: GlobalSite = siteDataReq.data ?? null;
+    const { data: siteData } = await getSingle<GlobalSite>('global', { populate: '*' });
     const nonce = (await headers()).get('x-nonce') ?? '';
 
     return (

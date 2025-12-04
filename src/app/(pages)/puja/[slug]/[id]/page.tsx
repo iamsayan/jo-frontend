@@ -45,14 +45,13 @@ interface Params {
 }
 
 export async function generateStaticParams() {
-    const pujaData = await getCollection<Puja>('pujas', {
+    const { data = [] } = await getCollection<Puja>('pujas', {
         pagination: {
             page: 1,
             pageSize: 200
         },
         sort: ['sortOrder:asc']
     });
-    const data: Puja[] = pujaData.data ?? [];
 
     return data.map((item: Puja) => ({
         slug: item.slug,
@@ -63,7 +62,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<Params>): Promise<Metadata> {
     const { slug, id } = await params
 
-    const pujaData = await getCollection<Puja>('pujas', {
+    const { data: pujas = [] } = await getCollection<Puja>('pujas', {
         populate: ['images', 'links'],
         filters: {
             referenceId: {
@@ -71,8 +70,7 @@ export async function generateMetadata({ params }: PageProps<Params>): Promise<M
             }
         }
     });
-    const data: Puja[] = pujaData.data ?? []
-    const currentPuja = data?.[0] ?? null;
+    const currentPuja = pujas[0] ?? null;
 
     return {
         title: `${currentPuja.name} Sarbajanin, ${currentPuja.zone === 'bhadreswar' ? 'Bhadreswar' : 'Chandannagar'}`,
@@ -97,28 +95,19 @@ export default async function Page({ params }: PageProps<Params>) {
     const { slug, id } = await params
     const queryYear = new Date().getFullYear()
 
-    const pujasReq = getCollection<Puja>('pujas', {
-        populate: ['partnerships'],
-        pagination: {
-            page: 1,
-            pageSize: 200
-        },
-        sort: ['sortOrder:asc']
-    });
-
-    const siteDataReq = getSingle<GlobalSite>('global', {
-        populate: '*',
-    });
-
-    const [pujasRes, siteDataRes] = await Promise.allSettled([pujasReq, siteDataReq]).then(results => [
-        results[0].status === "fulfilled" ? results[0].value : { data: [] },
-        results[1].status === "fulfilled" ? results[1].value : { data: {} },
+    const [
+        { data: pujasData = [] }, 
+        { data: siteData = null }
+    ] = await Promise.all([
+        getCollection<Puja>('pujas', {
+            populate: ['partnerships'],
+            pagination: { page: 1, pageSize: 200 },
+            sort: ['sortOrder:asc'],
+        }),
+        getSingle<GlobalSite>('global', { populate: '*' }),
     ]);
 
-    const pujas: PujaExtended[] = Array.isArray(pujasRes.data) && pujasRes.data.length > 0
-        ? pujasRes.data.map((data: Puja) => extendPuja(data, queryYear))
-        : [];
-    const siteData: GlobalSite = (siteDataRes.data as GlobalSite) ?? null;
+    const pujas: PujaExtended[] = pujasData.map((p) => extendPuja(p, queryYear));
     const currentPuja = pujas.find((item: PujaExtended) => item.referenceId === id) ?? null;
 
     if (!currentPuja) {
@@ -149,7 +138,7 @@ export default async function Page({ params }: PageProps<Params>) {
     const gMapLink = currentPuja.location?.coordinates?.lat && currentPuja.location?.coordinates?.lng
         ? `https://www.google.com/maps/search/?api=1&query=${currentPuja.location.coordinates.lat},${currentPuja.location.coordinates.lng}(${currentPuja.name}+Jagadhatri+Puja+${currentPuja.psZone})`
         : `https://www.google.com/maps/search/?api=1&query=${currentPuja.name}+Jagadhatri+Puja+${currentPuja.zone},+Hooghly,+West+Bengal`
-    
+
     const artistTypes = [
         { type: 'idol', icon: <LuBrush className="text-xl text-purple-600" />, title: 'Idol Artist' },
         { type: 'decoration', icon: <LuPalette className="text-xl text-purple-600" />, title: 'Decoration Artist' },
@@ -184,7 +173,7 @@ export default async function Page({ params }: PageProps<Params>) {
             icon: <FaFacebook className="text-sm md:text-xl text-white/80 hover:text-white transition-colors" />
         },
         {
-            type: "instagram", 
+            type: "instagram",
             icon: <FaInstagram className="text-sm md:text-xl text-white/80 hover:text-white transition-colors" />
         },
         {
@@ -226,7 +215,7 @@ export default async function Page({ params }: PageProps<Params>) {
     }
     const jsonLd = schema(schemaData);
     jsonLd["@graph"].push({
-        "name": `${(currentPuja.jubilee || currentPuja.preJubilee) ? currentPuja.celebrating : currentPuja.year ? `${currentPuja.year} Years`  : 'Jagadhatri Puja'} Celebration of ${currentPuja.name} Sarbajanin`,
+        "name": `${(currentPuja.jubilee || currentPuja.preJubilee) ? currentPuja.celebrating : currentPuja.year ? `${currentPuja.year} Years` : 'Jagadhatri Puja'} Celebration of ${currentPuja.name} Sarbajanin`,
         "description": `Jagadhatri Puja ${queryYear} celebration by ${currentPuja?.name} Sarbajanin, ${currentPuja.psZone}`,
         "@type": "Event",
         "eventStatus": "https://schema.org/EventScheduled",
@@ -260,9 +249,9 @@ export default async function Page({ params }: PageProps<Params>) {
         ...(pujaImages ? {
             "image": pujaImages?.map((item: any) => imageUrl(item.src)),
         } : {}),
-        "startDate": `${format(getDateByIndex(siteData.schedules, 0, "06:00:00"), "yyyy-MM-dd'T'HH:mm:ssXXX")}`,
-        "endDate": `${format(getDateByIndex(siteData.schedules, 4, "23:59:59"), "yyyy-MM-dd'T'HH:mm:ssXXX")}`,
-        "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}/#schema-${currentPuja.sortOrder+1}`, // ensure unique ID
+        "startDate": `${format(getDateByIndex(siteData?.schedules, 0, "06:00:00"), "yyyy-MM-dd'T'HH:mm:ssXXX")}`,
+        "endDate": `${format(getDateByIndex(siteData?.schedules, 4, "23:59:59"), "yyyy-MM-dd'T'HH:mm:ssXXX")}`,
+        "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}/#schema-${currentPuja.ccjpcId}`, // ensure unique ID
         "inLanguage": "en-IN",
         "mainEntityOfPage": {
             "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}/#webpage`
@@ -290,7 +279,7 @@ export default async function Page({ params }: PageProps<Params>) {
                                 backgroundPosition: '0 0, 16px 0, 16px 16px, 0 16px'
                             }} />
                         </div>
-                        
+
                         {/* Sacred Geometry Pattern */}
                         <div className="absolute inset-0 opacity-10">
                             <div className="absolute inset-0" style={{
@@ -310,7 +299,7 @@ export default async function Page({ params }: PageProps<Params>) {
                     <div className="absolute inset-0 overflow-hidden">
                         {/* Large Decorative Circle */}
                         <div className="absolute -top-1/4 -right-1/4 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-[#FFD700]/10 to-transparent" />
-                        
+
                         {/* Animated Blobs */}
                         <div className="absolute top-0 left-0 w-[600px] h-[600px]">
                             <div className="absolute inset-0 bg-gradient-to-br from-[#FF9933]/20 to-transparent rounded-full mix-blend-overlay filter blur-3xl animate-blob" />
@@ -329,7 +318,7 @@ export default async function Page({ params }: PageProps<Params>) {
 
                     {/* Enhanced Vignette Effect */}
                     <div className="absolute inset-0 bg-gradient-to-t from-[#2D1B69]/60 via-transparent to-[#2D1B69]/60" />
-                    
+
                     {/* Subtle Color Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-r from-[#FFD700]/5 via-transparent to-[#FF5E5B]/5" />
                 </div>
@@ -355,7 +344,7 @@ export default async function Page({ params }: PageProps<Params>) {
                                         </span> */}
                                         <span className="relative flex items-center gap-1 text-xs md:text-sm font-semibold px-3 py-1.5 bg-gradient-to-r from-yellow-400/20 via-orange-500/20 to-red-600/20 rounded-full border border-yellow-400/30 backdrop-blur-sm">
                                             <svg className="w-4 h-4 text-yellow-400 animate-spin-slow" viewBox="0 0 24 24">
-                                                <path fill="currentColor" d="M12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28z"/>
+                                                <path fill="currentColor" d="M12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28z" />
                                             </svg>
                                             Popular
                                         </span>
@@ -402,7 +391,7 @@ export default async function Page({ params }: PageProps<Params>) {
                                     description: 'Puja Category'
                                 },
                                 {
-                                    text: String(currentPuja.sortOrder + 1).padStart(2, '0'),
+                                    text: String(currentPuja.ccjpcId).padStart(2, '0'),
                                     description: 'Serial Number'
                                 }
                             ].map((item, index) => (
@@ -425,7 +414,7 @@ export default async function Page({ params }: PageProps<Params>) {
 
                         {socialLinks.length > 0 && <div className="flex items-center justify-center gap-4 mt-4">
                             {socialLinks.map((item, index) => (
-                                <a 
+                                <a
                                     key={index}
                                     href={item.link}
                                     target="_blank"
@@ -492,7 +481,7 @@ export default async function Page({ params }: PageProps<Params>) {
                                     <LuBook className="text-sm" />
                                     <span className="text-sm">About Our Puja</span>
                                 </div>
-                                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-900 via-purple-700 to-purple-800" style={{lineHeight: 'normal'}}>
+                                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-900 via-purple-700 to-purple-800" style={{ lineHeight: 'normal' }}>
                                     Celebrating Culture & Tradition
                                 </h2>
                                 <p className="text-gray-600 text-base md:text-lg">
@@ -509,7 +498,7 @@ export default async function Page({ params }: PageProps<Params>) {
                                             <div className="my-8 p-6 rounded-2xl bg-gradient-to-r from-purple-50 to-amber-50 border border-amber-100 relative overflow-hidden">
                                                 <div className="absolute top-0 right-0 w-40 h-40 bg-yellow-100/70 rounded-full blur-3xl -mr-20 -mt-20 opacity-70" />
                                                 <div className="absolute bottom-0 left-0 w-40 h-40 bg-purple-100/70 rounded-full blur-3xl -ml-20 -mb-20 opacity-70" />
-                                                
+
                                                 <div className="relative flex flex-col md:flex-row items-center gap-6">
                                                     <div className="flex-shrink-0 w-24 h-24 md:w-28 md:h-28 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-200/50">
                                                         <div className="text-white font-bold text-2xl md:text-3xl">
@@ -569,7 +558,7 @@ export default async function Page({ params }: PageProps<Params>) {
                         </div>
                     </div>
                 </div>
-          
+
                 {pujaImages && (
                     <div id="gallery" className="py-20 bg-gradient-to-br from-white via-amber-50/30 to-orange-50/30">
                         <div className="text-center mb-16">
@@ -577,14 +566,14 @@ export default async function Page({ params }: PageProps<Params>) {
                                 <LuImages className="text-lg" />
                                 <span>Our Gallery</span>
                             </div>
-                            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 px-3 bg-gradient-to-r from-amber-700 to-orange-800 bg-clip-text text-transparent" style={{lineHeight: 'normal'}}>Glimpses of Celebration</h2>
+                            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 px-3 bg-gradient-to-r from-amber-700 to-orange-800 bg-clip-text text-transparent" style={{ lineHeight: 'normal' }}>Glimpses of Celebration</h2>
                             <p className="text-gray-600 max-w-2xl mx-auto">Explore moments from our recent celebrations that capture the essence of our tradition and community spirit.</p>
                         </div>
-                        <GallerySlider 
-                            speed={500} 
-                            thumbnail={true} 
-                            slideShowAutoplay={true} 
-                            fullScreen={true} 
+                        <GallerySlider
+                            speed={500}
+                            thumbnail={true}
+                            slideShowAutoplay={true}
+                            fullScreen={true}
                             slides={pujaImages}
                             sliderOptions={{
                                 lazyLoad: 'sequential',
@@ -621,13 +610,13 @@ export default async function Page({ params }: PageProps<Params>) {
                                 <LuCalendar className="text-lg" />
                                 <span>Event Schedule</span>
                             </div>
-                            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent" style={{lineHeight: 'normal'}}>
+                            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent" style={{ lineHeight: 'normal' }}>
                                 Upcoming Events
                             </h2>
                             <p className="text-gray-600 max-w-2xl mx-auto">Mark your calendar for these auspicious occasions</p>
                         </div>
                         <div className="grid md:grid-cols-2 gap-4">
-                            {siteData.schedules?.map((item: SharedSchedule, index: number) => (
+                            {siteData?.schedules?.map((item: SharedSchedule, index: number) => (
                                 <div
                                     key={index}
                                     className="flex items-center gap-4 bg-white/90 backdrop-blur-sm p-4 rounded-2xl backdrop-blur-sm border border-gray-200 hover:border-blue-200 hover:bg-blue-50/50 transition-all duration-300 overflow-hidden"
@@ -832,7 +821,7 @@ export default async function Page({ params }: PageProps<Params>) {
                             <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">Quick Actions</h3>
                             <p className="text-gray-600">Everything you need to know about this puja</p>
                         </div>
-                        
+
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                             <Link
                                 href={`/puja-committee-list`}
@@ -843,7 +832,7 @@ export default async function Page({ params }: PageProps<Params>) {
                                 </div>
                                 <div className="text-sm font-medium text-gray-700 group-hover:text-purple-700">All Pujas</div>
                             </Link>
-                            
+
                             <Link
                                 href={`/gallery`}
                                 className="group p-4 rounded-xl bg-white/80 backdrop-blur-sm border border-gray-200 hover:border-blue-200 hover:bg-blue-50/50 transition-all duration-300 text-center"
@@ -853,7 +842,7 @@ export default async function Page({ params }: PageProps<Params>) {
                                 </div>
                                 <div className="text-sm font-medium text-gray-700 group-hover:text-blue-700">Gallery</div>
                             </Link>
-                            
+
                             <Link
                                 href={`/puja-history`}
                                 className="group p-4 rounded-xl bg-white/80 backdrop-blur-sm border border-gray-200 hover:border-green-200 hover:bg-green-50/50 transition-all duration-300 text-center"
@@ -863,7 +852,7 @@ export default async function Page({ params }: PageProps<Params>) {
                                 </div>
                                 <div className="text-sm font-medium text-gray-700 group-hover:text-green-700">History</div>
                             </Link>
-                            
+
                             <Link
                                 href={`/contact-us`}
                                 className="group p-4 rounded-xl bg-white/80 backdrop-blur-sm border border-gray-200 hover:border-orange-200 hover:bg-orange-50/50 transition-all duration-300 text-center"

@@ -1,6 +1,6 @@
 import {
     Paytone_One,
-    Rubik
+    Rubik,
 } from 'next/font/google'
 
 export const rubik = Rubik({

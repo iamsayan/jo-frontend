@@ -5,7 +5,7 @@ import type { Document } from '@/types/interfaces';
 
 export async function searchModels<T extends Document>(model: string, query: string, params: Record<string, unknown> = {}) {
     try {
-        const searchData = await getCollection<T>(model, {
+        const { data: searchData = [] } = await getCollection<T>(model, {
             filters: {
                 name: {
                     $contains: query,
@@ -13,7 +13,7 @@ export async function searchModels<T extends Document>(model: string, query: str
             },
             ...params,
         });
-        return searchData.data ?? null;
+        return searchData;
     } catch (error) {
         if (error instanceof Error && error.name !== 'TimeoutError') {
             console.error("API error:", error);

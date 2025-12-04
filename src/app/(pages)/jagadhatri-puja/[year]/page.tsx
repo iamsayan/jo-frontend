@@ -49,11 +49,8 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<Params>): Promise<Metadata> {
     const { year } = await params
     const queryYear = parseInt(year);
-    const siteDataRes = await getSingle<GlobalSite>('global', {
-        populate: '*',
-    });
-    const siteData: GlobalSite = siteDataRes.data ?? null;
-    const displayDate = getDateByIndex(siteData.schedules, 0);
+    const { data } = await getSingle<GlobalSite>('global', { populate: '*' });
+    const displayDate = getDateByIndex(data?.schedules, 0) ?? new Date();
     const dateIsCurrent = queryYear === displayDate.getFullYear();
 
     return {
@@ -77,30 +74,20 @@ export default async function Page({ params }: PageProps<Params>) {
     const { year } = await params
     const queryYear = Number(year);
 
-    const pujasReq = getCollection<PujaExtended>('pujas', {
-        populate: '*',
-        pagination: {
-            page: 1,
-            pageSize: 200
-        },
-        sort: ['sortOrder:asc']
-    });
-
-    const siteDataReq = getSingle<GlobalSite>('global', {
-        populate: '*',
-    });
-
-    const [pujasRes, siteDataRes] = await Promise.allSettled([pujasReq, siteDataReq]).then(results => [
-        results[0].status === "fulfilled" ? results[0].value : { data: [] },
-        results[1].status === "fulfilled" ? results[1].value : { data: {} },
+    const [
+        { data: pujasData = [] }, 
+        { data: siteData = null }
+    ] = await Promise.all([
+        getCollection<Puja>('pujas', {
+            populate: '*',
+            pagination: { page: 1, pageSize: 200 },
+            sort: ['sortOrder:asc'],
+        }),
+        getSingle<GlobalSite>('global', { populate: '*' }),
     ]);
 
-    const pujas: PujaExtended[] = Array.isArray(pujasRes.data) && pujasRes.data.length > 0
-        ? pujasRes.data.map((data: Puja) => extendPuja(data, queryYear))
-        : [];
-    const siteData: GlobalSite = (siteDataRes.data as GlobalSite) ?? null;
-
-    const displayDate = getDateByIndex(siteData.schedules, 0);
+    const pujas: PujaExtended[] = pujasData.map((p: Puja) => extendPuja(p, queryYear));
+    const displayDate = getDateByIndex(siteData?.schedules, 0);
     const dateIsCurrent = queryYear === displayDate.getFullYear();
     const jubilee: PujaExtended[] = pujas.filter((data: PujaExtended) => data.jubilee === true);
     const prejubilee: PujaExtended[] = pujas.filter((data: PujaExtended) => data.preJubilee === true);
@@ -207,7 +194,7 @@ export default async function Page({ params }: PageProps<Params>) {
         const items: InfoItem[] = [
             {
                 title: "Festival Duration",
-                description: `${siteData.schedules?.length ?? 0} Days`,
+                description: `${siteData?.schedules?.length ?? 0} Days`,
                 icon: <LuClock />,
                 variant: "from-orange-500 to-orange-300",
             },
@@ -245,7 +232,7 @@ export default async function Page({ params }: PageProps<Params>) {
                             </tr>
                         </thead>
                         <tbody>
-                            {siteData.schedules?.map((item: SharedSchedule, index: number) => {
+                            {siteData?.schedules?.map((item: SharedSchedule, index: number) => {
                                 return (
                                     <tr key={index} className='row'>
                                         <td>{index + 1}</td>
@@ -438,8 +425,8 @@ export default async function Page({ params }: PageProps<Params>) {
                 "url": process.env.NEXT_PUBLIC_SITE_URL
             },
             "image": `${process.env.NEXT_PUBLIC_SITE_URL}/og-image.jpg`,
-            "startDate": format(getDateByIndex(siteData.schedules, 0, "06:00:00"), "yyyy-MM-dd'T'HH:mm:ssXXX"),
-            "endDate": format(getDateByIndex(siteData.schedules, 4, "23:59:59"), "yyyy-MM-dd'T'HH:mm:ssXXX"),
+            "startDate": format(getDateByIndex(siteData?.schedules, 0, "06:00:00"), "yyyy-MM-dd'T'HH:mm:ssXXX"),
+            "endDate": format(getDateByIndex(siteData?.schedules, 4, "23:59:59"), "yyyy-MM-dd'T'HH:mm:ssXXX"),
             "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}/#schema-${queryYear}`, // ensure unique ID
             "inLanguage": "en-IN",
             "mainEntityOfPage": {
@@ -448,7 +435,7 @@ export default async function Page({ params }: PageProps<Params>) {
         });
     }
 
-    if (siteData.processionListPublished && pujaWithProcessions) {
+    if (siteData?.processionListPublished && pujaWithProcessions) {
         tabs.push({
             title: <span key={queryYear} className="flex items-center gap-2">Procession List <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-300/10 text-blue-500">{pujaWithProcessions.length}</span></span>,
             icon: <LuPartyPopper  />,
@@ -508,7 +495,7 @@ export default async function Page({ params }: PageProps<Params>) {
                                 <h3 className="text-xl font-semibold text-blue-800">Festival Schedule</h3>
                             </div>
                             <p className="text-gray-700 leading-relaxed">
-                                In {queryYear}, the grand festival of Jagadhatri Puja will be celebrated with immense devotion and splendor beginning on <span className="font-semibold">{format(displayDate, "EEEE, 'the' do 'of' MMMM yyyy")}</span>, which marks the auspicious day of Jagadhatri Puja itself, and the festivities, cultural programs, and rituals will continue in full spirit and grandeur for several consecutive days until <span className="font-semibold">{format(getDateByIndex(siteData.schedules, 4), "EEEE, 'the' do 'of' MMMM yyyy")}</span>, making this sacred occasion a five-day-long celebration filled with traditional worship, elaborate decorations, vibrant processions, and community gatherings that unite devotees and visitors alike in an atmosphere of joy, faith, and cultural harmony..
+                                In {queryYear}, the grand festival of Jagadhatri Puja will be celebrated with immense devotion and splendor beginning on <span className="font-semibold">{format(displayDate, "EEEE, 'the' do 'of' MMMM yyyy")}</span>, which marks the auspicious day of Jagadhatri Puja itself, and the festivities, cultural programs, and rituals will continue in full spirit and grandeur for several consecutive days until <span className="font-semibold">{format(getDateByIndex(siteData?.schedules, 4), "EEEE, 'the' do 'of' MMMM yyyy")}</span>, making this sacred occasion a five-day-long celebration filled with traditional worship, elaborate decorations, vibrant processions, and community gatherings that unite devotees and visitors alike in an atmosphere of joy, faith, and cultural harmony..
                             </p>
                         </div>
                     )}

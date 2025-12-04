@@ -23,7 +23,7 @@ export async function generateMetadata({ params, searchParams }: PageProps<Param
     const { year } = await params
     const { page } = await searchParams
 
-    const images = await getCollection<Image>('images', {
+    const { data: images = [], meta: metaData } = await getCollection<Image>('images', {
         filters: {
             category: { $in: ['puja', 'procession', 'immersion'] },
             year: year
@@ -40,7 +40,7 @@ export async function generateMetadata({ params, searchParams }: PageProps<Param
         }
     });
 
-    const pageCount = Math.ceil((images?.meta?.pagination?.total ?? 0) / itemsPerPage);
+    const pageCount = Math.ceil((metaData?.pagination?.total ?? 0) / itemsPerPage);
     const currentPage = Number(page ?? 0)
     
     return {
@@ -49,7 +49,7 @@ export async function generateMetadata({ params, searchParams }: PageProps<Param
         openGraph: {
             ...metadataSchema.openGraph,
             url: currentPage === 0 ? `/gallery/${year}` : `/gallery/${year}?page=${currentPage}`,
-            images: images?.data?.slice(0, 3)?.map((item: Image) => {
+            images: images.slice(0, 3)?.map((item: Image) => {
                 return {
                     url: imageUrl(`${item.year}/${item.puja?.referenceId}/${item.name}`, { quality: 60 }),
                     alt: item.puja?.name ?? item.name
@@ -70,7 +70,7 @@ export default async function Page({ params, searchParams }: PageProps<Params, S
     const { year } = await params
     const { page } = await searchParams
 
-    const imagesObject = await getCollection<Image>('images', {
+    const { data: images = [], meta: metaData } = await getCollection<Image>('images', {
         filters: {
             category: { $in: ['puja', 'procession', 'immersion'] },
             year: year
@@ -82,7 +82,6 @@ export default async function Page({ params, searchParams }: PageProps<Params, S
             limit: itemsPerPage,
         }
     });
-    const images: Image[] = imagesObject.data ?? []
 
     if (images.length < 1) {
         notFound()
@@ -102,7 +101,7 @@ export default async function Page({ params, searchParams }: PageProps<Params, S
     return (
         <MainLayout title={`Photo Gallery ${year}`} jsonLd={jsonLd}>
             <Section title="View Jagadhatri Puja" description={`Photo Gallery ${year}`}>
-                <GalleryPaginate key={year} total={imagesObject.meta?.pagination?.total ?? 0} images={images} itemsPerPage={itemsPerPage} />
+                <GalleryPaginate key={year} total={metaData?.pagination?.total ?? 0} images={images} itemsPerPage={itemsPerPage} />
             </Section>
         </MainLayout>
     )

@@ -3,7 +3,7 @@ import type { MetadataRoute } from 'next'
 import type { Puja } from '@/types';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const pujaData = await getCollection<Puja>('pujas', {
+    const { data = [] } = await getCollection<Puja>('pujas', {
         populate: ['partnerships'],
         pagination: {
             page: 1,
@@ -11,7 +11,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         },
         sort: ['sortOrder:asc']
     });
-    const data: Puja[] = pujaData.data ?? [];
 
     const sitemaps: MetadataRoute.Sitemap = [
         {

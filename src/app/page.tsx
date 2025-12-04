@@ -74,11 +74,8 @@ interface ShopItem {
 }
 
 export default async function Home() {
-    const siteData = await getSingle<GlobalSite>('global', {
-        populate: '*',
-    });
-    const data: GlobalSite = siteData.data ?? null;
-    const year = getDateByIndex(data.schedules, 0).getFullYear();
+    const { data } = await getSingle<GlobalSite>('global', { populate: '*' });
+    const year = getDateByIndex(data?.schedules, 0).getFullYear();
     const curYear = new Date().getFullYear();
     const btnYear = curYear > year ? curYear : year;
 
@@ -429,9 +426,9 @@ export default async function Home() {
                 description={`Countdown ${year}`}
             >
                 <div className="flex flex-col gap-8 text-center">
-                    {data.schedules && <CountdownTimer className="mt-3" targetDate={formatDate(data.schedules[0].date)} />}
+                    {data?.schedules && <CountdownTimer className="mt-3" targetDate={formatDate(data.schedules[0].date)} />}
                     <div className="grid gap-6 grid-cols-2 md:grid-cols-6">
-                        {data.schedules?.slice(-5).map((item: SharedSchedule, index: number) => (
+                        {data?.schedules?.slice(-5).map((item: SharedSchedule, index: number) => (
                             <a
                                 key={index}
                                 href={buildGoogleCalendarUrl({

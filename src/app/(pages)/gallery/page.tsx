@@ -23,7 +23,7 @@ export const metadata = {
 }
 
 export default async function Page() {
-    const allImagesData = await getCollection<Image>('images', {
+    const { data: allImages = [] } = await getCollection<Image>('images', {
         populate: {
             puja: {
                 fields: ['name', 'referenceId']
@@ -40,7 +40,6 @@ export default async function Page() {
         },
         sort: ['updatedAt:desc'],
     });
-    const allImages: Image[] = allImagesData.data ?? [];
     const availableYears = [...new Set(allImages.map((img: Image) => img.year))].sort((a: number, b: number) => b - a);
 
     const jsonLd = schema({
