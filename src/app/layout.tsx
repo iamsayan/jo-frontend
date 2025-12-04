@@ -68,6 +68,21 @@ interface RootLayoutProps {
 }
 
 export default async function RootLayout({ children }: RootLayoutProps) {
+    const response = await fetch(`${process.env.API_URL}/global`, {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${process.env.API_KEY!}`,
+        },
+        next: {
+            tags: [`global`],
+            revalidate: 604800,
+        },
+    });
+    const siteDatatest = await response.json();
+    console.log(siteDatatest);
+
+
+
     const globalClient = cms.tag('global').single('global');
     const siteDataReq = await globalClient.find({
         populate: '*',

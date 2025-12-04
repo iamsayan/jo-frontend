@@ -33,8 +33,7 @@ export default function strapiNext(config: Config): StrapiNextClient {
       const callNext = (init as any).next ?? {};
       const callTags = Array.isArray(callNext.tags) ? callNext.tags : [];
       const merged = Array.from(new Set([...(clone.__next_tags ?? []), ...callTags]));
-
-      return baseFetch(url, {
+      const params = {
         ...init,
         next: {
           ...(scoped.next ?? {}),
@@ -46,7 +45,10 @@ export default function strapiNext(config: Config): StrapiNextClient {
           ...(scoped.headers ?? {}),
           ...(init.headers ?? {}),
         } as HeadersInit,
-      } as NextInit);
+      } as NextInit;
+      console.log(params);
+
+      return baseFetch(url, params);
     };
 
     return clone;

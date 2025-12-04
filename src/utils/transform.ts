@@ -1,4 +1,4 @@
-type Params = {
+interface Params {
     width?: number;
     quality?: number;
     height?: number;
