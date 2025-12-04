@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import CinematicsPlans from '@/components/cinematics-plans';
-import { cms } from '@/lib/cms';
+import { getCollection } from '@/utils/fetch';
 import { extendPuja } from '@/utils/functions';
-import type { Puja, PageProps, PujaExtended, APIResponseCollection } from '@/types';
+import type { Puja, PageProps, PujaExtended } from '@/types';
 
 export const metadata: Metadata = {
     title: 'JO Cinematics Registration',
@@ -25,15 +25,14 @@ interface SearchParams {
 export default async function Page({ searchParams }: PageProps<{}, SearchParams>) {
     const { plan } = await searchParams;
 
-    const client = cms.tag('puja').collection('pujas');
-    const pujasData = await client.find({
+    const pujasData = await getCollection<Puja>('pujas', {
         populate: ['partnerships'],
         pagination: {
             page: 1,
             pageSize: 200
         },
         sort: ['sortOrder:asc']
-    }) as APIResponseCollection<Puja>;
+    });
 
     const pujas: PujaExtended[] = pujasData.data ? pujasData.data.map((data: Puja) => extendPuja(data)) : [];
     return (

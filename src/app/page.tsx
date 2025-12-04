@@ -26,11 +26,11 @@ import {
     FaInstagram,
     FaWhatsapp
 } from "react-icons/fa";
-import { cms } from "@/lib/cms";
+import { getSingle } from "@/utils/fetch";
 import { buildGoogleCalendarUrl, cn, formatDate, getDateByIndex } from "@/utils/functions";
 import { paytoneOne } from "@/fonts";
 import { PiConfettiThin } from "react-icons/pi";
-import type { APIResponse, GlobalSite, SharedSchedule } from "@/types";
+import type { GlobalSite, SharedSchedule } from "@/types";
 import type { IconType } from "react-icons/lib";
 
 const imagesPath = [
@@ -74,10 +74,9 @@ interface ShopItem {
 }
 
 export default async function Home() {
-    const globalClient = cms.tag('global').single('global');
-    const siteData = await globalClient.find({
+    const siteData = await getSingle<GlobalSite>('global', {
         populate: '*',
-    }) as APIResponse<GlobalSite>;
+    });
     const data: GlobalSite = siteData.data ?? null;
     const year = getDateByIndex(data.schedules, 0).getFullYear();
     const curYear = new Date().getFullYear();

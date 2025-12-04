@@ -1,11 +1,11 @@
 'use server'
 
-import { admin } from "@/lib/cms";
+import { getCollection } from "@/utils/fetch";
+import type { Document } from '@/types/interfaces';
 
-export async function searchModels(model: string, query: string, params: Record<string, any> = {}) {
+export async function searchModels<T extends Document>(model: string, query: string, params: Record<string, unknown> = {}) {
     try {
-        const client = admin.collection(model);
-        const searchData = await client.find({
+        const searchData = await getCollection<T>(model, {
             filters: {
                 name: {
                     $contains: query,

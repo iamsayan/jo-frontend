@@ -4,13 +4,11 @@ import Section from "@/components/section";
 import Gallery from "@/components/gallery";
 import schema from "@/utils/schema";
 import SmartImage from "@/components/smart-image";
-import { cms } from "@/lib/cms";
+import { getCollection } from "@/utils/fetch";
 import { capitalizeFirst } from "@/utils/functions";
 import { metadata as metadataSchema } from "@/app/layout";
 import imageUrl from "@/utils/transform";
-import type { APIResponseCollection, Image } from "@/types";
-
-const client = cms.tag('image').collection('images');
+import type { Image } from "@/types";
 
 export const metadata = {
     title: 'Photo Gallery',
@@ -25,7 +23,7 @@ export const metadata = {
 }
 
 export default async function Page() {
-    const allImagesData = await client.find({
+    const allImagesData = await getCollection<Image>('images', {
         populate: {
             puja: {
                 fields: ['name', 'referenceId']
@@ -41,7 +39,7 @@ export default async function Page() {
             } 
         },
         sort: ['updatedAt:desc'],
-    }) as APIResponseCollection<Image>;
+    });
     const allImages: Image[] = allImagesData.data ?? [];
     const availableYears = [...new Set(allImages.map((img: Image) => img.year))].sort((a: number, b: number) => b - a);
 

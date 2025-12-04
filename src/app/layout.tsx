@@ -1,11 +1,11 @@
 import type { Metadata, Viewport } from 'next'
 import Script from "next/script"
+import { headers } from 'next/headers'
 import { rubik } from "@/fonts"
 import { GoogleTagManager } from '@next/third-parties/google'
 import Providers from '@/app/providers';
-import { cms } from '@/lib/cms';
-import { headers } from 'next/headers'
-import type { APIResponse, GlobalSite } from '@/types';
+import { getSingle } from '@/utils/fetch';
+import type { GlobalSite } from '@/types';
 
 import '@/app/globals.sass'
 import '@bprogress/core/css';
@@ -68,25 +68,9 @@ interface RootLayoutProps {
 }
 
 export default async function RootLayout({ children }: RootLayoutProps) {
-    const response = await fetch(`${process.env.API_URL}/global`, {
-        method: "GET",
-        headers: {
-            "Authorization": `Bearer ${process.env.API_KEY!}`,
-        },
-        next: {
-            tags: [`global`],
-            revalidate: 604800,
-        },
-    });
-    const siteDatatest = await response.json();
-    console.log(siteDatatest);
-
-
-
-    const globalClient = cms.tag('global').single('global');
-    const siteDataReq = await globalClient.find({
+    const siteDataReq = await getSingle<GlobalSite>('global', {
         populate: '*',
-    }) as APIResponse<GlobalSite>;
+    });
     const siteData: GlobalSite = siteDataReq.data ?? null;
     const nonce = (await headers()).get('x-nonce') ?? '';
 

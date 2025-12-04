@@ -1,6 +1,28 @@
-import type { API } from '@strapi/client'
-
 // Base Strapi Types
+export interface Document {
+  documentId: string;
+  createdAt: string;
+  updatedAt: string;
+  [key: string]: any;
+}
+
+export interface Pagination {
+  page: number;
+  pageSize: number;
+  pageCount: number;
+  total: number;
+}
+export interface ResponseMeta {
+  pagination?: Pagination;
+}
+export interface DocumentResponse<T extends Document = Document> {
+  data: T;
+  meta: ResponseMeta;
+}
+export interface DocumentResponseCollection<T extends Document = Document> {
+  data: T[];
+  meta: ResponseMeta;
+}
 
 // Image format keys - generated from upload plugin config
 export type StrapiImageFormatKey =
@@ -19,7 +41,7 @@ export interface StrapiImageFormat {
   url: string
 }
 
-export interface StrapiBaseFile extends API.Document {
+export interface StrapiBaseFile extends Document {
   id: number
   name: string
   alternativeText: string | null
@@ -48,7 +70,7 @@ export interface StrapiImage extends StrapiBaseFile {
   provider_metadata: unknown | null
 }
 
-export interface StrapiUser extends API.Document {
+export interface StrapiUser extends Document {
   id: number
   username: string | null
   email: string | null
@@ -58,7 +80,7 @@ export interface StrapiUser extends API.Document {
   role: StrapiRole | null
 }
 
-export interface StrapiRole extends API.Document {
+export interface StrapiRole extends Document {
   id: number
   name: string | null
   description: string | null
@@ -207,7 +229,7 @@ export interface SharedVideo {
   description: string
 }
 
-export interface Artist extends API.Document {
+export interface Artist extends Document {
   id: number
   name: string
   type: 'idol' | 'decoration' | 'light' | 'theme'
@@ -217,27 +239,27 @@ export interface Artist extends API.Document {
   pujas?: Puja[]
 }
 
-export interface AshsEntry extends API.Document {
+export interface AshsEntry extends Document {
   id: number
   year: number
   entries?: SharedAshsParticipant[]
 }
 
-export interface Award extends API.Document {
+export interface Award extends Document {
   id: number
   year: number
   categories?: AwardsCategory[]
   description: string
 }
 
-export interface Contact extends API.Document {
+export interface Contact extends Document {
   id: number
   name: string
   location: LocationPickerFieldType | null
   contact: string
 }
 
-export interface GlobalSite extends API.Document {
+export interface GlobalSite extends Document {
   id: number
   processionListPublished?: boolean
   schedules?: SharedSchedule[]
@@ -245,7 +267,7 @@ export interface GlobalSite extends API.Document {
   achievements: SharedAchievement[] | null
 }
 
-export interface Image extends API.Document {
+export interface Image extends Document {
   id: number
   puja?: Puja
   category: 'puja' | 'preparation' | 'banner' | 'events' | 'idolmaking' | 'eyecreation' | 'procession' | 'immersion' | 'lighting' | 'pandal' | 'kathamo-puja'
@@ -255,7 +277,7 @@ export interface Image extends API.Document {
   hash?: string
 }
 
-export interface Partnership extends API.Document {
+export interface Partnership extends Document {
   id: number
   puja?: Puja
   year: number
@@ -272,7 +294,7 @@ export interface Partnership extends API.Document {
   fullPaid: boolean
 }
 
-export interface Procession extends API.Document {
+export interface Procession extends Document {
   id: number
   title?: string
   puja?: Puja
@@ -281,7 +303,7 @@ export interface Procession extends API.Document {
   sortOrder: number
 }
 
-export interface Puja extends API.Document {
+export interface Puja extends Document {
   id: number
   name: string
   zone: 'chandannagar' | 'bhadreswar'
@@ -301,7 +323,7 @@ export interface Puja extends API.Document {
   partnerships?: Partnership[]
 }
 
-export interface VirtualTour extends API.Document {
+export interface VirtualTour extends Document {
   id: number
   puja?: Puja
   year: number

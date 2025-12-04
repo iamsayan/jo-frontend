@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import Link from 'next/link';
 import MainLayout from '@/components/main-layout';
 import Section from '@/components/section';
 import schema from "@/utils/schema";
@@ -12,12 +12,12 @@ import {
     LuAward,
     LuMedal
 } from 'react-icons/lu';
-import { cms } from '@/lib/cms';
+import { getCollection } from '@/utils/fetch';
 import { metadata as metadataSchema } from "@/app/layout";
 import Tabs, { TabProps } from '@/components/tabs';
-import Link from 'next/link';
 import { createElement } from 'react';
-import type { APIResponseCollection, Award, AwardsCategory, AwardsPosition } from '@/types';
+import type { Metadata } from 'next'
+import type { Award, AwardsCategory, AwardsPosition } from '@/types';
 
 export const metadata: Metadata = {
     title: 'Amie Srestho Hoimantika Somman',
@@ -47,8 +47,7 @@ const getPositionStyle = (position: string) => {
 };
 
 export default async function Page() {
-    const awardsClient = cms.tag('award').collection('awards');
-    const awardsData = await awardsClient.find({
+    const awardsData = await getCollection<Award>('awards', {
         sort: ['year:desc'],
         populate: {
             categories: {
@@ -63,7 +62,7 @@ export default async function Page() {
                 }
             }
         }
-    }) as APIResponseCollection<Award>;
+    });
 
     let awards: Award[] = awardsData?.data ?? [];
 

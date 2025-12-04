@@ -1,6 +1,5 @@
 import MainLayout from "@/components/main-layout";
 import Section from "@/components/section";
-import { cms } from "@/lib/cms";
 import Tabs, { TabProps } from '@/components/tabs';
 import Info, { InfoItem } from '@/components/info';
 import {
@@ -30,18 +29,16 @@ import {
     LuAward, 
     LuPlus
 } from "react-icons/lu";
+import { getCollection, getSingle } from "@/utils/fetch";
 import { metadata as metadataSchema } from "@/app/layout";
 import type { Metadata } from 'next'
 import cx from 'classix';
 import { format } from "date-fns";
-import type { Puja, PageProps, GlobalSite, Procession, SharedSchedule, PujaExtended, APIResponseCollection, APIResponse } from "@/types";
+import type { Puja, PageProps, GlobalSite, Procession, SharedSchedule, PujaExtended } from "@/types";
 
 interface Params {
     year: string;
 }
-
-const client = cms.tag('puja').collection('pujas');
-const globalClient = cms.tag('global').single('global');
 
 export async function generateStaticParams() {
     return Array.from({ length: 100 }, (_, i) => ({
@@ -52,9 +49,9 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<Params>): Promise<Metadata> {
     const { year } = await params
     const queryYear = parseInt(year);
-    const siteDataRes = await globalClient.find({
+    const siteDataRes = await getSingle<GlobalSite>('global', {
         populate: '*',
-    }) as APIResponse<GlobalSite>;
+    });
     const siteData: GlobalSite = siteDataRes.data ?? null;
     const displayDate = getDateByIndex(siteData.schedules, 0);
     const dateIsCurrent = queryYear === displayDate.getFullYear();
@@ -80,7 +77,7 @@ export default async function Page({ params }: PageProps<Params>) {
     const { year } = await params
     const queryYear = Number(year);
 
-    const pujasReq = client.find({
+    const pujasReq = getCollection<PujaExtended>('pujas', {
         populate: '*',
         pagination: {
             page: 1,
@@ -89,13 +86,13 @@ export default async function Page({ params }: PageProps<Params>) {
         sort: ['sortOrder:asc']
     });
 
-    const siteDataReq = globalClient.find({
+    const siteDataReq = getSingle<GlobalSite>('global', {
         populate: '*',
     });
 
     const [pujasRes, siteDataRes] = await Promise.allSettled([pujasReq, siteDataReq]).then(results => [
-        results[0].status === "fulfilled" ? results[0].value as APIResponseCollection<Puja> : { data: [] },
-        results[1].status === "fulfilled" ? results[1].value as APIResponse<GlobalSite> : { data: {} },
+        results[0].status === "fulfilled" ? results[0].value : { data: [] },
+        results[1].status === "fulfilled" ? results[1].value : { data: {} },
     ]);
 
     const pujas: PujaExtended[] = Array.isArray(pujasRes.data) && pujasRes.data.length > 0

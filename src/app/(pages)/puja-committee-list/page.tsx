@@ -1,9 +1,9 @@
 import { Metadata } from 'next';
 import MainLayout from "@/components/main-layout";
 import Section from "@/components/section";
-import { cms } from '@/lib/cms';
 import Tabs, { TabProps } from '@/components/tabs';
 import Info, { InfoItem } from '@/components/info';
+import { getCollection } from '@/utils/fetch';
 import { extendPuja } from "@/utils/functions";
 import schema from "@/utils/schema";
 import { metadata as metadataSchema } from "@/app/layout";
@@ -18,7 +18,7 @@ import {
     LuMapPin 
 } from "react-icons/lu";
 import PujaList from '@/components/puja-list';
-import type { APIResponseCollection, Puja, PujaExtended } from "@/types";
+import type { Puja, PujaExtended } from "@/types";
 
 export const metadata: Metadata = {
     title: 'Jagadhatri Puja Committee List',
@@ -31,8 +31,6 @@ export const metadata: Metadata = {
         canonical: '/puja-committee-list',
     },
 }
-
-const client = cms.tag('puja').collection('pujas');
 
 const getZoneDescription = (zone: PujaExtended['zone']) => {
     switch (zone) {
@@ -62,14 +60,14 @@ const getZoneDescription = (zone: PujaExtended['zone']) => {
 };
 
 export default async function Page() {
-    const pujaData = await client.find({
+    const pujaData = await getCollection<Puja>('pujas', {
         populate: ['procession', 'images'],
         pagination: {
             page: 1,
             pageSize: 200
         },
         sort: ['sortOrder:asc']
-    }) as APIResponseCollection<Puja>;
+    });
     const data: PujaExtended[] = pujaData.data ? pujaData.data.map((data: Puja) => extendPuja(data)) : [];
     const cgr: PujaExtended[] = data.filter((data: PujaExtended) => data.zone === 'chandannagar');
     const bhr: PujaExtended[] = data.filter((data: PujaExtended) => data.zone === 'bhadreswar');

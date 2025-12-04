@@ -3,10 +3,10 @@ import MainLayout from '@/components/main-layout';
 import Markdown from '@/components/markdown';
 import Section from '@/components/section';
 import schema from "@/utils/schema";
-import { cms } from '@/lib/cms';
+import { getSingle } from '@/utils/fetch';
 import { metadata as metadataSchema } from "@/app/layout";
 import { LuCircleCheck } from 'react-icons/lu';
-import type { APIResponse, GlobalSite, SharedAchievement } from '@/types';
+import type { GlobalSite, SharedAchievement } from '@/types';
 
 export const metadata: Metadata = {
     title: 'Achievements',
@@ -21,10 +21,9 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-    const globalClient = cms.tag('global').single('global');
-    const siteData = await globalClient.find({
+    const siteData = await getSingle<GlobalSite>('global', {
         populate: '*',
-    }) as APIResponse<GlobalSite>;
+    });
     const data: GlobalSite = siteData.data ?? null
 
     const jsonLd = schema({

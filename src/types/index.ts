@@ -1,5 +1,4 @@
 import type { Puja } from '@/types/interfaces';
-import type { API } from '@strapi/client';
 
 export interface PageProps<TParams = {}, TSearchParams = {}> {
   params: Promise<TParams>;
@@ -18,6 +17,3 @@ export interface PujaExtended extends Puja {
 }
 
 export * from "@/types/interfaces";
-
-export type APIResponse<T extends API.Document = API.Document> = API.DocumentResponse<T>;
-export type APIResponseCollection<T extends API.Document = API.Document> = API.DocumentResponseCollection<T>;

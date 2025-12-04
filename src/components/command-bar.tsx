@@ -15,7 +15,7 @@ import {
 import { useEffect, useState, useMemo } from "react";
 import { useRouter } from '@bprogress/next/app'
 import { useDebouncedCallback } from "use-debounce";
-import { extendPuja, getYear, sanitizeSearchQuery } from '@/utils/functions';
+import { extendPuja, sanitizeSearchQuery } from '@/utils/functions';
 import { LuSearch, LuList, LuImage, LuZap, LuShoppingCart, LuTrophy, LuInfo, LuMapPin } from "react-icons/lu";
 import { MdOutline360 } from 'react-icons/md';
 import { useSearchParams } from "next/navigation";
@@ -147,7 +147,7 @@ function DynamicActionsLoader({ onInput, onSearch }: DynamicActionsLoaderProps) 
 
         onSearch?.(true);
         try {
-            const searchResults = await searchModels(currentRootActionId as string, search) as Puja[];
+            const searchResults = await searchModels<Puja>(currentRootActionId as string, search);
             const dynamicActions = Array.isArray(searchResults) ? searchResults.map((pujaItem: Puja) => {
                 const item: PujaExtended = extendPuja(pujaItem);
                 return ({

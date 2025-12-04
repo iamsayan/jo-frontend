@@ -1,5 +1,4 @@
 import { notFound, permanentRedirect } from 'next/navigation';
-import { cms } from '@/lib/cms';
 import { capitalizeFirst, cn, extendPuja, getDateByIndex, stripHtmlAndLimit } from "@/utils/functions";
 import {
     LuArrowLeft,
@@ -37,23 +36,22 @@ import GallerySlider from '@/components/gallery-slider';
 import Markdown from '@/components/markdown';
 import imageUrl from '@/utils/transform';
 import { format } from "date-fns";
-import type { Artist, Image, Puja, GlobalSite, PujaExtended, SharedLink, SharedSchedule, PageProps, APIResponseCollection, APIResponse } from '@/types';
+import type { Artist, Image, Puja, GlobalSite, PujaExtended, SharedLink, SharedSchedule, PageProps } from '@/types';
+import { getCollection, getSingle } from '@/utils/fetch';
 
 interface Params {
     slug: string;
     id: string;
 }
 
-const client = cms.tag('puja').collection('pujas');
-
 export async function generateStaticParams() {
-    const pujaData = await client.find({
+    const pujaData = await getCollection<Puja>('pujas', {
         pagination: {
             page: 1,
             pageSize: 200
         },
         sort: ['sortOrder:asc']
-    }) as APIResponseCollection<Puja>;
+    });
     const data: Puja[] = pujaData.data ?? [];
 
     return data.map((item: Puja) => ({
@@ -65,14 +63,14 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<Params>): Promise<Metadata> {
     const { slug, id } = await params
 
-    const pujaData = await client.find({
+    const pujaData = await getCollection<Puja>('pujas', {
         populate: ['images', 'links'],
         filters: {
             referenceId: {
                 $eq: id
             }
         }
-    }) as APIResponseCollection<Puja>;
+    });
     const data: Puja[] = pujaData.data ?? []
     const currentPuja = data?.[0] ?? null;
 
@@ -99,7 +97,7 @@ export default async function Page({ params }: PageProps<Params>) {
     const { slug, id } = await params
     const queryYear = new Date().getFullYear()
 
-    const pujasReq = client.find({
+    const pujasReq = getCollection<Puja>('pujas', {
         populate: ['partnerships'],
         pagination: {
             page: 1,
@@ -108,14 +106,13 @@ export default async function Page({ params }: PageProps<Params>) {
         sort: ['sortOrder:asc']
     });
 
-    const globalClient = cms.tag('global').single('global');
-    const siteDataReq = globalClient.find({
+    const siteDataReq = getSingle<GlobalSite>('global', {
         populate: '*',
     });
 
     const [pujasRes, siteDataRes] = await Promise.allSettled([pujasReq, siteDataReq]).then(results => [
-        results[0].status === "fulfilled" ? results[0].value as APIResponseCollection<Puja> : { data: [] },
-        results[1].status === "fulfilled" ? results[1].value as APIResponse<GlobalSite> : { data: {} },
+        results[0].status === "fulfilled" ? results[0].value : { data: [] },
+        results[1].status === "fulfilled" ? results[1].value : { data: {} },
     ]);
 
     const pujas: PujaExtended[] = Array.isArray(pujasRes.data) && pujasRes.data.length > 0
