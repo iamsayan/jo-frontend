@@ -66,6 +66,8 @@ export default function GallerySlider({ slides, sliderOptions, ...props }: Galle
                             className="object-cover pointer-events-none text-transparent transform transition-all duration-700 group-hover:scale-110" 
                             fill={true}
                             quality={item?.quality ?? 70}
+                            lazy={false}
+                            loading='lazy'
                         />
                         {item?.subHtml && (
                             <>
