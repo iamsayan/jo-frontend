@@ -64,29 +64,28 @@ export async function generateMetadata({ params }: PageProps<Params>): Promise<M
 
     const { data: pujas = [] } = await getCollection<Puja>('pujas', {
         populate: ['images', 'links'],
-        filters: {
-            referenceId: {
-                $eq: id
-            }
-        }
+        pagination: {
+            page: 1,
+            pageSize: 200
+        },
     });
-    const currentPuja = pujas[0] ?? null;
+    const currentPuja = pujas.find((item: Puja) => item.referenceId === id);
 
     return {
-        title: `${currentPuja.name} Sarbajanin, ${currentPuja.zone === 'bhadreswar' ? 'Bhadreswar' : 'Chandannagar'}`,
-        description: stripHtmlAndLimit(currentPuja.info ?? ''),
+        title: `${currentPuja?.name} Sarbajanin, ${currentPuja?.zone === 'bhadreswar' ? 'Bhadreswar' : 'Chandannagar'}`,
+        description: stripHtmlAndLimit(currentPuja?.info ?? ''),
         openGraph: {
             ...metadataSchema.openGraph,
             url: `/puja/${slug}/${id}`,
-            images: currentPuja.images?.slice(0, 3).map((item: Image) => {
+            images: currentPuja?.images?.slice(0, 3).map((item: Image) => {
                 return {
-                    url: imageUrl(`${item.year}/${currentPuja.referenceId}/${item.name}`, { quality: 60 }),
-                    alt: currentPuja.name
+                    url: imageUrl(`${item.year}/${currentPuja?.referenceId}/${item.name}`, { quality: 60 }),
+                    alt: currentPuja?.name ?? ''
                 }
             })
         },
         alternates: {
-            canonical: currentPuja.links?.find((link: SharedLink) => link.title === 'website')?.url ?? `/puja/${slug}/${id}`
+            canonical: currentPuja?.links?.find((link: SharedLink) => link.title === 'website')?.url ?? `/puja/${slug}/${id}`
         },
     }
 }
@@ -108,7 +107,7 @@ export default async function Page({ params }: PageProps<Params>) {
     ]);
 
     const pujas: PujaExtended[] = pujasData.map((p) => extendPuja(p, queryYear));
-    const currentPuja = pujas.find((item: PujaExtended) => item.referenceId === id) ?? null;
+    const currentPuja = pujas.find((item: PujaExtended) => item.referenceId === id);
 
     if (!currentPuja) {
         notFound();
