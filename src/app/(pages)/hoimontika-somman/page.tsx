@@ -49,19 +49,12 @@ const getPositionStyle = (position: string) => {
 export default async function Page() {
     const { data: awards = [] } = await getCollection<Award>('awards', {
         sort: ['year:desc'],
-        populate: {
-            categories: {
-                populate: {
-                    positions: {
-                        populate: {
-                            pujas: {
-                                fields: ['name', 'slug', 'referenceId']
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        populate: [
+            'categories',
+            'categories.positions',
+            'categories.positions.pujas',
+            'categories.positions.artist',
+        ]
     });
 
     let tabs: TabProps[] = []
@@ -97,6 +90,11 @@ export default async function Page() {
                                                     </Link>
                                                 </div>
                                             ))}
+                                            {position.artist && (
+                                                <div className="text-gray-700 pl-6">
+                                                    &bull; {position.artist.name}
+                                                </div>
+                                            )}
                                         </div>
                                     ))}
                                 </div>

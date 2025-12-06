@@ -183,6 +183,7 @@ export interface AwardsPosition {
   id: number
   position: string
   pujas?: Puja[]
+  artist?: Artist
 }
 
 export interface SharedAchievement {
