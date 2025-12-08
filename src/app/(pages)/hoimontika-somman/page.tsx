@@ -111,7 +111,7 @@ export default async function Page() {
     awards.forEach((award: Award) => {
         const totalAwards = award.categories?.reduce((total: number, category: AwardsCategory) => {
             return total + (category.positions?.reduce((posTotal: number, position: AwardsPosition) => {
-                return posTotal + (position.pujas?.length || 0);
+                return posTotal + (position.pujas?.length || 0) + (position.artist ? 1 : 0);
             }, 0) || 0);
         }, 0) || 0;
 
