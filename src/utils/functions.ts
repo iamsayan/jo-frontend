@@ -1,7 +1,7 @@
 import cx, { ClassName } from 'classix';
-import { twMerge } from 'tailwind-merge';
+import { twMerge } from 'fluid-tailwindcss/tailwind-merge';
 import { parseISO, format } from 'date-fns';
-import { formatInTimeZone } from 'date-fns-tz'
+import { formatInTimeZone } from 'date-fns-tz';
 import type { Puja, PujaExtended, SharedSchedule } from '@/types';
 
 export function cn(...classes: ClassName[]) {
