@@ -21,7 +21,7 @@ export default function imageUrl(src: string, params?: Params): string {
         transform = true,
     } = params || {};
 
-    const baseUrl = 'https://assets.jagadhatrionline.co.in/images';
+    const baseUrl = process.env.NEXT_PUBLIC_IMAGE_SERVICE_URL;
     if (!transform) return `${baseUrl}/${src}`;
 
     const url = new URL(`${baseUrl}/transform`);
