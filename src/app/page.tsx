@@ -248,7 +248,7 @@ export default async function Home() {
                         </div>
 
                         <div className="relative">
-                            <h1 className={`mb-3 text-2xl md:text-4xl lg:text-6xl ${paytoneOne.className}`}>
+                            <h1 className={`mb-3 fl-text-2xl/6xl leading-none ${paytoneOne.className}`}>
                                 CHANDANNAGAR <br /> JAGADHATRI PUJA
                             </h1>
                             <p className="mb-8">Explore the Grand Festival of Chandannagar.</p>
@@ -363,7 +363,7 @@ export default async function Home() {
                                 target={item.link.includes('https') ? '_blank' : '_self'}
                                 className="flex flex-col gap-2 items-center"
                             >
-                                <span className="p-5 border border-gray-200 rounded-full">{<item.icon className="size-6 sm:size-8 md:size-10 text-yellow-500" />}</span>
+                                <span className="p-5 border border-gray-200 rounded-full">{<item.icon className="fl-size-6/10 text-yellow-500" />}</span>
                                 <span className="text-xl font-bold uppercase">{item.title}</span>
                                 <span className="">{item.description}</span>
                             </Link>
@@ -464,7 +464,7 @@ export default async function Home() {
                     </div>
                     {data?.videos && 
                         <div className="relative">
-                            <p className="font-bold text-base sm:text-xl md:text-2xl xl:text-3xl mb-4">
+                            <p className="font-bold fl-text-base/3xl mb-4">
                                 Glimps of <span className="text-yellow-500">Jagadhatri Puja</span>
                             </p>
                             <Videos videos={data.videos} />

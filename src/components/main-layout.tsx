@@ -20,7 +20,7 @@ export default function MainLayout({ children, title, jsonLd, breadcrumbTitle, e
             <div className="hero h-96 relative" style={{backgroundImage: `url(${bgImage})`}}>
                 <div className="hero-overlay bg-black/70"></div>
                 <div className="flex-col hero-content text-center text-white-content text-white p-0 pt-10 gap-5">
-                    <h1 className={`text-3xl md:text-4xl text-shadow-2xs text-shadow-grey-300 ${paytoneOne.className}`}>{title}</h1>
+                    <h1 className={`fl-text-3xl/4xl text-shadow-2xs text-shadow-grey-300 ${paytoneOne.className}`}>{title}</h1>
                     <Breadcrumbs breadcrumbTitle={breadcrumbTitle} end={end} />
                     {/* <div className="absolute top-4 left-4 w-12 h-12 border-t-2 border-l-2 border-amber-500/30"></div>
                     <div className="absolute top-4 right-4 w-12 h-12 border-t-2 border-r-2 border-amber-500/30"></div>

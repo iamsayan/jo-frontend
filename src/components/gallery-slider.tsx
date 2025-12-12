@@ -67,6 +67,7 @@ export default function GallerySlider({ slides, sliderOptions, ...props }: Galle
                             fill={true}
                             quality={item?.quality ?? 70}
                             lazy={false}
+                            loader={false}
                             loading='lazy'
                         />
                         {item?.subHtml && (
@@ -74,7 +75,7 @@ export default function GallerySlider({ slides, sliderOptions, ...props }: Galle
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                     <div className="absolute inset-0 flex items-end left-0 right-0 text-center bottom-0">
                                     <div className="text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 w-full group-hover:mb-3">
-                                        <div className="font-medium mb-2 max-w-50 mx-auto text-xs md:text-sm" dangerouslySetInnerHTML={{ __html: item?.subHtml }} />
+                                        <div className="font-medium mb-2 max-w-50 mx-auto fl-text-xs/sm" dangerouslySetInnerHTML={{ __html: item?.subHtml }} />
                                         {/* <div className="text-sm text-white/80">Click to expand</div> */}
                                     </div>
                                 </div>

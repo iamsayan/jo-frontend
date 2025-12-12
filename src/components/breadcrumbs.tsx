@@ -18,7 +18,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ breadcrumbTitle = null, end =
     pathItems = end !== null ? pathItems.slice(0, end) : pathItems;
 
     return (
-        <div id="breadcrumb" className={cn("text-xs breadcrumbs text-white/90 capitalize p-0 flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20", className)}>
+        <div id="breadcrumb" className={cn("text-xs breadcrumbs text-white/90 capitalize flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20", className)}>
             <ul className="breadcrumb-wrapper">
                 <li className="breadcrumb-item">
                     <Link href="/" className="flex items-center gap-2">

@@ -187,16 +187,16 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
     return (
         <div className="space-y-8">
             {/* Enhanced Search and Filter Section */}
-            <section className="bg-white/90 backdrop-blur-md rounded-2xl p-4 sm:p-6 border border-white/20 ring-1 ring-blue-100/50" aria-label="Search and filter pujas">
+            <section className="bg-white/90 backdrop-blur-md rounded-2xl fl-p-4/6 border border-white/20 ring-1 ring-blue-100/50" aria-label="Search and filter pujas">
                 {/* Search Bar */}
-                <div className="relative mb-4 sm:mb-6">
+                <div className="relative fl-mb-4/6">
                     <div className="relative">
                         <LuSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                         <input
                             type="text"
                             placeholder="Search by name, year, theme, address..."
                             value={search}
-                            className="w-full px-5 py-3 sm:py-4 rounded-xl border border-gray-200/60 focus:border-blue-400 focus-visible:border-blue-400 transition-all duration-200 text-gray-700 placeholder-gray-400 bg-white/95 backdrop-blur-sm text-base touch-manipulation"
+                            className="w-full px-5 fl-py-3/4 rounded-xl border border-gray-200/60 focus:border-blue-400 focus-visible:border-blue-400 transition-all duration-200 text-gray-700 placeholder-gray-400 bg-white/95 backdrop-blur-sm text-base touch-manipulation"
                             onChange={(e) => setSearch(e.target.value)}
                             aria-label="Search pujas by name, year, theme, or address"
                             aria-describedby="search-help"
@@ -327,7 +327,7 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
                 </div>
             )}
             {/* Cards Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 fl-gap-4/6">
                 {filteredData.map((item: PujaExtended, index: number) => {
                     const image = item.images?.[0];
                     return (

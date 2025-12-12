@@ -55,7 +55,7 @@ export default async function Page() {
             <Section title="View Jagadhatri Puja" description="Photo Gallery">
                 <div className="mb-16 text-center">
                     <Gallery 
-                        elementClassNames="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3 lg:gap-4"
+                        elementClassNames="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 fl-gap-2/4"
                         speed={500}
                         slideShowAutoplay={true}
                         fullScreen={true}
@@ -78,7 +78,7 @@ export default async function Page() {
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                 <div className="absolute inset-0 flex items-end left-0 right-0 text-center bottom-0">
                                     <div className="text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 w-full group-hover:mb-3">
-                                        <div className="font-medium mb-2 max-w-50 mx-auto text-xs md:text-sm">{image.puja?.name ?? image.name}</div>
+                                        <div className="font-medium mb-2 max-w-50 mx-auto fl-text-xs/sm">{image.puja?.name ?? image.name}</div>
                                         {/* <div className="text-sm text-white/80">Click to expand</div> */}
                                     </div>
                                 </div>
@@ -88,7 +88,7 @@ export default async function Page() {
                 </div>
                 <div>
                     <h2 className="text-2xl font-bold mb-6">Browse by Year</h2>
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3 lg:gap-4">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 fl-gap-2/4">
                         {availableYears.map((year: number) => {
                             const yearImages = allImages.filter((img: Image) => img.year === year);
                             if (yearImages.length === 0) return null;

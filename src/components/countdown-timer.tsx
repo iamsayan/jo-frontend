@@ -49,11 +49,11 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ className, targetDate }
             return (
                 <div className={`grid grid-flow-col gap-3 justify-center text-center auto-cols-max ${classes}`}>
                     {timer.map((item, index) => (
-                        <div className="flex flex-col items-center gap-2 border-slate-800 border-2 p-3 sm:p-4 md:p-5 rounded-sm bg-gray-100" key={index}>
-                            <span className={`countdown text-2xl sm:text-4xl md:text-5xl text-yellow-500 font-bold`}>
+                        <div className="flex flex-col items-center gap-2 border-slate-800 border-2 fl-p-3/5 rounded-sm bg-gray-100" key={index}>
+                            <span className={`countdown fl-text-2xl/5xl text-yellow-500 font-bold`}>
                                 <span style={{ "--value": item.value, "--digits": 2 } as React.CSSProperties} aria-live="polite" aria-label={String(item.value)}>{item.value}</span>
                             </span>
-                            <span className="countdown-label text-sm sm:text-base md:text-md">
+                            <span className="countdown-label fl-text-sm/md">
                                 {item.label}
                             </span>
                         </div>

@@ -8,7 +8,7 @@ import {
     buildGoogleCalendarUrl,
     extendPuja,
 } from "@/utils/functions";
-import schema from "@/utils/schema";
+import schema, { baseUrl } from "@/utils/schema";
 import Link from "next/link";
 import { 
     LuArrowLeft, 
@@ -122,7 +122,7 @@ export default async function Page({ params }: PageProps<Params>) {
         ]
 
         return (
-            <div className="text-center p-2 pt-5 md:p-5 space-y-3 md:space-y-4 lg:space-y-3 md:space-y-4 lg:space-y-5">
+            <div className="text-center fl-p-2/5 pt-5 fl-space-y-3/5">
                 <Info items={items} />
                 <div className="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
                     <table className="table text-center table-zebra">
@@ -218,7 +218,7 @@ export default async function Page({ params }: PageProps<Params>) {
             }
         ]
         return (
-            <div className="text-center p-2 pt-5 md:p-5 space-y-3 md:space-y-4 lg:space-y-5">
+            <div className="text-center fl-p-2/5 pt-5 fl-space-y-3/5">
                 <Info items={items} />
                 <div className="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
                     <table className="table text-center table-zebra">
@@ -289,7 +289,7 @@ export default async function Page({ params }: PageProps<Params>) {
             }
         ]
         return (
-            <div className="text-center p-2 pt-5 md:p-5 space-y-3 md:space-y-4 lg:space-y-5">
+            <div className="text-center fl-p-2/5 pt-5 fl-space-y-3/5">
                 <Info items={items} />
                 <div className="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
                     <table className="table text-center table-zebra">
@@ -417,20 +417,20 @@ export default async function Page({ params }: PageProps<Params>) {
             "performer": {
                 "@type": "Organization",
                 "name": "Jagadhatri Online",
-                "sameAs": process.env.NEXT_PUBLIC_SITE_URL
+                "sameAs": baseUrl
             },
             "organizer": {
                 "@type": "Organization",
                 "name": "Jagadhatri Online",
-                "url": process.env.NEXT_PUBLIC_SITE_URL
+                "url": baseUrl
             },
-            "image": `${process.env.NEXT_PUBLIC_SITE_URL}/og-image.jpg`,
+            "image": `${baseUrl}/og-image.jpg`,
             "startDate": format(getDateByIndex(siteData?.schedules, 0, "06:00:00"), "yyyy-MM-dd'T'HH:mm:ssXXX"),
             "endDate": format(getDateByIndex(siteData?.schedules, 4, "23:59:59"), "yyyy-MM-dd'T'HH:mm:ssXXX"),
-            "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}/#schema-${queryYear}`, // ensure unique ID
+            "@id": `${baseUrl}/${schemaData.path}/#schema-${queryYear}`, // ensure unique ID
             "inLanguage": "en-IN",
             "mainEntityOfPage": {
-                "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}/#webpage`
+                "@id": `${baseUrl}/${schemaData.path}/#webpage`
             }
         });
     }

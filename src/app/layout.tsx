@@ -92,7 +92,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                     <Script src="https://www.statcounter.com/counter/counter.js" nonce={nonce} async={true} />
                 </>
             }
-            <body className={`${rubik.className} ${rubik.variable} antialiased overflow-x-hidden text-sm md:text-base`}>
+            <body className={`${rubik.className} ${rubik.variable} antialiased overflow-x-hidden fl-text-sm/base`}>
                 <Providers siteData={siteData}>
                     {children}
                 </Providers>

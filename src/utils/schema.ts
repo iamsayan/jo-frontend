@@ -31,9 +31,9 @@ interface BreadcrumbItem {
     };
 }
 
+export const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || '';
+
 function generateBreadcrumbs(path: string, title: string, parents?: Parent[]): Array<BreadcrumbItem> {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || ''
-    
     const homeBreadcrumb = {
         "@type": "ListItem" as const,
         position: "1",
@@ -75,10 +75,10 @@ export default function schema({ path, title, parents, type, dates }: SchemaOpti
         "@graph": [
             {
                 "@type": "Organization",
-                "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/#organization`,
+                "@id": `${baseUrl}/#organization`,
                 "name": "Jagadhatri Online",
-                "url": process.env.NEXT_PUBLIC_SITE_URL,
-                "logo": `${process.env.NEXT_PUBLIC_SITE_URL}/circle-logo.png`,
+                "url": baseUrl,
+                "logo": `${baseUrl}/circle-logo.png`,
                 "email": "info@jagadhatrionline.co.in",
                 "sameAs": [
                     "https://www.facebook.com/JagadhatriOnlineOfficial/",
@@ -92,38 +92,38 @@ export default function schema({ path, title, parents, type, dates }: SchemaOpti
             },
             {
                 "@type": "WebSite",
-                "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/#website`,
-                "url": process.env.NEXT_PUBLIC_SITE_URL,
+                "@id": `${baseUrl}/#website`,
+                "url": baseUrl,
                 "name": "Jagadhatri Online",
                 "publisher": {
-                    "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/#organization`
+                    "@id": `${baseUrl}/#organization`
                 },
                 "inLanguage": "en-IN",
                 "potentialAction": {
                     "@type": "SearchAction",
-                    "target": `${process.env.NEXT_PUBLIC_SITE_URL}/?q={search_term_string}`,
+                    "target": `${baseUrl}/?q={search_term_string}`,
                     "query-input": "required name=search_term_string"
                 }
             },
             {
                 "@type": "BreadcrumbList",
-                "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${path}/#breadcrumb`,
+                "@id": `${baseUrl}/${path}/#breadcrumb`,
                 "name": `Navigate to ${title}`,
                 "itemListElement": generateBreadcrumbs(path, title, parents)
             },
             {
                 "@type": "WebPage",
-                "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${path}/#webpage`,
-                "url": `${process.env.NEXT_PUBLIC_SITE_URL}/${path}`,
+                "@id": `${baseUrl}/${path}/#webpage`,
+                "url": `${baseUrl}/${path}`,
                 "name": `${title} - Jagadhatri Online™ | the #1 Popular Jagadhatri Puja Portal`,
                 "datePublished": dates?.published ?? "2016-05-06T00:00:00+05:30",
                 "dateModified": dates?.modified ?? "2024-11-01T11:26:00+05:30",
                 "isPartOf": {
-                    "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/#website`
+                    "@id": `${baseUrl}/#website`
                 },
                 "inLanguage": "en-IN",
                 "breadcrumb": {
-                    "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${path}/#breadcrumb`
+                    "@id": `${baseUrl}/${path}/#breadcrumb`
                 }
             }
         ]
@@ -132,15 +132,15 @@ export default function schema({ path, title, parents, type, dates }: SchemaOpti
     if (type?.collection) {
         siteSchema['@graph'].push({
             "@type": "CollectionPage",
-            "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${path}/#webpage`,
-            "url": `${process.env.NEXT_PUBLIC_SITE_URL}/${path}`,
+            "@id": `${baseUrl}/${path}/#webpage`,
+            "url": `${baseUrl}/${path}`,
             "name": title,
             "isPartOf": {
-                "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/#website`
+                "@id": `${baseUrl}/#website`
             },
             "inLanguage": "en-IN",
             "breadcrumb": {
-                "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${path}/#breadcrumb`
+                "@id": `${baseUrl}/${path}/#breadcrumb`
             }
         })
     }

@@ -90,7 +90,7 @@ const Navbar: React.FC = () => {
                         : 'bg-transparent border-b-[1px] border-[#ffffff14]'
                         }`}
                 >
-                    <div className="navbar container mx-auto px-5 md:px-0">
+                    <div className="navbar container mx-auto fl-px-5/0">
                         <div className="navbar-start">
                             <div className="dropdown">
                                 <label tabIndex={0} className={cn('cursor-pointer lg:hidden p-0', !isScrolled && 'text-white')}>
@@ -140,7 +140,7 @@ const Navbar: React.FC = () => {
                                     <Image
                                         src={isScrolled ? circleLogo : logo}
                                         alt="Jagadhatri Online Logo"
-                                        className={isScrolled ? 'h-10 w-10' : 'py-1 h-12 w-auto'}
+                                        className={isScrolled ? 'size-10' : 'py-1 h-12 w-auto'}
                                         priority={true}
                                     />
                                 </Link>
@@ -152,7 +152,7 @@ const Navbar: React.FC = () => {
                                     <Image
                                         src={isScrolled ? circleLogo : logo}
                                         alt="Jagadhatri Online Logo"
-                                        className={isScrolled ? 'h-10 w-10' : 'py-1 h-12 w-auto'}
+                                        className={isScrolled ? 'size-10' : 'py-1 h-12 w-auto'}
                                         priority={true}
                                     />
                                 </Link>

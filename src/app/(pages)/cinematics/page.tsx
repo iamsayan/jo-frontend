@@ -68,7 +68,7 @@ export default function Page() {
                         etc got benefitted with our digital media partnership program.</p>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {features.map((feature, index) => (
-                            <div className="hover:shadow border rounded-md border-neutral-200 px-4 py-4 md:px-5 flex gap-4" key={index}>
+                            <div className="hover:shadow border rounded-md border-neutral-200 fl-px-4/5 py-4 flex gap-4" key={index}>
                                 <div className="pt-1">
                                     <LuCircleCheck className="size-6 text-green-500" />
                                 </div>

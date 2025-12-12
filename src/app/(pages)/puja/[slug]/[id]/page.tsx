@@ -23,10 +23,8 @@ import {
     FaThreads,
     FaGlobe,
 } from "react-icons/fa6";
-import {
-    formatDate,
-} from "@/utils/functions";
-import schema from "@/utils/schema";
+import { formatDate } from "@/utils/functions";
+import schema, { baseUrl } from "@/utils/schema";
 import Link from "next/link";
 import { metadata as metadataSchema } from "@/app/layout";
 import type { Metadata } from 'next'
@@ -169,27 +167,27 @@ export default async function Page({ params }: PageProps<Params>) {
     const socialLinks = [
         {
             type: "facebook",
-            icon: <FaFacebook className="text-sm md:text-xl text-white/80 hover:text-white transition-colors" />
+            icon: FaFacebook
         },
         {
             type: "instagram",
-            icon: <FaInstagram className="text-sm md:text-xl text-white/80 hover:text-white transition-colors" />
+            icon: FaInstagram
         },
         {
             type: "youtube",
-            icon: <FaYoutube className="text-sm md:text-xl text-white/80 hover:text-white transition-colors" />
+            icon: FaYoutube
         },
         {
             type: "x",
-            icon: <FaXTwitter className="text-sm md:text-xl text-white/80 hover:text-white transition-colors" />
+            icon: FaXTwitter
         },
         {
             type: "threads",
-            icon: <FaThreads className="text-sm md:text-xl text-white/80 hover:text-white transition-colors" />
+            icon: FaThreads
         },
         {
             type: "website",
-            icon: <FaGlobe className="text-sm md:text-xl text-white/80 hover:text-white transition-colors" />
+            icon: FaGlobe
         },
     ].map((item: any) => {
         return {
@@ -243,17 +241,17 @@ export default async function Page({ params }: PageProps<Params>) {
         "organizer": {
             "@type": "Organization",
             "name": currentPuja.name,
-            "url": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}`
+            "url": `${baseUrl}/${schemaData.path}`
         },
         ...(pujaImages ? {
             "image": pujaImages?.map((item: any) => imageUrl(item.src)),
         } : {}),
         "startDate": `${format(getDateByIndex(siteData?.schedules, 0, "06:00:00"), "yyyy-MM-dd'T'HH:mm:ssXXX")}`,
         "endDate": `${format(getDateByIndex(siteData?.schedules, 4, "23:59:59"), "yyyy-MM-dd'T'HH:mm:ssXXX")}`,
-        "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}/#schema-${currentPuja.ccjpcId}`, // ensure unique ID
+        "@id": `${baseUrl}/${schemaData.path}/#schema-${currentPuja.ccjpcId}`, // ensure unique ID
         "inLanguage": "en-IN",
         "mainEntityOfPage": {
-            "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${schemaData.path}/#webpage`
+            "@id": `${baseUrl}/${schemaData.path}/#webpage`
         }
     });
 
@@ -332,7 +330,7 @@ export default async function Page({ params }: PageProps<Params>) {
 
                         {/* Main Title */}
                         <div className="relative">
-                            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 tracking-tight text-center flex flex-col xl:flex-row items-center gap-2">
+                            <h1 className="fl-text-4xl/7xl font-bold text-white mb-6 tracking-tight text-center flex flex-col xl:flex-row items-center gap-2">
                                 <span className="text-shadow-xl text-shadow-grey-900">
                                     {currentPuja.name}
                                 </span>
@@ -341,7 +339,7 @@ export default async function Page({ params }: PageProps<Params>) {
                                         {/* <span className="absolute -inset-2">
                                             <div className="w-full h-full max-w-sm mx-auto rotate-2 blur-sm bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 opacity-30 animate-pulse" />
                                         </span> */}
-                                        <span className="relative flex items-center gap-1 text-xs md:text-sm font-semibold px-3 py-1.5 bg-gradient-to-r from-yellow-400/20 via-orange-500/20 to-red-600/20 rounded-full border border-yellow-400/30 backdrop-blur-sm">
+                                        <span className="relative flex items-center gap-1 fl-text-xs/sm font-semibold px-3 py-1.5 bg-gradient-to-r from-yellow-400/20 via-orange-500/20 to-red-600/20 rounded-full border border-yellow-400/30 backdrop-blur-sm">
                                             <svg className="w-4 h-4 text-yellow-400 animate-spin-slow" viewBox="0 0 24 24">
                                                 <path fill="currentColor" d="M12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28z" />
                                             </svg>
@@ -358,7 +356,7 @@ export default async function Page({ params }: PageProps<Params>) {
                         <div className="relative mb-12">
                             <div className="flex items-center justify-center gap-3 px-6 py-3 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
                                 <span className="size-4"><LuMapPin className="text-purple-400" /></span>
-                                <a href={gMapLink} target="_blank" className="text-xs md:text-sm text-white/90">
+                                <a href={gMapLink} target="_blank" className="fl-text-xs/sm text-white/90">
                                     {currentPuja.address}
                                 </a>
                             </div>
@@ -374,7 +372,7 @@ export default async function Page({ params }: PageProps<Params>) {
                         </div>
 
                         {/* Stats Row */}
-                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 mb-12">
+                        <div className="grid grid-cols-2 lg:grid-cols-4 fl-gap-4/8 mb-12">
                             {[
                                 {
                                     text: currentPuja.year ? currentPuja.year : '300+',
@@ -397,11 +395,11 @@ export default async function Page({ params }: PageProps<Params>) {
                                 <div key={index} className="px-6 py-4 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 xl:min-w-[200px] relative overflow-hidden">
                                     {/* <div className="absolute -right-8 -top-8 w-16 h-16 bg-purple-500/20 rounded-full blur-xl animate-pulse" /> */}
                                     <div className="relative text-center">
-                                        <div className="text-xl md:text-2xl font-bold text-white mb-1 flex items-center justify-center gap-2">
+                                        <div className="fl-text-xl/2xl font-bold text-white mb-1 flex items-center justify-center gap-2">
                                             <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-200 to-amber-500 whitespace-nowrap">{item.text}</span>
                                             {item?.after}
                                         </div>
-                                        <div className="text-xs md:text-sm text-white/70 whitespace-nowrap">{item.description}</div>
+                                        <div className="fl-text-xs/sm text-white/70 whitespace-nowrap">{item.description}</div>
                                     </div>
                                     <div className="absolute -left-2 -bottom-2 w-8 h-8" style={{
                                         backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.2) 1px, transparent 0)',
@@ -422,7 +420,7 @@ export default async function Page({ params }: PageProps<Params>) {
                                     aria-label={`Visit our ${capitalizeFirst(item.type)}`}
                                     title={capitalizeFirst(item.type)}
                                 >
-                                    {item.icon}
+                                    <item.icon className="fl-text-sm/xl text-white/80 hover:text-white transition-colors" />
                                 </a>
                             ))}
                         </div>}
@@ -433,15 +431,15 @@ export default async function Page({ params }: PageProps<Params>) {
             <div className="w-full bg-gradient-to-br from-purple-50/50 via-white to-purple-50/50">
                 <div className="px-4 pattern-dots">
                     <div className="container px-2 lg:px-0 mx-auto relative -mt-10 mb-16">
-                        <div className={cn(`grid grid-cols-1 gap-4 md:gap-8 justify-center items-center mx-auto`, currentPuja.procession && 'lg:grid-cols-3 max-w-screen-xl', !currentPuja.procession && 'lg:grid-cols-2 max-w-screen-lg')}>
+                        <div className={cn(`grid grid-cols-1 fl-gap-4/8 justify-center items-center mx-auto`, currentPuja.procession && 'lg:grid-cols-3 max-w-screen-xl', !currentPuja.procession && 'lg:grid-cols-2 max-w-screen-lg')}>
                             <div className="bg-white rounded-2xl p-5 shadow-xl shadow-purple-100/50 hover:shadow-2xl hover:shadow-purple-100/50 transition-all duration-300">
                                 <div className="flex items-center gap-4">
                                     <div className="p-3 rounded-xl bg-purple-100">
                                         <LuHistory className="text-2xl text-purple-600" />
                                     </div>
                                     <div>
-                                        <div className="text-xl md:text-2xl font-bold text-gray-800 mb-1">{currentPuja.celebrating ? currentPuja.celebrating : currentPuja.year ? currentPuja.year : '300+'}</div>
-                                        <div className="text-xs md:text-sm text-gray-600">{currentPuja.celebrating ? `Be the part of ${currentPuja.year} years' celebration` : 'Years of Celebration'}</div>
+                                        <div className="fl-text-xl/2xl font-bold text-gray-800 mb-1">{currentPuja.celebrating ? currentPuja.celebrating : currentPuja.year ? currentPuja.year : '300+'}</div>
+                                        <div className="fl-text-xs/sm text-gray-600">{currentPuja.celebrating ? `Be the part of ${currentPuja.year} years' celebration` : 'Years of Celebration'}</div>
                                     </div>
                                 </div>
                             </div>
@@ -451,8 +449,8 @@ export default async function Page({ params }: PageProps<Params>) {
                                         <LuMapPin className="text-2xl text-purple-600" />
                                     </div>
                                     <div>
-                                        <div className="text-xl md:text-2xl font-bold text-gray-800 mb-1">{currentPuja?.zone === 'bhadreswar' ? 'Bhadreswar' : 'Chandannagar'}</div>
-                                        <div className="text-xs md:text-sm text-gray-600">Police Station Zone</div>
+                                        <div className="fl-text-xl/2xl font-bold text-gray-800 mb-1">{currentPuja?.zone === 'bhadreswar' ? 'Bhadreswar' : 'Chandannagar'}</div>
+                                        <div className="fl-text-xs/sm text-gray-600">Police Station Zone</div>
                                     </div>
                                 </div>
                             </div>
@@ -463,8 +461,8 @@ export default async function Page({ params }: PageProps<Params>) {
                                             <LuPalette className="text-2xl text-purple-600" />
                                         </div>
                                         <div>
-                                            <div className="text-xl md:text-2xl font-bold text-gray-800 mb-1">Participating</div>
-                                            <div className="text-xs md:text-sm text-gray-600">
+                                            <div className="fl-text-xl/2xl font-bold text-gray-800 mb-1">Participating</div>
+                                            <div className="fl-text-xs/sm text-gray-600">
                                                 {`With ${currentPuja.procession?.truckCount} Vehicle${currentPuja.procession?.truckCount > 1 ? 's' : ''} in Procession`}
                                             </div>
                                         </div>
@@ -480,14 +478,14 @@ export default async function Page({ params }: PageProps<Params>) {
                                     <LuBook className="text-sm" />
                                     <span className="text-sm">About Our Puja</span>
                                 </div>
-                                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-900 via-purple-700 to-purple-800" style={{ lineHeight: 'normal' }}>
+                                <h2 className="fl-text-3xl/5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-900 via-purple-700 to-purple-800" style={{ lineHeight: 'normal' }}>
                                     Celebrating Culture & Tradition
                                 </h2>
-                                <p className="text-gray-600 text-base md:text-lg">
+                                <p className="text-gray-600 fl-text-base/lg">
                                     {currentPuja.estd === 0 ? 'A Legacy of Tradition' : `Since the year ${currentPuja.estd}`}
                                 </p>
                             </div>
-                            <div className="bg-white rounded-3xl p-6 md:p-8 border border-purple-100 shadow-xl shadow-purple-100/50 relative overflow-hidden">
+                            <div className="bg-white rounded-3xl fl-p-6/8 border border-purple-100 shadow-xl shadow-purple-100/50 relative overflow-hidden">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-purple-100/50 rounded-full blur-3xl -mr-16 -mt-16" />
                                 <div className="absolute bottom-0 left-0 w-32 h-32 bg-purple-100/50 rounded-full blur-3xl -ml-16 -mb-16" />
                                 <div className="relative">
@@ -499,13 +497,13 @@ export default async function Page({ params }: PageProps<Params>) {
                                                 <div className="absolute bottom-0 left-0 w-40 h-40 bg-purple-100/70 rounded-full blur-3xl -ml-20 -mb-20 opacity-70" />
 
                                                 <div className="relative flex flex-col md:flex-row items-center gap-6">
-                                                    <div className="flex-shrink-0 w-24 h-24 md:w-28 md:h-28 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-200/50">
-                                                        <div className="text-white font-bold text-2xl md:text-3xl">
+                                                    <div className="flex-shrink-0 fl-size-24/28 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-200/50">
+                                                        <div className="text-white font-bold fl-text-2xl/3xl">
                                                             {currentPuja.year}
                                                         </div>
                                                     </div>
                                                     <div className="text-center md:text-left">
-                                                        <h3 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-700 via-amber-600 to-amber-700 bg-clip-text text-transparent mb-2">
+                                                        <h3 className="fl-text-2xl/3xl font-bold bg-gradient-to-r from-purple-700 via-amber-600 to-amber-700 bg-clip-text text-transparent mb-2">
                                                             Celebrating {currentPuja.celebrating} Year!
                                                         </h3>
                                                         <p className="text-gray-700">
@@ -522,7 +520,7 @@ export default async function Page({ params }: PageProps<Params>) {
                                             </div>
                                         )}
                                     </div>
-                                    {info.length > 0 && <div className={cn(`lg:max-w-screen-xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-${info.length} justify-center gap-4 md:gap-6 mt-8 border-t border-purple-100 pt-8`)}>
+                                    {info.length > 0 && <div className={cn(`lg:max-w-screen-xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-${info.length} justify-center fl-gap-4/6 mt-8 border-t border-purple-100 pt-8`)}>
                                         {
                                             info.map((item: any, index: number) => (
                                                 <div key={index} className="flex items-start gap-4">
@@ -547,7 +545,7 @@ export default async function Page({ params }: PageProps<Params>) {
                                         </div>
                                         <div>
                                             <h4 className="text-gray-900 font-medium mb-2">Disclaimer</h4>
-                                            <p className="text-xs md:text-sm text-gray-600 leading-relaxed">
+                                            <p className="fl-text-xs/sm text-gray-600 leading-relaxed">
                                                 The information provided here may be incomplete or partially inaccurate. If you are a representative of this puja committee and notice any discrepancies, we encourage you to get in touch with us so we can update and correct the details. This initiative aims to bring all puja committees together on a single unified platform.
                                             </p>
                                         </div>
@@ -565,7 +563,7 @@ export default async function Page({ params }: PageProps<Params>) {
                                 <LuImages className="text-lg" />
                                 <span>Our Gallery</span>
                             </div>
-                            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 px-3 bg-gradient-to-r from-amber-700 to-orange-800 bg-clip-text text-transparent" style={{ lineHeight: 'normal' }}>Glimpses of Celebration</h2>
+                            <h2 className="fl-text-3xl/5xl font-bold mb-4 px-3 bg-gradient-to-r from-amber-700 to-orange-800 bg-clip-text text-transparent" style={{ lineHeight: 'normal' }}>Glimpses of Celebration</h2>
                             <p className="text-gray-600 max-w-2xl mx-auto">Explore moments from our recent celebrations that capture the essence of our tradition and community spirit.</p>
                         </div>
                         <GallerySlider
@@ -609,7 +607,7 @@ export default async function Page({ params }: PageProps<Params>) {
                                 <LuCalendar className="text-lg" />
                                 <span>Event Schedule</span>
                             </div>
-                            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent" style={{ lineHeight: 'normal' }}>
+                            <h2 className="fl-text-3xl/4xl font-bold mb-4 bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent" style={{ lineHeight: 'normal' }}>
                                 Upcoming Events
                             </h2>
                             <p className="text-gray-600 max-w-2xl mx-auto">Mark your calendar for these auspicious occasions</p>
@@ -647,7 +645,7 @@ export default async function Page({ params }: PageProps<Params>) {
                                     <LuMapPin className="text-lg" />
                                     <span>Location</span>
                                 </div>
-                                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-green-700 to-emerald-700 bg-clip-text text-transparent" style={{lineHeight: 'normal'}}>
+                                <h2 className="fl-text-3xl/4xl font-bold mb-4 bg-gradient-to-r from-green-700 to-emerald-700 bg-clip-text text-transparent" style={{lineHeight: 'normal'}}>
                                     Find Us
                                 </h2>
                                 <p className="text-gray-600 max-w-2xl mx-auto">Visit us to experience the divine atmosphere and spiritual energy</p>
@@ -717,7 +715,7 @@ export default async function Page({ params }: PageProps<Params>) {
                                 <LuBuilding className="text-lg" />
                                 <span>Explore More</span>
                             </div>
-                            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent" style={{lineHeight: 'normal'}}>
+                            <h2 className="fl-text-3xl/4xl font-bold mb-4 bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent" style={{lineHeight: 'normal'}}>
                                 Related Pujas
                             </h2>
                             <p className="text-gray-600 max-w-2xl mx-auto">Discover other puja committees in the same area</p>
@@ -817,7 +815,7 @@ export default async function Page({ params }: PageProps<Params>) {
                 <div className="py-16 bg-gradient-to-br from-white via-gray-50/50 to-slate-50/50">
                     <div className="max-w-4xl mx-auto px-4">
                         <div className="text-center mb-12">
-                            <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">Quick Actions</h3>
+                            <h3 className="fl-text-2xl/3xl font-bold text-gray-800 mb-4">Quick Actions</h3>
                             <p className="text-gray-600">Everything you need to know about this puja</p>
                         </div>
 

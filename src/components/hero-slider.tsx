@@ -44,6 +44,7 @@ const HeroSlider: React.FC<ImageSliderProps> = ({ children }) => {
                             quality={90}
                             lazy={false}
                             className="object-cover"
+                            loader={false}
                         />
                         <div className="absolute inset-0 bg-black/60"></div>
                     </div>

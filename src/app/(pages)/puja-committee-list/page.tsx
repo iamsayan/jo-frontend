@@ -102,15 +102,15 @@ export default async function Page() {
         ]
 
         return (
-            <div className="text-center p-2 pt-5 md:p-5 space-y-3 md:space-y-4 lg:space-y-5">
+            <div className="text-center fl-p-2/5 pt-5 fl-space-y-3/5">
                 {zoneInfo && (
-                    <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-6 md:p-8 mb-8">
+                    <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 fl-p-6/8 mb-8">
                         <div className="relative flex flex-col gap-8">
                             <div className="flex-1">
-                                <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+                                <h2 className="fl-text-2xl/3xl font-bold text-white mb-4">
                                     {zoneInfo.title}
                                 </h2>
-                                <p className="text-white/90 text-sm md:text-base">
+                                <p className="text-white/90 fl-text-sm/base">
                                     {zoneInfo.description}
                                 </p>
                             </div>

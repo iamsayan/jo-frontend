@@ -70,7 +70,7 @@ export default async function Page() {
                                 key={idx}
                                 className="group hover:scale-105 transition-all duration-300 delay-300 ease-in-out hover:shadow-lg border rounded-xl border-neutral-200 bg-gradient-to-br from-white to-neutral-50 flex gap-5"
                             >
-                                <div className="border-r border-neutral-200 py-6 px-2 flex items-center justify-center w-8 md:w-12">
+                                <div className="border-r border-neutral-200 py-6 px-2 flex items-center justify-center fl-w-8/12">
                                     <h3 className="md:text-lg font-bold text-gray-800 writing-mode-vertical transform -rotate-180">
                                         {category.category}
                                     </h3>
@@ -149,30 +149,30 @@ export default async function Page() {
                         striving to win in categories like Best Puja, Creative Excellence, and Best Artisan, among
                         others
                     </p>
-                    <div className="grid md:grid-cols-3 gap-4 md:gap-6">
-                        <div className="bg-white/90 backdrop-blur-sm p-4 md:p-6 rounded-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-200 flex items-start">
+                    <div className="grid md:grid-cols-3 fl-gap-4/6">
+                        <div className="bg-white/90 backdrop-blur-sm fl-p-4/6 rounded-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-200 flex items-start">
                             <LuTrophy className="text-yellow-500 text-3xl shrink-0 mt-1" />
                             <div className="ml-4">
-                                <h3 className="text-lg md:text-xl font-bold mb-1 md:mb-2">Prestigious Award</h3>
+                                <h3 className="fl-text-lg/xl font-bold fl-mb-1/2">Prestigious Award</h3>
                                 <p className="text-gray-600">Celebrating creativity and craftsmanship since 2016.</p>
                             </div>
                         </div>
-                        <div className="bg-white/90 backdrop-blur-sm p-4 md:p-6 rounded-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-200 flex items-start">
+                        <div className="bg-white/90 backdrop-blur-sm fl-p-4/6 rounded-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-200 flex items-start">
                             <LuUsers className="text-yellow-500 text-3xl shrink-0 mt-1" />
                             <div className="ml-4">
-                                <h3 className="text-lg md:text-xl font-bold mb-1 md:mb-2">Expert Panel</h3>
+                                <h3 className="fl-text-lg/xl font-bold fl-mb-1/2">Expert Panel</h3>
                                 <p className="text-gray-600">Judged by eminent personalities from various fields.</p>
                             </div>
                         </div>
-                        <div className="bg-white/90 backdrop-blur-sm p-4 md:p-6 rounded-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-200 flex items-start">
+                        <div className="bg-white/90 backdrop-blur-sm fl-p-4/6 rounded-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-200 flex items-start">
                             <LuLightbulb className="text-yellow-500 text-3xl shrink-0 mt-1" />
                             <div className="ml-4">
-                                <h3 className="text-lg md:text-xl font-bold mb-1 md:mb-2">Innovation</h3>
+                                <h3 className="fl-text-lg/xl font-bold fl-mb-1/2">Innovation</h3>
                                 <p className="text-gray-600">Promoting artistic and cultural excellence.</p>
                             </div>
                         </div>
                     </div>
-                    <div className="flex flex-col gap-4 md:gap-6">
+                    <div className="flex flex-col fl-gap-4/6">
                         <h2 className="text-2xl font-bold text-center flex items-center justify-center gap-2">
                             <LuHistory className="text-yellow-500" />
                             Archives

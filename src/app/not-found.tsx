@@ -12,7 +12,7 @@ const NotFound: React.FC = () => {
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center p-4">
             <div className="max-w-3xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden">
-                <div className="p-8 md:p-12 relative">
+                <div className="fl-p-8/12 relative">
                     {/* Decorative background elements */}
                     <div className="absolute inset-0 opacity-5">
                         <div className="absolute -right-10 -top-10 w-44 h-44 rounded-full bg-blue-500"></div>
@@ -21,10 +21,10 @@ const NotFound: React.FC = () => {
                     
                     {/* Content */}
                     <div className="relative space-y-8 text-center">
-                        <h1 className="text-8xl md:text-9xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">
+                        <h1 className="fl-text-8xl/9xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">
                             404
                         </h1>
-                        <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
+                        <h2 className="fl-text-2xl/3xl font-bold text-gray-800">
                             Page Not Found
                         </h2>
                         <p className="text-gray-600 max-w-md mx-auto">

@@ -74,7 +74,7 @@ function GalleryFilter({ className, images }: GalleryFilterProps) {
                 ))}
             </div>
 
-            <Gallery elementClassNames="flex flex-row gap-2 md:gap-3 mt-2 justify-center" speed={500} thumbnail={true} slideShowAutoplay={true} onInit={onInit} fullScreen={true} dynamicEl={dynamicEl} dynamic={true}>
+            <Gallery elementClassNames="flex flex-row fl-gap-2/3 mt-2 justify-center" speed={500} thumbnail={true} slideShowAutoplay={true} onInit={onInit} fullScreen={true} dynamicEl={dynamicEl} dynamic={true}>
                 {paginatedImages.map((item: any, index: number) => (
                     <div key={item?._id + index} className="relative aspect-[4/5] overflow-hidden rounded-2xl group cursor-pointer" onClick={() => lightGallery.current.openGallery(index)}>
                         <SmartImage
@@ -88,7 +88,7 @@ function GalleryFilter({ className, images }: GalleryFilterProps) {
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                         <div className="absolute inset-0 flex items-end left-0 right-0 text-center bottom-0">
                             <div className="text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 w-full group-hover:mb-3">
-                                <div className="font-medium mb-2 max-w-50 mx-auto text-xs md:text-sm">{item?.puja_entry_id?.puja_name}</div>
+                                <div className="font-medium mb-2 max-w-50 mx-auto fl-text-xs/sm">{item?.puja_entry_id?.puja_name}</div>
                                 {/* <div className="text-sm text-white/80">Click to expand</div> */}
                             </div>
                         </div>
