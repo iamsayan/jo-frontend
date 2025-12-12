@@ -26,7 +26,7 @@ export default function imageUrl(src: string, params?: Params): string {
 
     const url = new URL(`${baseUrl}/transform`);
 
-    url.searchParams.set('src', src);
+    url.searchParams.set('src', encodeURIComponent(src));
     if (width) url.searchParams.set('w', width.toString());
     if (height) url.searchParams.set('h', height.toString());
     if (fit) url.searchParams.set('fit', fit);
