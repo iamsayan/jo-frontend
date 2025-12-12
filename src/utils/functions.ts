@@ -32,7 +32,7 @@ export function extendPuja(puja: Puja, year?: number): PujaExtended {
 
 export function getCelebrating(year: number | string): string {
     const parsedYear = typeof year === 'string' ? parseInt(year) : year;
-    return jubilees.includes(parsedYear) 
+    return jubilees.includes(parsedYear)
         ? populateCel(parsedYear)
         : preJubilees.includes(parsedYear)
             ? populateCel(parsedYear, true)
@@ -98,7 +98,7 @@ export function getDateByIndex(dates: SharedSchedule[] | undefined, index: numbe
     const resolvedIndex = index === 'last' ? Math.max(dates.length - 1, 0) : index;
     const raw = dates[resolvedIndex].date;
     if (!raw) return setTime(new Date(), time);
-    
+
     const date = createDate(raw, time);
 
     if (addDays !== 0) date.setDate(date.getDate() + addDays);

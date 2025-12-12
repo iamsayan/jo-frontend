@@ -72,7 +72,7 @@ export default function SmartImage({
                     {...rest}
                     onLoad={handleLoad}
                     onError={handleError}
-                    // loader={({ src }) => src}
+                    //loader={({ src }) => src}
                 />
             )}
             {error && (
