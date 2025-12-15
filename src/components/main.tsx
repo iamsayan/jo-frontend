@@ -12,7 +12,7 @@ interface MainProps {
 const Main: React.FC<MainProps> = ({ children, className, jsonLd }) => {
   const classes = cn(
     "flex flex-col flex-wrap items-center justify-between",
-    className!,
+    className,
   );
 
   return (

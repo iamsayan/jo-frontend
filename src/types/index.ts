@@ -1,4 +1,4 @@
-import type { Puja } from '@/types/interfaces';
+import type { Puja } from "@/types/interfaces";
 
 export interface PageProps<TParams = {}, TSearchParams = {}> {
   params: Promise<TParams>;
