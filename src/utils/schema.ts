@@ -33,11 +33,7 @@ interface BreadcrumbItem {
 
 export const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "";
 
-function generateBreadcrumbs(
-  path: string,
-  title: string,
-  parents?: Parent[],
-): Array<BreadcrumbItem> {
+function generateBreadcrumbs(path: string, title: string, parents?: Parent[]): Array<BreadcrumbItem> {
   const homeBreadcrumb = {
     "@type": "ListItem" as const,
     position: "1",
@@ -77,13 +73,7 @@ function generateBreadcrumbs(
   return [homeBreadcrumb, ...parentsBreadcrumbs, currentBreadcrumb];
 }
 
-export default function schema({
-  path,
-  title,
-  parents,
-  type,
-  dates,
-}: SchemaOptions) {
+export default function schema({ path, title, parents, type, dates }: SchemaOptions) {
   const siteSchema: { "@context": string; "@graph": SchemaItem[] } = {
     "@context": "https://schema.org",
     "@graph": [

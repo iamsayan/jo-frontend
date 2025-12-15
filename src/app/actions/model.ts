@@ -1,18 +1,12 @@
 "use server";
 
-export async function submitModel(
-  model: string,
-  data: any,
-  documentId: string | null = null,
-) {
+export async function submitModel(model: string, data: any, documentId: string | null = null) {
   if (!process.env.API_URL || !process.env.API_KEY) {
     console.error("Missing API_URL or API_KEY environment variable");
     return { success: false, error: "Server configuration error" };
   }
 
-  const url = documentId
-    ? `${process.env.API_URL}/${model}/${documentId}`
-    : `${process.env.API_URL}/${model}`;
+  const url = documentId ? `${process.env.API_URL}/${model}/${documentId}` : `${process.env.API_URL}/${model}`;
 
   try {
     const response = await fetch(url, {

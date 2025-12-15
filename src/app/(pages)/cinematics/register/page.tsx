@@ -6,8 +6,7 @@ import type { Puja, PageProps, PujaExtended } from "@/types";
 
 export const metadata: Metadata = {
   title: "JO Cinematics Registration",
-  description:
-    "JO Cinematics Registration is a collaboration program for Jagadhatri Puja Commitees across Chandannagar Mankundu and Bhadreswar.",
+  description: "JO Cinematics Registration is a collaboration program for Jagadhatri Puja Commitees across Chandannagar Mankundu and Bhadreswar.",
   alternates: {
     canonical: "/digital-media-partnership/register",
   },
@@ -23,9 +22,7 @@ interface SearchParams {
   plan: string;
 }
 
-export default async function Page({
-  searchParams,
-}: PageProps<{}, SearchParams>) {
+export default async function Page({ searchParams }: PageProps<{}, SearchParams>) {
   const { plan } = await searchParams;
 
   const { data: pujasData = [] } = await getCollection<Puja>("pujas", {

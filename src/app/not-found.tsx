@@ -5,8 +5,7 @@ import { LuArrowLeft, LuArrowRight } from "react-icons/lu";
 
 export const metadata: Metadata = {
   title: "404: This page could not be found",
-  description:
-    "Oops! The page you are looking for does not exist. Find your way back home.",
+  description: "Oops! The page you are looking for does not exist. Find your way back home.",
 };
 
 const NotFound: React.FC = () => {
@@ -22,22 +21,15 @@ const NotFound: React.FC = () => {
 
           {/* Content */}
           <div className="relative space-y-8 text-center">
-            <h1 className="fl-text-8xl/9xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">
-              404
-            </h1>
-            <h2 className="fl-text-2xl/3xl font-bold text-gray-800">
-              Page Not Found
-            </h2>
+            <h1 className="fl-text-8xl/9xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">404</h1>
+            <h2 className="fl-text-2xl/3xl font-bold text-gray-800">Page Not Found</h2>
             <p className="text-gray-600 max-w-md mx-auto">
-              Sorry, the page you are looking for could not be found. It might
-              have been moved or deleted.
+              Sorry, the page you are looking for could not be found. It might have been moved or deleted.
             </p>
 
             {/* Store Section */}
             <div className="border-t border-gray-200 pt-8 mt-8">
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                While you're here, check out our store!
-              </h3>
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">While you're here, check out our store!</h3>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
                   href="/"
@@ -56,10 +48,7 @@ const NotFound: React.FC = () => {
                   <LuArrowRight className="text-sm" />
                 </a>
               </div>
-              <p className="text-sm text-gray-500 mt-4">
-                Discover our collection of stationery, t-shirts, hoodies, and
-                more!
-              </p>
+              <p className="text-sm text-gray-500 mt-4">Discover our collection of stationery, t-shirts, hoodies, and more!</p>
             </div>
           </div>
         </div>

@@ -3,11 +3,7 @@
 import { getCollection } from "@/utils/fetch";
 import type { Document } from "@/types/interfaces";
 
-export async function searchModels<T extends Document>(
-  model: string,
-  query: string,
-  params: Record<string, unknown> = {},
-) {
+export async function searchModels<T extends Document>(model: string, query: string, params: Record<string, unknown> = {}) {
   try {
     const { data: searchData = [] } = await getCollection<T>(model, {
       filters: {

@@ -7,19 +7,7 @@ import GallerySlider from "@/components/gallery-slider";
 import CountdownTimer from "@/components/countdown-timer";
 import Videos from "@/components/videos";
 import HeroSlider from "@/components/hero-slider";
-import {
-  LuHistory,
-  LuImages,
-  LuVideo,
-  LuMapPin,
-  LuFlag,
-  LuGlobe,
-  LuPencil,
-  LuShirt,
-  LuShoppingBag,
-  LuTrendingUp,
-  LuCalendar1,
-} from "react-icons/lu";
+import { LuHistory, LuImages, LuVideo, LuMapPin, LuFlag, LuGlobe, LuPencil, LuShirt, LuShoppingBag, LuTrendingUp, LuCalendar1 } from "react-icons/lu";
 import { FaFacebook, FaYoutube, FaInstagram, FaWhatsapp } from "react-icons/fa";
 import { getSingle } from "@/utils/fetch";
 import { buildGoogleCalendarUrl, cn, formatDate, getDateByIndex } from "@/utils/functions";
@@ -263,23 +251,19 @@ export default async function Home() {
       >
         <div className="flex flex-col gap-6 text-center">
           <p className="md:text-xl text-center m-auto md:leading-relaxed">
-            Jagadhatri Online is your online destination to visit the collection of most popular Jagadhatri Pujas of
-            Chanannagar, Mankundu & Bhadreswar. It is a platform on internet where we display the Location, Photos &
-            Videos of various Jagadhatri Pujas of Chandannagar. It will guide people who want directions to go Pandal
-            Hopping around the city, looking for the best Pujas in town.
+            Jagadhatri Online is your online destination to visit the collection of most popular Jagadhatri Pujas of Chanannagar, Mankundu &
+            Bhadreswar. It is a platform on internet where we display the Location, Photos & Videos of various Jagadhatri Pujas of Chandannagar. It
+            will guide people who want directions to go Pandal Hopping around the city, looking for the best Pujas in town.
           </p>
           <div className="relative py-8 px-6 bg-gradient-to-r from-yellow-500/5 via-yellow-500/10 to-yellow-500/5 rounded-2xl border border-yellow-500/20">
             <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 truncate">
-              <span className="inline-block px-4 py-1 bg-yellow-500 text-white text-sm font-medium rounded-full">
-                10 Years of Digital Heritage
-              </span>
+              <span className="inline-block px-4 py-1 bg-yellow-500 text-white text-sm font-medium rounded-full">10 Years of Digital Heritage</span>
             </div>
             <div className="flex flex-col items-center gap-4">
               <p className="md:text-lg text-gray-700">
-                Since 2016, we've been documenting the grandeur of Chandannagar's Jagadhatri Puja, preserving its rich
-                cultural heritage for future generations. As we celebrate our 10th anniversary in 2025, we remain
-                committed to showcasing the beauty and tradition of this magnificent festival for many more years to
-                come.
+                Since 2016, we've been documenting the grandeur of Chandannagar's Jagadhatri Puja, preserving its rich cultural heritage for future
+                generations. As we celebrate our 10th anniversary in 2025, we remain committed to showcasing the beauty and tradition of this
+                magnificent festival for many more years to come.
               </p>
               <div className="flex flex-wrap justify-center gap-4 text-center">
                 <div className="px-6 py-3 bg-white rounded-xl shadow-sm">
@@ -308,9 +292,7 @@ export default async function Home() {
           <div className="stats stats-vertical lg:stats-horizontal text-left shadow-sm container">
             {stats.map((item: StatsItem, index) => (
               <div className="stat bg-white !border-gray-200" key={index}>
-                <div className={`${cn("stat-figure text-primary", item?.class)}`}>
-                  {<item.icon className="inline-block size-8 stroke-current" />}
-                </div>
+                <div className={`${cn("stat-figure text-primary", item?.class)}`}>{<item.icon className="inline-block size-8 stroke-current" />}</div>
                 <div className="stat-title">{item.title}</div>
                 <div className={`${cn("stat-value text-primary", item?.class)}`}>{item.stat}</div>
                 <div className="stat-desc">
@@ -367,9 +349,7 @@ export default async function Home() {
                 target={item.link.includes("https") ? "_blank" : "_self"}
                 className="flex flex-col gap-2 items-center"
               >
-                <span className="p-5 border border-gray-200 rounded-full">
-                  {<item.icon className="fl-size-6/10 text-yellow-500" />}
-                </span>
+                <span className="p-5 border border-gray-200 rounded-full">{<item.icon className="fl-size-6/10 text-yellow-500" />}</span>
                 <span className="text-xl font-bold uppercase">{item.title}</span>
                 <span className="">{item.description}</span>
               </Link>
@@ -380,25 +360,18 @@ export default async function Home() {
       <Section title="Our Store" description="Discover Our Products" className="bg-gray-50">
         <div className="flex flex-col gap-8 items-center">
           <p className="md:text-xl text-center max-w-5xl mx-auto">
-            Visit our online store to explore a curated collection of high-quality products. From premium stationery to
-            trendy apparel, we've got something special for everyone.
+            Visit our online store to explore a curated collection of high-quality products. From premium stationery to trendy apparel, we've got
+            something special for everyone.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl">
             {shopItems.map((item: ShopItem, index) => (
-              <div
-                key={index}
-                className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300"
-              >
+              <div key={index} className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
                 <div className="flex flex-col items-center text-center gap-4">
                   <div className="p-4 bg-gray-50 rounded-full">{<item.icon className="size-8 text-yellow-500" />}</div>
                   <h3 className="text-xl font-bold">
                     {item.title}
-                    {item.comingSoon && (
-                      <span className="ml-2 text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">
-                        Coming Soon
-                      </span>
-                    )}
+                    {item.comingSoon && <span className="ml-2 text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">Coming Soon</span>}
                   </h3>
                   <p className="text-gray-600">{item.description}</p>
                 </div>
@@ -440,10 +413,7 @@ export default async function Home() {
                 )}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={cn(
-                  "flex gap-4 col-span-2 border border-gray-200 rounded-xl p-4 bg-gray-50",
-                  index === 3 && "md:col-start-2",
-                )}
+                className={cn("flex gap-4 col-span-2 border border-gray-200 rounded-xl p-4 bg-gray-50", index === 3 && "md:col-start-2")}
               >
                 <div className="bg-white p-2 rounded-full self-start border border-gray-200">
                   <Image

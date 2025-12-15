@@ -86,10 +86,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   });
 
   const currentYear = new Date().getFullYear();
-  const pujaYears = Array.from(
-    { length: currentYear - 1998 },
-    (_, i) => i + 2000,
-  );
+  const pujaYears = Array.from({ length: currentYear - 1998 }, (_, i) => i + 2000);
   pujaYears.forEach((year: number) => {
     sitemaps.push({
       url: `${process.env.NEXT_PUBLIC_SITE_URL}/jagadhatri-puja/${year}`,

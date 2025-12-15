@@ -21,9 +21,7 @@ const HeroSlider: React.FC<ImageSliderProps> = ({ children }) => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentImageIndex((prevIndex) =>
-        prevIndex === images.length - 1 ? 0 : prevIndex + 1,
-      );
+      setCurrentImageIndex((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
     }, 4000);
 
     return () => clearInterval(interval);

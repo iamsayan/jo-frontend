@@ -13,9 +13,7 @@ interface GoogleAdUnitClientProps {
   children: ReactNode;
 }
 
-const GoogleAdUnitClient: React.FC<GoogleAdUnitClientProps> = ({
-  children,
-}) => {
+const GoogleAdUnitClient: React.FC<GoogleAdUnitClientProps> = ({ children }) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 

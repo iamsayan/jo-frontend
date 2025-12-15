@@ -8,12 +8,8 @@ export function cn(...classes: ClassName[]) {
   return twMerge(cx(...classes));
 }
 
-export const jubilees: number[] = [
-  25, 50, 60, 75, 100, 125, 150, 160, 175, 200, 225, 250, 260, 275, 300,
-];
-export const preJubilees: number[] = [
-  24, 49, 59, 74, 99, 124, 149, 159, 174, 199, 224, 249, 259, 274, 299,
-];
+export const jubilees: number[] = [25, 50, 60, 75, 100, 125, 150, 160, 175, 200, 225, 250, 260, 275, 300];
+export const preJubilees: number[] = [24, 49, 59, 74, 99, 124, 149, 159, 174, 199, 224, 249, 259, 274, 299];
 
 export function extendPuja(puja: Puja, year?: number): PujaExtended {
   const y = getYear(puja.estd, year);
@@ -36,11 +32,7 @@ export function extendPuja(puja: Puja, year?: number): PujaExtended {
 
 export function getCelebrating(year: number | string): string {
   const parsedYear = typeof year === "string" ? parseInt(year) : year;
-  return jubilees.includes(parsedYear)
-    ? populateCel(parsedYear)
-    : preJubilees.includes(parsedYear)
-      ? populateCel(parsedYear, true)
-      : "";
+  return jubilees.includes(parsedYear) ? populateCel(parsedYear) : preJubilees.includes(parsedYear) ? populateCel(parsedYear, true) : "";
 }
 
 export function populateCel(year: number, pre: boolean = false): string {
@@ -69,10 +61,7 @@ export function populateCel(year: number, pre: boolean = false): string {
   return name ? name + " Jubilee" : "Jubilee";
 }
 
-export function getYear(
-  estd: number | string | null,
-  year: number = new Date().getFullYear(),
-): number {
+export function getYear(estd: number | string | null, year: number = new Date().getFullYear()): number {
   const parsedEstd = typeof estd === "string" ? parseInt(estd) : estd;
   return parsedEstd ? year - parsedEstd + 1 : 0;
 }
@@ -86,16 +75,8 @@ export const setTime = (date: Date, time?: string): Date => {
 };
 
 export function createDate(date: string, time?: string): Date;
-export function createDate(
-  date: string,
-  time: string | undefined,
-  dateFormat: string,
-): string;
-export function createDate(
-  date: string,
-  time?: string,
-  dateFormat?: string,
-): Date | string {
+export function createDate(date: string, time: string | undefined, dateFormat: string): string;
+export function createDate(date: string, time?: string, dateFormat?: string): Date | string {
   let baseDate = parseISO(date);
   if (time) baseDate = setTime(baseDate, time);
   return dateFormat ? format(baseDate, dateFormat) : baseDate;
@@ -104,21 +85,13 @@ export function createDate(
 export function formatDate(date: string): Date;
 export function formatDate(date: string, dateFormat: string): string;
 export function formatDate(date: string, dateFormat?: string): Date | string {
-  return dateFormat
-    ? createDate(date, undefined, dateFormat)
-    : createDate(date);
+  return dateFormat ? createDate(date, undefined, dateFormat) : createDate(date);
 }
 
-export function getDateByIndex(
-  dates: SharedSchedule[] | undefined,
-  index: number | "last",
-  time?: string,
-  addDays: number = 0,
-): Date {
+export function getDateByIndex(dates: SharedSchedule[] | undefined, index: number | "last", time?: string, addDays: number = 0): Date {
   if (!dates || dates.length === 0) return setTime(new Date(), time);
 
-  const resolvedIndex =
-    index === "last" ? Math.max(dates.length - 1, 0) : index;
+  const resolvedIndex = index === "last" ? Math.max(dates.length - 1, 0) : index;
   const raw = dates[resolvedIndex].date;
   if (!raw) return setTime(new Date(), time);
 
@@ -129,12 +102,7 @@ export function getDateByIndex(
   return date;
 }
 
-export function buildGoogleCalendarUrl(
-  { title = "", description = "", location = "" },
-  date: string,
-  startTime: string,
-  endTime: string,
-): string {
+export function buildGoogleCalendarUrl({ title = "", description = "", location = "" }, date: string, startTime: string, endTime: string): string {
   const base = "https://calendar.google.com/calendar/render?action=TEMPLATE";
   const startDate = createDate(date, startTime);
   const endDate = createDate(date, endTime);
@@ -151,9 +119,7 @@ export function buildGoogleCalendarUrl(
 
 export function stripHtmlAndLimit(text: string, limit: number = 160): string {
   const strippedText = text.replace(/<\/?[^>]+(>|$)/g, "");
-  return strippedText.length > limit
-    ? strippedText.substring(0, limit).trim() + "..."
-    : strippedText;
+  return strippedText.length > limit ? strippedText.substring(0, limit).trim() + "..." : strippedText;
 }
 
 export function sanitizeSearchQuery(query: string | number): string {

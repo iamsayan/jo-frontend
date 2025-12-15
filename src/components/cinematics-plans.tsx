@@ -49,8 +49,7 @@ const plans: Plan[] = [
     name: "Premium",
     price: 11999,
     basicPrice: 20999,
-    description:
-      "1 cinematic video, 3 reels (pre-puja, puja days, post-puja), Nabami + Dashami full day, pre-puja, drone + normal camera shoots.",
+    description: "1 cinematic video, 3 reels (pre-puja, puja days, post-puja), Nabami + Dashami full day, pre-puja, drone + normal camera shoots.",
   },
   {
     id: "basic",
@@ -105,17 +104,9 @@ const addons: Addon[] = [
   { id: 10, title: "Voice-over Narration", price: 2000, applicableTo: "both" },
 ];
 
-export default function CinematicsPlans({
-  pujaData,
-  planId,
-}: {
-  pujaData: PujaExtended[];
-  planId?: string;
-}) {
+export default function CinematicsPlans({ pujaData, planId }: { pujaData: PujaExtended[]; planId?: string }) {
   const [selectedPuja, setSelectedPuja] = useState<string | null>(null);
-  const [selectedPlan, setSelectedPlan] = useState<PlanId | null>(
-    (planId as PlanId) ?? null,
-  );
+  const [selectedPlan, setSelectedPlan] = useState<PlanId | null>((planId as PlanId) ?? null);
   const [selectedAddons, setSelectedAddons] = useState<number[]>([]);
   const [success, setSuccess] = useState<{ paymentId: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -138,39 +129,25 @@ export default function CinematicsPlans({
   };
 
   const toggleAddon = (id: number) => {
-    setSelectedAddons((prev) =>
-      prev.includes(id) ? prev.filter((a) => a !== id) : [...prev, id],
-    );
+    setSelectedAddons((prev) => (prev.includes(id) ? prev.filter((a) => a !== id) : [...prev, id]));
   };
 
-  const selectedPujaData =
-    pujaData.find((data: PujaExtended) => data.documentId === selectedPuja) ??
-    null;
+  const selectedPujaData = pujaData.find((data: PujaExtended) => data.documentId === selectedPuja) ?? null;
   const existingData =
     selectedPujaData?.partnerships?.find(
-      (partnership: Partnership) =>
-        parseInt(String(partnership.year)) === parseInt(formData.year) &&
-        partnership.fullPaid === false,
+      (partnership: Partnership) => parseInt(String(partnership.year)) === parseInt(formData.year) && partnership.fullPaid === false,
     ) ?? null;
 
-  const planPrice = selectedPlan
-    ? (plans.find((p: Plan) => p.id === selectedPlan)?.price ?? 0)
-    : 0;
+  const planPrice = selectedPlan ? (plans.find((p: Plan) => p.id === selectedPlan)?.price ?? 0) : 0;
 
   const addonsPrice = selectedAddons.reduce((sum, id) => {
     const addon = addons.find((a) => a.id === id);
     return sum + (addon?.price ?? 0);
   }, 0);
 
-  const total = existingData
-    ? planPrice + addonsPrice - existingData.amount
-    : planPrice + addonsPrice;
+  const total = existingData ? planPrice + addonsPrice - existingData.amount : planPrice + addonsPrice;
 
-  const filteredAddons = addons.filter(
-    (a) =>
-      selectedPlan &&
-      (a.applicableTo === selectedPlan || a.applicableTo === "both"),
-  );
+  const filteredAddons = addons.filter((a) => selectedPlan && (a.applicableTo === selectedPlan || a.applicableTo === "both"));
 
   const pujaName = selectedPujaData?.name ?? "";
   const pujaDataOptions = pujaData.map((data: PujaExtended) => ({
@@ -247,22 +224,14 @@ export default function CinematicsPlans({
                   }
                 : {}),
               year: formData.year,
-              amount:
-                parseInt(total.toString()) +
-                (existingData ? parseInt(existingData.amount.toString()) : 0),
+              amount: parseInt(total.toString()) + (existingData ? parseInt(existingData.amount.toString()) : 0),
               email: formData.email,
               name: formData.name,
               orderId: existingData?.orderId
-                ? existingData.orderId
-                    .split(",")
-                    .concat(response.razorpay_order_id)
-                    .join(",")
+                ? existingData.orderId.split(",").concat(response.razorpay_order_id).join(",")
                 : response.razorpay_order_id,
               paymentId: existingData?.paymentId
-                ? existingData.paymentId
-                    .split(",")
-                    .concat(response.razorpay_payment_id)
-                    .join(",")
+                ? existingData.paymentId.split(",").concat(response.razorpay_payment_id).join(",")
                 : response.razorpay_payment_id,
               phone: formData.phone,
               planName: selectedPlanData?.name,
@@ -303,8 +272,7 @@ export default function CinematicsPlans({
       console.error("Payment failed!", err);
 
       // Extract message
-      const message =
-        err instanceof Error ? err.message : "An unexpected error occurred";
+      const message = err instanceof Error ? err.message : "An unexpected error occurred";
       setError(message);
     }
   };
@@ -316,27 +284,13 @@ export default function CinematicsPlans({
           <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
             <div className="text-center">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg
-                  className="w-8 h-8 text-green-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M5 13l4 4L19 7"
-                  />
+                <svg className="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-green-600 mb-2">
-                Payment Successful!
-              </h3>
+              <h3 className="text-xl font-bold text-green-600 mb-2">Payment Successful!</h3>
               <p className="text-gray-600 mb-4">Thank you for your payment.</p>
-              <p className="text-sm text-gray-500 mb-4">
-                Payment ID: {success.paymentId}
-              </p>
+              <p className="text-sm text-gray-500 mb-4">Payment ID: {success.paymentId}</p>
               {/* <button
                                 onClick={() => setSuccess(null)}
                                 className="w-full py-2 px-4 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
@@ -350,16 +304,9 @@ export default function CinematicsPlans({
       {error && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
-            <h3 className="text-xl font-bold text-red-600 mb-4">
-              Payment Failed
-            </h3>
-            <pre className="whitespace-pre-wrap text-sm text-gray-700 mb-4">
-              {error}
-            </pre>
-            <button
-              onClick={closeError}
-              className="w-full py-2 px-4 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
-            >
+            <h3 className="text-xl font-bold text-red-600 mb-4">Payment Failed</h3>
+            <pre className="whitespace-pre-wrap text-sm text-gray-700 mb-4">{error}</pre>
+            <button onClick={closeError} className="w-full py-2 px-4 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors">
               Close
             </button>
           </div>
@@ -375,9 +322,7 @@ export default function CinematicsPlans({
                 key={plan.id}
                 className={cn(
                   "border rounded-lg p-4 w-full cursor-pointer",
-                  selectedPlan === plan.id
-                    ? "border-yellow-500 bg-gradient-to-br from-white to-yellow-50"
-                    : "border-neutral-200",
+                  selectedPlan === plan.id ? "border-yellow-500 bg-gradient-to-br from-white to-yellow-50" : "border-neutral-200",
                 )}
                 onClick={() => {
                   setSelectedPlan(plan.id);
@@ -388,11 +333,7 @@ export default function CinematicsPlans({
                 <p className="text-sm text-gray-600 mb-2">{plan.description}</p>
                 <div className="flex items-center gap-2">
                   <div className="text-yellow-600 font-bold">₹{plan.price}</div>
-                  {plan.basicPrice && (
-                    <div className="text-sm text-gray-500 line-through">
-                      ₹{plan.basicPrice}
-                    </div>
-                  )}
+                  {plan.basicPrice && <div className="text-sm text-gray-500 line-through">₹{plan.basicPrice}</div>}
                 </div>
               </div>
             ))}
@@ -408,25 +349,15 @@ export default function CinematicsPlans({
                   key={addon.id}
                   className={cn(
                     "relative group border rounded-lg p-4 transition-all duration-200",
-                    selectedAddons.includes(addon.id)
-                      ? "border-yellow-500 bg-gradient-to-br from-white to-yellow-50"
-                      : "border-neutral-200",
+                    selectedAddons.includes(addon.id) ? "border-yellow-500 bg-gradient-to-br from-white to-yellow-50" : "border-neutral-200",
                   )}
                 >
                   <div className="flex flex-col justify-center gap-3 text-left">
-                    <h3 className="font-semibold text-gray-800 text-sm sm:text-md">
-                      {addon.title}
-                    </h3>
+                    <h3 className="font-semibold text-gray-800 text-sm sm:text-md">{addon.title}</h3>
                     <div className="flex items-center justify-between gap-2 w-full">
                       <div className="flex items-center gap-2">
-                        <div className="text-yellow-600 font-bold">
-                          ₹{addon.price}
-                        </div>
-                        {addon.basicPrice && (
-                          <div className="text-sm text-gray-500 line-through">
-                            ₹{addon.basicPrice}
-                          </div>
-                        )}
+                        <div className="text-yellow-600 font-bold">₹{addon.price}</div>
+                        {addon.basicPrice && <div className="text-sm text-gray-500 line-through">₹{addon.basicPrice}</div>}
                       </div>
                       <button
                         type="button"
@@ -455,10 +386,7 @@ export default function CinematicsPlans({
 
         <form onSubmit={handlePayment} className="space-y-4">
           <div>
-            <label
-              htmlFor="pujaName"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
+            <label htmlFor="pujaName" className="block text-sm font-medium text-gray-700 mb-1">
               Puja Committee Name <span className="text-red-500">*</span>
             </label>
             <Select
@@ -507,10 +435,7 @@ export default function CinematicsPlans({
             />
           </div>
           <div>
-            <label
-              htmlFor="year"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
+            <label htmlFor="year" className="block text-sm font-medium text-gray-700 mb-1">
               Year <span className="text-red-500">*</span>
             </label>
             <input
@@ -527,10 +452,7 @@ export default function CinematicsPlans({
             />
           </div>
           <div>
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
               Full Name <span className="text-red-500">*</span>
             </label>
             <input
@@ -544,10 +466,7 @@ export default function CinematicsPlans({
             />
           </div>
           <div>
-            <label
-              htmlFor="phone"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
+            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
               WhatsApp Number <span className="text-red-500">*</span>
             </label>
             <input
@@ -564,10 +483,7 @@ export default function CinematicsPlans({
             />
           </div>
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
               Email Address <span className="text-red-500">*</span>
             </label>
             <input
@@ -587,9 +503,7 @@ export default function CinematicsPlans({
               disabled={processing || !selectedPlan || total <= 0}
               className={cn(
                 "px-4 py-2 rounded bg-yellow-500 text-white font-semibold cursor-pointer flex items-center justify-center gap-2",
-                !selectedPlan || total <= 0
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:bg-yellow-600",
+                !selectedPlan || total <= 0 ? "opacity-50 cursor-not-allowed" : "hover:bg-yellow-600",
               )}
             >
               {processing ? (

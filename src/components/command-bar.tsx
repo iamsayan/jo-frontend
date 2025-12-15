@@ -16,16 +16,7 @@ import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "@bprogress/next/app";
 import { useDebouncedCallback } from "use-debounce";
 import { extendPuja, sanitizeSearchQuery } from "@/utils/functions";
-import {
-  LuSearch,
-  LuList,
-  LuImage,
-  LuZap,
-  LuShoppingCart,
-  LuTrophy,
-  LuInfo,
-  LuMapPin,
-} from "react-icons/lu";
+import { LuSearch, LuList, LuImage, LuZap, LuShoppingCart, LuTrophy, LuInfo, LuMapPin } from "react-icons/lu";
 import { MdOutline360 } from "react-icons/md";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
@@ -60,10 +51,7 @@ function Search() {
   return null;
 }
 
-function DynamicActionsLoader({
-  onInput,
-  onSearch,
-}: DynamicActionsLoaderProps) {
+function DynamicActionsLoader({ onInput, onSearch }: DynamicActionsLoaderProps) {
   const { searchQuery, currentRootActionId } = useKBar((state) => state);
   const router = useRouter();
   const actions = useMemo(
@@ -102,8 +90,7 @@ function DynamicActionsLoader({
         shortcut: ["j", "p"],
         keywords: "jagadhatri-puja",
         icon: <LuZap />,
-        perform: () =>
-          router.push(`/jagadhatri-puja/${new Date().getFullYear()}`),
+        perform: () => router.push(`/jagadhatri-puja/${new Date().getFullYear()}`),
       },
       {
         id: "store",
@@ -112,8 +99,7 @@ function DynamicActionsLoader({
         section: "Go To",
         keywords: "visit-store",
         icon: <LuShoppingCart />,
-        perform: () =>
-          window.open("https://store.jagadhatrionline.co.in", "_blank"),
+        perform: () => window.open("https://store.jagadhatrionline.co.in", "_blank"),
       },
       {
         id: "hoimontika-somman",
@@ -131,8 +117,7 @@ function DynamicActionsLoader({
         section: "Go To",
         keywords: "virtual-tours",
         icon: <MdOutline360 />,
-        perform: () =>
-          window.open("https://vr.jagadhatrionline.co.in", "_blank"),
+        perform: () => window.open("https://vr.jagadhatrionline.co.in", "_blank"),
       },
       {
         id: "about-us",
@@ -166,10 +151,7 @@ function DynamicActionsLoader({
 
       onSearch?.(true);
       try {
-        const searchResults = await searchModels<Puja>(
-          currentRootActionId as string,
-          search,
-        );
+        const searchResults = await searchModels<Puja>(currentRootActionId as string, search);
         const dynamicActions = Array.isArray(searchResults)
           ? searchResults.map((pujaItem: Puja) => {
               const item: PujaExtended = extendPuja(pujaItem);
@@ -181,8 +163,7 @@ function DynamicActionsLoader({
                 parent: "pujas",
                 icon: <LuZap />,
                 subtitle: item.address,
-                perform: () =>
-                  router.push(`/puja/${item.slug}/${item.referenceId}`),
+                perform: () => router.push(`/puja/${item.slug}/${item.referenceId}`),
               };
             })
           : [];
@@ -223,9 +204,7 @@ function RenderResults({ onRender }: RenderResultsProps) {
       items={results}
       onRender={({ item, active }) =>
         typeof item === "string" ? (
-          <div className="px-4 py-2 text-xs font-medium uppercase text-zinc-500 tracking-wide bg-zinc-100 dark:bg-zinc-800">
-            {item}
-          </div>
+          <div className="px-4 py-2 text-xs font-medium uppercase text-zinc-500 tracking-wide bg-zinc-100 dark:bg-zinc-800">{item}</div>
         ) : (
           <div
             className={`px-4 py-3 flex items-center justify-between text-sm cursor-pointer transition-colors ${active ? "bg-zinc-200 dark:bg-zinc-700" : "bg-transparent"}`}
@@ -234,11 +213,7 @@ function RenderResults({ onRender }: RenderResultsProps) {
               {item.icon}
               <div className="flex flex-col gap-1">
                 <div>{item.name}</div>
-                {item?.subtitle && (
-                  <div className="text-zinc-500 dark:text-zinc-400 text-xs">
-                    {item.subtitle}
-                  </div>
-                )}
+                {item?.subtitle && <div className="text-zinc-500 dark:text-zinc-400 text-xs">{item.subtitle}</div>}
               </div>
             </div>
             {item?.shortcut && item?.shortcut?.length > 0 && (
@@ -283,9 +258,7 @@ const CommandBar = ({ children }: CommandBarProps) => {
           <KBarAnimator className="w-full max-w-2xl bg-white dark:bg-zinc-900 text-black dark:text-white rounded-md shadow-2xl overflow-hidden flex flex-col">
             {parentId && (
               <div className="px-4 pt-3 flex items-center justify-between text-zinc-500 dark:text-zinc-400 dark:border-zinc-700 uppercase">
-                <span className="text-[10px] bg-gray-800 py-1 px-2 rounded-sm">
-                  {parentId}
-                </span>
+                <span className="text-[10px] bg-gray-800 py-1 px-2 rounded-sm">{parentId}</span>
               </div>
             )}
             <div className="flex border-b border-zinc-200 dark:border-zinc-700">
@@ -294,12 +267,7 @@ const CommandBar = ({ children }: CommandBarProps) => {
                 <div
                   className="flex justify-center items-center p-4 cursor-pointer"
                   title="Search on Google"
-                  onClick={() =>
-                    window.open(
-                      `https://www.google.com/search?q=site:${process.env.NEXT_PUBLIC_SITE_URL}"${searchQuery}"`,
-                      "_blank",
-                    )
-                  }
+                  onClick={() => window.open(`https://www.google.com/search?q=site:${process.env.NEXT_PUBLIC_SITE_URL}"${searchQuery}"`, "_blank")}
                 >
                   <LuSearch />
                 </div>
@@ -307,20 +275,8 @@ const CommandBar = ({ children }: CommandBarProps) => {
             </div>
             {showLoader && (
               <div className="px-3 py-2 flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400 dark:border-zinc-700">
-                <svg
-                  className="animate-spin h-4 w-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
+                <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path
                     className="opacity-75"
                     fill="currentColor"

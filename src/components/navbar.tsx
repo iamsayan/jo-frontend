@@ -45,12 +45,7 @@ const Navbar: React.FC = () => {
     return () => controller.abort();
   }, [pathname]);
 
-  const currentYear = useMemo(
-    () =>
-      getDateByIndex(siteData?.schedules, 0)?.getFullYear() ||
-      new Date().getFullYear(),
-    [siteData?.schedules],
-  );
+  const currentYear = useMemo(() => getDateByIndex(siteData?.schedules, 0)?.getFullYear() || new Date().getFullYear(), [siteData?.schedules]);
 
   const items: MenuItem[] = [
     { name: "Home", path: "/" },
@@ -93,46 +88,25 @@ const Navbar: React.FC = () => {
       {isInitialized && (
         <div
           className={`navbar-container fixed w-full top-0 left-0 z-50 transition-all duration-300 ${
-            isScrolled
-              ? "animate-slide-down bg-white shadow-xs border-b-[1px] border-gray-300"
-              : "bg-transparent border-b-[1px] border-[#ffffff14]"
+            isScrolled ? "animate-slide-down bg-white shadow-xs border-b-[1px] border-gray-300" : "bg-transparent border-b-[1px] border-[#ffffff14]"
           }`}
         >
           <div className="navbar container mx-auto fl-px-5/0">
             <div className="navbar-start">
               <div className="dropdown">
-                <label
-                  tabIndex={0}
-                  className={cn(
-                    "cursor-pointer lg:hidden p-0",
-                    !isScrolled && "text-white",
-                  )}
-                >
+                <label tabIndex={0} className={cn("cursor-pointer lg:hidden p-0", !isScrolled && "text-white")}>
                   <LuAlignLeft className="size-5" />
                 </label>
-                <ul
-                  tabIndex={0}
-                  className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-sm bg-base-100 rounded-box w-56"
-                >
+                <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-sm bg-base-100 rounded-box w-56">
                   {items.map((item, index) => (
                     <li key={index}>
                       {item.subMenu ? (
                         <details>
-                          <summary className="font-bold">
-                            {item.path !== "#" ? (
-                              <Link href={item.path}>{item.name}</Link>
-                            ) : (
-                              item.name
-                            )}
-                          </summary>
+                          <summary className="font-bold">{item.path !== "#" ? <Link href={item.path}>{item.name}</Link> : item.name}</summary>
                           <ul className="p-2">
                             {item.subMenu.map((subItem, subIndex) => (
                               <li key={subIndex}>
-                                <Link
-                                  href={subItem.path}
-                                  target={subItem.target ?? "_self"}
-                                  className="font-bold"
-                                >
+                                <Link href={subItem.path} target={subItem.target ?? "_self"} className="font-bold">
                                   {subItem.name}
                                 </Link>
                               </li>
@@ -184,9 +158,7 @@ const Navbar: React.FC = () => {
               </div>
               <ul className="menu menu-horizontal px-1 gap-2 uppercase font-bold hidden lg:flex">
                 {items.map((item, index) => {
-                  const isActive =
-                    pathname === item.path ||
-                    item.subMenu?.some((subItem) => pathname === subItem.path);
+                  const isActive = pathname === item.path || item.subMenu?.some((subItem) => pathname === subItem.path);
                   const classes = cn(
                     isScrolled
                       ? "text-slate-600"
@@ -197,31 +169,13 @@ const Navbar: React.FC = () => {
                     <li key={index}>
                       {item.subMenu ? (
                         <details>
-                          <summary className={classes}>
-                            {item.path !== "#" ? (
-                              <Link href={item.path}>{item.name}</Link>
-                            ) : (
-                              item.name
-                            )}
-                          </summary>
-                          <ul
-                            className={cn(
-                              "p-2 w-28 right-0 text-slate-600",
-                              item.className,
-                            )}
-                          >
+                          <summary className={classes}>{item.path !== "#" ? <Link href={item.path}>{item.name}</Link> : item.name}</summary>
+                          <ul className={cn("p-2 w-28 right-0 text-slate-600", item.className)}>
                             {item.subMenu.map((subItem, subIndex) => {
-                              const innerClasses = cn(
-                                !isScrolled && "text-slate-600",
-                                pathname === subItem.path && "!text-yellow-500",
-                              );
+                              const innerClasses = cn(!isScrolled && "text-slate-600", pathname === subItem.path && "!text-yellow-500");
                               return (
                                 <li key={subIndex}>
-                                  <Link
-                                    href={subItem.path}
-                                    target={subItem.target ?? "_self"}
-                                    className={innerClasses}
-                                  >
+                                  <Link href={subItem.path} target={subItem.target ?? "_self"} className={innerClasses}>
                                     {subItem.name}
                                   </Link>
                                 </li>
@@ -230,11 +184,7 @@ const Navbar: React.FC = () => {
                           </ul>
                         </details>
                       ) : (
-                        <Link
-                          href={item.path}
-                          target={item.target ?? "_self"}
-                          className={classes}
-                        >
+                        <Link href={item.path} target={item.target ?? "_self"} className={classes}>
                           {item.name}
                         </Link>
                       )}
@@ -244,14 +194,8 @@ const Navbar: React.FC = () => {
               </ul>
             </div>
             <div className="navbar-end flex gap-3">
-              <div
-                className="cursor-pointer"
-                onClick={query.toggle}
-                title="Search"
-              >
-                <LuSearch
-                  className={`size-5 ${isScrolled ? "" : "text-white"}`}
-                />
+              <div className="cursor-pointer" onClick={query.toggle} title="Search">
+                <LuSearch className={`size-5 ${isScrolled ? "" : "text-white"}`} />
               </div>
               {/* <div className="hidden lg:block relative group">
                                 <a
@@ -288,9 +232,7 @@ const Navbar: React.FC = () => {
                 title="JO Store"
                 aria-label="JO Store"
               >
-                <LuShoppingBag
-                  className={`size-5 ${isScrolled ? "" : "text-white"}`}
-                />
+                <LuShoppingBag className={`size-5 ${isScrolled ? "" : "text-white"}`} />
               </a>
             </div>
           </div>

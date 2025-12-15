@@ -1,37 +1,20 @@
 import qs from "qs";
 import pluralize from "pluralize";
-import type {
-  Document,
-  DocumentResponse,
-  DocumentResponseCollection,
-} from "@/types/interfaces";
+import type { Document, DocumentResponse, DocumentResponseCollection } from "@/types/interfaces";
 
 interface GetCollectionOptions {
   revalidate?: number;
   tags?: string[];
 }
 
-async function requestApi<TResp>(
-  collection: string,
-  params: Record<string, unknown>,
-  options: GetCollectionOptions,
-): Promise<TResp> {
-  const {
-    revalidate = process.env.NODE_ENV === "development" ? 0 : 604800,
-    tags = [],
-  } = options;
+async function requestApi<TResp>(collection: string, params: Record<string, unknown>, options: GetCollectionOptions): Promise<TResp> {
+  const { revalidate = process.env.NODE_ENV === "development" ? 0 : 604800, tags = [] } = options;
 
-  const query = Object.keys(params).length
-    ? qs.stringify(params, { encodeValuesOnly: true })
-    : "";
+  const query = Object.keys(params).length ? qs.stringify(params, { encodeValuesOnly: true }) : "";
 
-  const baseTag = pluralize.isPlural(collection)
-    ? pluralize.singular(collection)
-    : collection;
+  const baseTag = pluralize.isPlural(collection) ? pluralize.singular(collection) : collection;
 
-  const url = query
-    ? `${process.env.API_URL}/${collection}?${query}`
-    : `${process.env.API_URL}/${collection}`;
+  const url = query ? `${process.env.API_URL}/${collection}?${query}` : `${process.env.API_URL}/${collection}`;
 
   const response = await fetch(url, {
     method: "GET",
@@ -48,9 +31,7 @@ async function requestApi<TResp>(
     const errorText = await response.text().catch(() => "");
     console.error("Strapi fetch error:", response.status, errorText);
 
-    throw new Error(
-      `Failed to fetch collection "${collection}" – ${response.status} ${response.statusText}`,
-    );
+    throw new Error(`Failed to fetch collection "${collection}" – ${response.status} ${response.statusText}`);
   }
 
   return (await response.json()) as TResp;

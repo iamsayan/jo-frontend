@@ -2,17 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import {
-  FaYoutube,
-  FaFacebookF,
-  FaInstagram,
-  FaXTwitter,
-  FaPinterestP,
-  FaWhatsapp,
-  FaEnvelope,
-  FaHeart,
-  FaThreads,
-} from "react-icons/fa6";
+import { FaYoutube, FaFacebookF, FaInstagram, FaXTwitter, FaPinterestP, FaWhatsapp, FaEnvelope, FaHeart, FaThreads } from "react-icons/fa6";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import ScrollTop from "@/components/scroll-top";
 import { useSiteData } from "@/contexts/siteDataContext";
@@ -112,18 +102,9 @@ export default function Footer() {
     },
   ];
 
-  const startDate = useMemo(
-    () => getDateByIndex(siteData?.schedules, 0),
-    [siteData?.schedules],
-  );
-  const endDate = useMemo(
-    () => getDateByIndex(siteData?.schedules, "last"),
-    [siteData?.schedules],
-  );
-  const pujaYear = useMemo(
-    () => startDate.getFullYear() || new Date().getFullYear(),
-    [startDate],
-  );
+  const startDate = useMemo(() => getDateByIndex(siteData?.schedules, 0), [siteData?.schedules]);
+  const endDate = useMemo(() => getDateByIndex(siteData?.schedules, "last"), [siteData?.schedules]);
+  const pujaYear = useMemo(() => startDate.getFullYear() || new Date().getFullYear(), [startDate]);
 
   return (
     <footer className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-slate-200 overflow-hidden">
@@ -136,24 +117,15 @@ export default function Footer() {
           {/* Brand Section */}
           <div className="lg:col-span-1">
             <div className="flex items-center justify-center md:justify-start space-x-3 mb-6">
-              <Image
-                src="/logo.png"
-                alt="Jagadhatri Online"
-                className="fl-h-12/14 w-auto"
-                width={500}
-                height={500}
-              />
+              <Image src="/logo.png" alt="Jagadhatri Online" className="fl-h-12/14 w-auto" width={500} height={500} />
               {/* <div>
                                 <h3 className="text-xl font-bold text-white">Jagadhatri Online</h3>
                                 <p className="text-sm text-slate-400">Celebrating Culture & Tradition</p>
                             </div> */}
             </div>
             <p className="text-slate-300 fl-text-xs/sm leading-relaxed mb-6">
-              Dedicated to preserving and promoting the rich cultural heritage
-              of Chandannagar Jagadhatri Puja and fostering community
-              connections through digital platforms. We celebrate the divine
-              mother Jagadhatri and bring together devotees from around the
-              world.
+              Dedicated to preserving and promoting the rich cultural heritage of Chandannagar Jagadhatri Puja and fostering community connections
+              through digital platforms. We celebrate the divine mother Jagadhatri and bring together devotees from around the world.
             </p>
 
             {/* Social Links */}
@@ -176,9 +148,7 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-lg font-semibold text-white mb-6">
-              Quick Links
-            </h4>
+            <h4 className="text-lg font-semibold text-white mb-6">Quick Links</h4>
             <nav className="space-y-3">
               {navigationItems.map((item) => (
                 <Link
@@ -210,27 +180,17 @@ export default function Footer() {
 
           {/* Contact Information */}
           <div>
-            <h4 className="text-lg font-semibold text-white mb-6">
-              Contact & Info
-            </h4>
+            <h4 className="text-lg font-semibold text-white mb-6">Contact & Info</h4>
             <div className="space-y-4">
               {contactInfo.map((contact, index) => (
-                <div
-                  key={index}
-                  className="flex items-start space-x-3 justify-center md:justify-start"
-                >
+                <div key={index} className="flex items-start space-x-3 justify-center md:justify-start">
                   <contact.icon className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
                   {contact.link ? (
-                    <a
-                      href={contact.link}
-                      className="text-slate-300 hover:text-white transition-colors duration-200 fl-text-xs/sm"
-                    >
+                    <a href={contact.link} className="text-slate-300 hover:text-white transition-colors duration-200 fl-text-xs/sm">
                       {contact.text}
                     </a>
                   ) : (
-                    <span className="text-slate-300 fl-text-xs/sm">
-                      {contact.text}
-                    </span>
+                    <span className="text-slate-300 fl-text-xs/sm">{contact.text}</span>
                   )}
                 </div>
               ))}
@@ -254,21 +214,15 @@ export default function Footer() {
                 <div className="space-y-3">
                   <div className="flex items-center space-x-3 justify-center md:justify-start">
                     <div className="fl-size-2/3 bg-orange-500 rounded-full flex-shrink-0"></div>
-                    <span className="text-slate-300 fl-text-xs/sm">
-                      Established in 2016
-                    </span>
+                    <span className="text-slate-300 fl-text-xs/sm">Established in 2016</span>
                   </div>
                   <div className="flex items-center space-x-3 justify-center md:justify-start">
                     <div className="fl-size-2/3 bg-orange-500 rounded-full flex-shrink-0"></div>
-                    <span className="text-slate-300 fl-text-xs/sm">
-                      Cultural Heritage Preservation
-                    </span>
+                    <span className="text-slate-300 fl-text-xs/sm">Cultural Heritage Preservation</span>
                   </div>
                   <div className="flex items-center space-x-3 justify-center md:justify-start">
                     <div className="fl-size-2/3 bg-orange-500 rounded-full flex-shrink-0"></div>
-                    <span className="text-slate-300 fl-text-xs/sm">
-                      Community Driven
-                    </span>
+                    <span className="text-slate-300 fl-text-xs/sm">Community Driven</span>
                   </div>
                 </div>
               </div>
@@ -277,33 +231,19 @@ export default function Footer() {
 
           {/* Events */}
           <div>
-            <h4 className="text-lg font-semibold text-white mb-6">
-              Upcoming Events
-            </h4>
+            <h4 className="text-lg font-semibold text-white mb-6">Upcoming Events</h4>
             <div className="space-y-4">
               <div className="bg-slate-700/30 rounded-lg p-3">
-                <div className="text-orange-400 text-xs font-medium uppercase">
-                  Celebration {pujaYear}
-                </div>
-                <div className="text-white fl-text-xs/sm font-medium mt-1">
-                  Jagadhatri Puja
-                </div>
+                <div className="text-orange-400 text-xs font-medium uppercase">Celebration {pujaYear}</div>
+                <div className="text-white fl-text-xs/sm font-medium mt-1">Jagadhatri Puja</div>
                 <div className="text-slate-300 text-xs">
-                  Annual celebration from {format(startDate, "do MMMM")} to{" "}
-                  {format(endDate, "do MMMM")}
+                  Annual celebration from {format(startDate, "do MMMM")} to {format(endDate, "do MMMM")}
                 </div>
               </div>
               <div className="bg-slate-700/30 rounded-lg p-3">
-                <div className="text-orange-400 text-xs font-medium uppercase">
-                  {format(endDate, "MMM yyyy")}
-                </div>
-                <div className="text-white fl-text-xs/sm font-medium mt-1">
-                  Grand Procession
-                </div>
-                <div className="text-slate-300 text-xs">
-                  Grand procession starts on {format(endDate, "do MMMM")}, from
-                  6:00 PM onwards
-                </div>
+                <div className="text-orange-400 text-xs font-medium uppercase">{format(endDate, "MMM yyyy")}</div>
+                <div className="text-white fl-text-xs/sm font-medium mt-1">Grand Procession</div>
+                <div className="text-slate-300 text-xs">Grand procession starts on {format(endDate, "do MMMM")}, from 6:00 PM onwards</div>
               </div>
             </div>
           </div>
@@ -313,14 +253,9 @@ export default function Footer() {
         <div className="border-t border-slate-700/50 mt-12 pt-8">
           <div className="text-center">
             <div className="text-slate-400 text-sm mb-4">
-              <p>
-                Copyright © 2016 - {new Date().getFullYear()} Jagadhatri Online.
-                All Rights Reserved.
-              </p>
+              <p>Copyright © 2016 - {new Date().getFullYear()} Jagadhatri Online. All Rights Reserved.</p>
               <p className="mt-1 text-xs">
-                Developed with{" "}
-                <FaHeart className="inline-block text-red-400 mx-0.5 animate-pulse" />{" "}
-                by{" "}
+                Developed with <FaHeart className="inline-block text-red-400 mx-0.5 animate-pulse" /> by{" "}
                 <a
                   href="https://sayandatta.co.in"
                   target="_blank"
@@ -332,8 +267,7 @@ export default function Footer() {
               </p>
             </div>
             <div className="text-slate-400 text-xs">
-              Unauthorized copying or representation of any content, photograph,
-              illustration, or artwork from this website is strictly prohibited.
+              Unauthorized copying or representation of any content, photograph, illustration, or artwork from this website is strictly prohibited.
             </div>
             {/* <div className="inline-flex items-center space-x-2 bg-slate-800/50 border border-slate-600/50 rounded-lg px-4 py-3">
                             <div className="flex-shrink-0">

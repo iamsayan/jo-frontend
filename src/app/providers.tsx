@@ -5,13 +5,7 @@ import CommandBar from "@/components/command-bar";
 import { SiteDataProvider } from "@/contexts/siteDataContext";
 import type { GlobalSite } from "@/types";
 
-const Providers = ({
-  children,
-  siteData,
-}: {
-  children: React.ReactNode;
-  siteData: GlobalSite;
-}) => {
+const Providers = ({ children, siteData }: { children: React.ReactNode; siteData: GlobalSite }) => {
   return (
     <SiteDataProvider siteData={siteData}>
       <ProgressProvider options={{ showSpinner: false }} disableStyle>

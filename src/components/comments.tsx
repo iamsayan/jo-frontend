@@ -10,18 +10,8 @@ const Comments: React.FC = () => {
 
   return (
     <div className="mt-6">
-      <FacebookProvider
-        appId={process.env.NEXT_PUBLIC_FB_APP_ID as string}
-        version="v19.0"
-        autoLogAppEvents={true}
-        xfbml={true}
-        language="en_GB"
-      >
-        <FBComments
-          href={`${process.env.NEXT_PUBLIC_SITE_URL}${pathname}`}
-          width="100%"
-          orderBy="reverse_time"
-        />
+      <FacebookProvider appId={process.env.NEXT_PUBLIC_FB_APP_ID as string} version="v19.0" autoLogAppEvents={true} xfbml={true} language="en_GB">
+        <FBComments href={`${process.env.NEXT_PUBLIC_SITE_URL}${pathname}`} width="100%" orderBy="reverse_time" />
       </FacebookProvider>
     </div>
   );

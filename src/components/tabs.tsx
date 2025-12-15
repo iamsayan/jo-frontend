@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  Tab as ReactTab,
-  Tabs as ReactTabs,
-  TabList,
-  TabPanel,
-} from "react-tabs";
+import { Tab as ReactTab, Tabs as ReactTabs, TabList, TabPanel } from "react-tabs";
 import { cn } from "@/utils/functions";
 
 export interface TabProps {
@@ -31,10 +26,7 @@ export interface TabsProps {
 
 export default function Tabs({ tabs, className, ...props }: TabsProps) {
   return (
-    <ReactTabs
-      className={cn("w-full", className)}
-      forceRenderTabPanel={props.forceRenderTabPanel}
-    >
+    <ReactTabs className={cn("w-full", className)} forceRenderTabPanel={props.forceRenderTabPanel}>
       <TabList className={cn("flex overflow-x-auto", props.tabListClassName)}>
         {tabs.map((tab: TabProps, index: number) => (
           <ReactTab
@@ -44,11 +36,7 @@ export default function Tabs({ tabs, className, ...props }: TabsProps) {
               props.tabClassName,
               tab.className,
             )}
-            selectedClassName={cn(
-              "text-blue-700",
-              props.tabSelectedClassName,
-              tab.selectedClassName,
-            )}
+            selectedClassName={cn("text-blue-700", props.tabSelectedClassName, tab.selectedClassName)}
           >
             {tab?.icon} {tab.title}
           </ReactTab>
@@ -59,11 +47,7 @@ export default function Tabs({ tabs, className, ...props }: TabsProps) {
         <TabPanel
           key={index}
           className={cn("hidden", props.tabPanelClassName, tab.panelClassName)}
-          selectedClassName={cn(
-            "!block",
-            props.tabPanelSelectedClassName,
-            tab.panelSelectedClassName,
-          )}
+          selectedClassName={cn("!block", props.tabPanelSelectedClassName, tab.panelSelectedClassName)}
         >
           {tab.content}
         </TabPanel>

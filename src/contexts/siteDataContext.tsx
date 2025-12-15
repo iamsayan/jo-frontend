@@ -7,18 +7,8 @@ import type { GlobalSite } from "@/types";
 export const SiteDataContext = createContext<GlobalSite | null>(null);
 
 // Provider component
-export const SiteDataProvider = ({
-  children,
-  siteData,
-}: {
-  children: ReactNode;
-  siteData: GlobalSite;
-}) => {
-  return (
-    <SiteDataContext.Provider value={siteData}>
-      {children}
-    </SiteDataContext.Provider>
-  );
+export const SiteDataProvider = ({ children, siteData }: { children: ReactNode; siteData: GlobalSite }) => {
+  return <SiteDataContext.Provider value={siteData}>{children}</SiteDataContext.Provider>;
 };
 
 // Custom hook to use the siteData context

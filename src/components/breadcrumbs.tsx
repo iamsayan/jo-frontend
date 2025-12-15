@@ -12,11 +12,7 @@ interface BreadcrumbsProps {
   className?: string;
 }
 
-const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
-  breadcrumbTitle = null,
-  end = null,
-  className,
-}) => {
+const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ breadcrumbTitle = null, end = null, className }) => {
   const pathname = usePathname();
   const pathItems = pathname
     .split("/")
@@ -38,22 +34,14 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
           </Link>
         </li>
         {pathItems?.map((item, index) => {
-          const title =
-            breadcrumbTitle && index === pathItems?.length - 1
-              ? breadcrumbTitle
-              : item.replaceAll("-", " ");
+          const title = breadcrumbTitle && index === pathItems?.length - 1 ? breadcrumbTitle : item.replaceAll("-", " ");
           return (
             <li key={index} className="breadcrumb-item">
               <div className="inline-block text-ellipsis overflow-hidden whitespace-nowrap">
                 {index === pathItems.length - 1 ? (
-                  <span className="truncate max-w-[100px] md:max-w-none">
-                    {title}
-                  </span>
+                  <span className="truncate max-w-[100px] md:max-w-none">{title}</span>
                 ) : (
-                  <Link
-                    href={`/${pathItems.slice(0, index + 1).join("/")}`}
-                    className="flex items-center gap-2"
-                  >
+                  <Link href={`/${pathItems.slice(0, index + 1).join("/")}`} className="flex items-center gap-2">
                     <LuFolder /> {title}
                   </Link>
                 )}

@@ -28,11 +28,7 @@ function Gallery({ children, ...props }: GalleryProps) {
   };
 
   return (
-    <LightGallery
-      plugins={[lgZoom, lgFullscreen, lgAutoplay]}
-      {...settings}
-      download={false}
-    >
+    <LightGallery plugins={[lgZoom, lgFullscreen, lgAutoplay]} {...settings} download={false}>
       {children}
     </LightGallery>
   );

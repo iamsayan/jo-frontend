@@ -79,8 +79,7 @@ const nextConfig = {
           },
           {
             key: "Access-Control-Allow-Headers",
-            value:
-              "X-Requested-With, Content-Type, Origin, Cache-Control, Pragma, Authorization, Accept, Accept-Encoding, X-Webhook-Secret",
+            value: "X-Requested-With, Content-Type, Origin, Cache-Control, Pragma, Authorization, Accept, Accept-Encoding, X-Webhook-Secret",
           },
           {
             key: "Access-Control-Max-Age",

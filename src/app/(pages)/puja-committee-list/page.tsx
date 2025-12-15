@@ -7,23 +7,13 @@ import { getCollection } from "@/utils/fetch";
 import { extendPuja } from "@/utils/functions";
 import schema from "@/utils/schema";
 import { metadata as metadataSchema } from "@/app/layout";
-import {
-  LuLandmark,
-  LuUsers,
-  LuBuilding,
-  LuBuilding2,
-  LuCrown,
-  LuMedal,
-  LuAward,
-  LuMapPin,
-} from "react-icons/lu";
+import { LuLandmark, LuUsers, LuBuilding, LuBuilding2, LuCrown, LuMedal, LuAward, LuMapPin } from "react-icons/lu";
 import PujaList from "@/components/puja-list";
 import type { Puja, PujaExtended } from "@/types";
 
 export const metadata: Metadata = {
   title: "Jagadhatri Puja Committee List",
-  description:
-    "Find verified Jagadhatri Puja committees from Chandannagar, Mankundu, and Bhadreswar with locations, years, and contact details.",
+  description: "Find verified Jagadhatri Puja committees from Chandannagar, Mankundu, and Bhadreswar with locations, years, and contact details.",
   openGraph: {
     ...metadataSchema.openGraph,
     url: "/puja-committee-list",
@@ -96,12 +86,8 @@ export default async function Page() {
     sort: ["sortOrder:asc"],
   });
   const data: PujaExtended[] = pujas.map((data: Puja) => extendPuja(data));
-  const cgr: PujaExtended[] = data.filter(
-    (data: PujaExtended) => data.zone === "chandannagar",
-  );
-  const bhr: PujaExtended[] = data.filter(
-    (data: PujaExtended) => data.zone === "bhadreswar",
-  );
+  const cgr: PujaExtended[] = data.filter((data: PujaExtended) => data.zone === "chandannagar");
+  const bhr: PujaExtended[] = data.filter((data: PujaExtended) => data.zone === "bhadreswar");
 
   const tabContent = (zone: PujaExtended[]) => {
     const zoneInfo = getZoneDescription(zone[0].zone);
@@ -114,24 +100,19 @@ export default async function Page() {
       },
       {
         title: "Jubilee Celebrations",
-        description: zone.filter((data: PujaExtended) => data.jubilee === true)
-          .length,
+        description: zone.filter((data: PujaExtended) => data.jubilee === true).length,
         icon: <LuMedal />,
         variant: "from-rose-500 to-rose-300",
       },
       {
         title: "Pre Jubilee Celebrations",
-        description: zone.filter(
-          (data: PujaExtended) => data.preJubilee === true,
-        ).length,
+        description: zone.filter((data: PujaExtended) => data.preJubilee === true).length,
         icon: <LuAward />,
         variant: "from-blue-500 to-blue-300",
       },
       {
         title: "Adi Pujas",
-        description: zone.filter(
-          (data: Puja) => data.tags.includes("adi") ?? false,
-        ).length,
+        description: zone.filter((data: Puja) => data.tags.includes("adi") ?? false).length,
         icon: <LuCrown />,
         variant: "from-purple-500 to-purple-300",
       },
@@ -143,30 +124,17 @@ export default async function Page() {
           <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 fl-p-6/8 mb-8">
             <div className="relative flex flex-col gap-8">
               <div className="flex-1">
-                <h2 className="fl-text-2xl/3xl font-bold text-white mb-4">
-                  {zoneInfo.title}
-                </h2>
-                <p className="text-white/90 fl-text-sm/base">
-                  {zoneInfo.description}
-                </p>
+                <h2 className="fl-text-2xl/3xl font-bold text-white mb-4">{zoneInfo.title}</h2>
+                <p className="text-white/90 fl-text-sm/base">{zoneInfo.description}</p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {zoneInfo.highlights.map((highlight, index) => (
-                  <div
-                    key={index}
-                    className="bg-white/10 backdrop-blur-sm rounded-lg p-4"
-                  >
+                  <div key={index} className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-full bg-white/10">
-                        {highlight.icon}
-                      </div>
+                      <div className="p-2 rounded-full bg-white/10">{highlight.icon}</div>
                       <div className="text-left">
-                        <div className="text-sm text-white/75">
-                          {highlight.title}
-                        </div>
-                        <div className="text-lg font-bold text-white">
-                          {highlight.value}
-                        </div>
+                        <div className="text-sm text-white/75">{highlight.title}</div>
+                        <div className="text-lg font-bold text-white">{highlight.value}</div>
                       </div>
                     </div>
                   </div>
@@ -268,10 +236,7 @@ export default async function Page() {
     {
       title: (
         <span key={cgr.length} className="flex items-center gap-2">
-          Chandannagar{" "}
-          <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-300/10 text-blue-500">
-            {cgr.length}
-          </span>
+          Chandannagar <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-300/10 text-blue-500">{cgr.length}</span>
         </span>
       ),
       icon: <LuBuilding />,
@@ -280,10 +245,7 @@ export default async function Page() {
     {
       title: (
         <span key={bhr.length} className="flex items-center gap-2">
-          Bhadreswar{" "}
-          <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-300/10 text-blue-500">
-            {bhr.length}
-          </span>
+          Bhadreswar <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-300/10 text-blue-500">{bhr.length}</span>
         </span>
       ),
       icon: <LuBuilding2 />,
@@ -294,13 +256,10 @@ export default async function Page() {
       icon: <LuMapPin />,
       content: (
         <div className="text-center py-16 px-5 space-y-3">
-          <h3 className="text-2xl font-bold text-gray-800">
-            Enlist Your Puja Committee
-          </h3>
+          <h3 className="text-2xl font-bold text-gray-800">Enlist Your Puja Committee</h3>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Others puja committees are requested to send their puja info in
-            details to us via this email id cgrjagadhatripuja@gmail.com. We will
-            add your puja to our website within 24 hours.
+            Others puja committees are requested to send their puja info in details to us via this email id cgrjagadhatripuja@gmail.com. We will add
+            your puja to our website within 24 hours.
           </p>
         </div>
       ),
@@ -320,16 +279,11 @@ export default async function Page() {
       <Section title="View All Jagadhatri" description="Puja Committee List">
         <div className="flex flex-col gap-6 text-justify">
           <p>
-            The number of community pujas in Chandannagar, Bhadreswar and
-            Champdany Municipal areas crosses 190 mark. Of these, {data?.length}{" "}
-            Puja committees in different localities in Chandannagar and
-            Bhadreswar are affiliated to the Chandannagar Central Jagadhatri
-            Puja Committee (CCJPC). The Central committee renders all possible
-            assistance to its constituents in getting permissions and clearances
-            for holding Puja. The immersion procession is really memorable and
-            enjoyable sight to witness which lakh of people throng in
-            Chandannagar from far and near. The beautiful decorated tall images
-            loaded on trucks are taken around the city in a procession.
+            The number of community pujas in Chandannagar, Bhadreswar and Champdany Municipal areas crosses 190 mark. Of these, {data?.length} Puja
+            committees in different localities in Chandannagar and Bhadreswar are affiliated to the Chandannagar Central Jagadhatri Puja Committee
+            (CCJPC). The Central committee renders all possible assistance to its constituents in getting permissions and clearances for holding Puja.
+            The immersion procession is really memorable and enjoyable sight to witness which lakh of people throng in Chandannagar from far and near.
+            The beautiful decorated tall images loaded on trucks are taken around the city in a procession.
           </p>
         </div>
         <div className="mt-6">

@@ -27,13 +27,7 @@ import type { PujaExtended } from "@/types";
 import placeholder from "@/public/circle-logo.png";
 import imageUrl from "@/utils/transform";
 
-type Filter =
-  | "all"
-  | "popular"
-  | "jubilee"
-  | "preJubilee"
-  | "adi"
-  | "favorites";
+type Filter = "all" | "popular" | "jubilee" | "preJubilee" | "adi" | "favorites";
 type SortOption = "name" | "year" | "estd" | "popular";
 type SortDirection = "asc" | "desc";
 
@@ -58,17 +52,13 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
       // Apply search filter
       if (value) {
         filtered = filtered.filter((item: PujaExtended) =>
-          [item.name, item.year, item.theme, item.address].some((val: any) =>
-            String(val).toLowerCase().includes(value.toLowerCase()),
-          ),
+          [item.name, item.year, item.theme, item.address].some((val: any) => String(val).toLowerCase().includes(value.toLowerCase())),
         );
       }
 
       // Apply category filter
       if (filter === "favorites") {
-        filtered = filtered.filter((item: PujaExtended) =>
-          favorites.has(item.referenceId),
-        );
+        filtered = filtered.filter((item: PujaExtended) => favorites.has(item.referenceId));
       } else if (filter !== "all") {
         filtered = filtered.filter((item: PujaExtended) => item[filter]);
       }
@@ -230,8 +220,7 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
               role="searchbox"
             />
             <div id="search-help" className="sr-only">
-              Use this search box to find pujas by typing keywords related to
-              name, year, theme, or address
+              Use this search box to find pujas by typing keywords related to name, year, theme, or address
             </div>
             {search && (
               <button
@@ -253,11 +242,7 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
         {/* Filter Chips and Controls */}
         <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
           {/* Filter Chips */}
-          <div
-            className="flex flex-wrap gap-2"
-            role="group"
-            aria-label="Filter pujas by category"
-          >
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Filter pujas by category">
             <span className="text-sm font-medium text-gray-600 flex items-center gap-2 mr-2">
               <LuFilter className="w-4 h-4" />
               Filters:
@@ -280,11 +265,7 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
           </div>
 
           {/* Sort Controls */}
-          <div
-            className="flex items-center gap-3"
-            role="group"
-            aria-label="Sort pujas"
-          >
+          <div className="flex items-center gap-3" role="group" aria-label="Sort pujas">
             <span className="text-sm font-medium text-gray-600">Sort:</span>
             <label htmlFor="sort-select" className="sr-only">
               Sort pujas by
@@ -302,29 +283,19 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
               <option value="popular">Popularity</option>
             </select>
             <button
-              onClick={() =>
-                setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"))
-              }
+              onClick={() => setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"))}
               className="p-2 rounded-lg border border-gray-200/60 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:border-blue-200 transition-all duration-200 touch-manipulation flex items-center justify-center bg-white/95 backdrop-blur-sm"
               aria-label={`Sort ${sortDirection === "asc" ? "descending" : "ascending"}`}
               title={`Currently sorting ${sortDirection === "asc" ? "ascending" : "descending"}. Click to change.`}
             >
-              {sortDirection === "asc" ? (
-                <LuAArrowUp className="w-4 h-4" />
-              ) : (
-                <LuAArrowDown className="w-4 h-4" />
-              )}
+              {sortDirection === "asc" ? <LuAArrowUp className="w-4 h-4" /> : <LuAArrowDown className="w-4 h-4" />}
             </button>
           </div>
         </div>
 
         {/* Results Counter */}
         <div className="mt-4 pt-4 border-t border-gray-100">
-          <div
-            className="text-sm text-gray-600"
-            aria-live="polite"
-            aria-atomic="true"
-          >
+          <div className="text-sm text-gray-600" aria-live="polite" aria-atomic="true">
             {isSearching ? (
               <span className="flex items-center gap-2">
                 <div className="animate-spin rounded-full h-3 w-3 border-2 border-blue-400 border-t-transparent"></div>
@@ -332,14 +303,9 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
               </span>
             ) : (
               <>
-                Showing{" "}
-                <span className="font-semibold text-blue-600">
-                  {filteredData.length}
-                </span>{" "}
-                of <span className="font-semibold">{data.length}</span> pujas
-                {search && (
-                  <span className="ml-2 text-gray-500">for "{search}"</span>
-                )}
+                Showing <span className="font-semibold text-blue-600">{filteredData.length}</span> of{" "}
+                <span className="font-semibold">{data.length}</span> pujas
+                {search && <span className="ml-2 text-gray-500">for "{search}"</span>}
               </>
             )}
           </div>
@@ -356,21 +322,15 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
           <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
             <LuSearch className="w-12 h-12 text-gray-400" />
           </div>
-          <h3 className="text-xl font-semibold text-gray-700 mb-2">
-            No pujas found
-          </h3>
+          <h3 className="text-xl font-semibold text-gray-700 mb-2">No pujas found</h3>
           <p className="text-gray-500 mb-6">
             {search ? (
               <>
-                No results found for "<strong>{search}</strong>". Try different
-                keywords or clear your search.
+                No results found for "<strong>{search}</strong>". Try different keywords or clear your search.
               </>
             ) : filter && filter !== "all" ? (
               <>
-                No pujas match the selected filter "
-                <strong>
-                  {filterOptions.find((opt) => opt.value === filter)?.label}
-                </strong>
+                No pujas match the selected filter "<strong>{filterOptions.find((opt) => opt.value === filter)?.label}</strong>
                 ". Try a different category.
               </>
             ) : (
@@ -418,20 +378,12 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
                     toggleFavorite(item.referenceId);
                   }}
                   className={`cursor-pointer p-2 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 ${
-                    favorites.has(item.referenceId)
-                      ? "bg-red-500 text-white"
-                      : "bg-white/90 hover:bg-white text-gray-700"
+                    favorites.has(item.referenceId) ? "bg-red-500 text-white" : "bg-white/90 hover:bg-white text-gray-700"
                   }`}
                   aria-label={`${favorites.has(item.referenceId) ? "Remove from" : "Add to"} favorites`}
-                  title={
-                    favorites.has(item.referenceId)
-                      ? "Remove from Favorites"
-                      : "Add to Favorites"
-                  }
+                  title={favorites.has(item.referenceId) ? "Remove from Favorites" : "Add to Favorites"}
                 >
-                  <LuHeart
-                    className={`w-4 h-4 ${favorites.has(item.referenceId) ? "fill-current" : ""}`}
-                  />
+                  <LuHeart className={`w-4 h-4 ${favorites.has(item.referenceId) ? "fill-current" : ""}`} />
                 </button>
               </div>
               <Link
@@ -459,9 +411,7 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
                   {image ? (
                     <div className="relative w-full h-full">
                       <SmartImage
-                        src={imageUrl(
-                          `${image.year}/${item.referenceId}/${image.name}`,
-                        )}
+                        src={imageUrl(`${image.year}/${item.referenceId}/${image.name}`)}
                         fill={true}
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         className="object-cover transition-transform duration-500 group-hover:scale-110"
@@ -473,12 +423,7 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
                   ) : (
                     <div className="relative w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
                       <div className="w-16 h-16 mb-3 bg-white rounded-full flex items-center justify-center shadow-lg">
-                        <Image
-                          src={placeholder}
-                          alt={`${item.name} placeholder`}
-                          className="w-10 h-10 opacity-60"
-                          priority={false}
-                        />
+                        <Image src={placeholder} alt={`${item.name} placeholder`} className="w-10 h-10 opacity-60" priority={false} />
                       </div>
                       {/* <div className="text-center px-4">
                                                 <p className="text-gray-500 text-sm font-medium">No Image Available</p>
@@ -496,8 +441,7 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
                           {item.name}
                         </h3>
                         <div className="text-sm text-gray-600 mt-2 line-clamp-1 font-medium">
-                          <LuMapPin className="w-4 h-4 inline-block mr-1 text-red-600" />{" "}
-                          {item.address}
+                          <LuMapPin className="w-4 h-4 inline-block mr-1 text-red-600" /> {item.address}
                         </div>
                       </div>
 
@@ -546,9 +490,7 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
                       <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
                         <LuCalendar className="text-green-600 w-4 h-4" />
                       </div>
-                      <span className="text-gray-700 font-medium">
-                        Established {item.estd}
-                      </span>
+                      <span className="text-gray-700 font-medium">Established {item.estd}</span>
                     </div>
                   </div>
 
@@ -556,9 +498,7 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
                   <div className="pt-4 border-t border-gray-100">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <span className="text-sm font-medium text-gray-700">
-                          View Details
-                        </span>
+                        <span className="text-sm font-medium text-gray-700">View Details</span>
                         <div className="flex gap-2">
                           <button
                             onClick={(e) => {
@@ -572,9 +512,7 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
                                     text: `Check out ${item.name} Jagadhatri Puja${item.theme ? ` - ${item.theme}` : ""}`,
                                     url: `${window.location.origin}/puja/${item.slug}/${item.referenceId}`,
                                   })
-                                  .catch((error) =>
-                                    console.log("Error sharing:", error),
-                                  );
+                                  .catch((error) => console.log("Error sharing:", error));
                               } else {
                                 // Fallback to copying URL to clipboard
                                 const url = `${window.location.origin}/puja/${item.slug}/${item.referenceId}`;
@@ -626,9 +564,7 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
                 <div className="relative aspect-[2/1] bg-gradient-to-br from-gray-100 to-gray-200">
                   <div className="relative w-full h-full">
                     <SmartImage
-                      src={imageUrl(
-                        `${previewItem.images[0].year}/${previewItem.referenceId}/${previewItem.images[0].name}`,
-                      )}
+                      src={imageUrl(`${previewItem.images[0].year}/${previewItem.referenceId}/${previewItem.images[0].name}`)}
                       fill={true}
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       className="object-cover transition-transform duration-500 group-hover:scale-110"
@@ -645,9 +581,7 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
               <div className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1 text-left">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                      {previewItem.name}
-                    </h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4">{previewItem.name}</h2>
                     <div className="flex flex-col items-left gap-2 text-sm text-gray-600">
                       <span className="flex items-center gap-1">
                         <LuMapPin className="w-4 h-4 text-blue-600" />
@@ -655,36 +589,26 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
                       </span>
                       <span className="flex items-center gap-1">
                         <LuCalendar className="w-4 h-4 text-green-600" />
-                        {previewItem.year
-                          ? `${previewItem.year} years`
-                          : "Not Known"}
+                        {previewItem.year ? `${previewItem.year} years` : "Not Known"}
                       </span>
                     </div>
                   </div>
                   <button
                     onClick={() => toggleFavorite(previewItem.referenceId)}
                     className={`cursor-pointer p-2 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 ${
-                      favorites.has(previewItem.referenceId)
-                        ? "bg-red-500 text-white"
-                        : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                      favorites.has(previewItem.referenceId) ? "bg-red-500 text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-700"
                     }`}
                     aria-label={`${favorites.has(previewItem.referenceId) ? "Remove from" : "Add to"} favorites`}
                   >
-                    <LuHeart
-                      className={`w-5 h-5 ${favorites.has(previewItem.referenceId) ? "fill-current" : ""}`}
-                    />
+                    <LuHeart className={`w-5 h-5 ${favorites.has(previewItem.referenceId) ? "fill-current" : ""}`} />
                   </button>
                 </div>
 
-                <div className="text-justify gap-2 text-sm text-gray-600">
-                  {previewItem.info}
-                </div>
+                <div className="text-justify gap-2 text-sm text-gray-600">{previewItem.info}</div>
 
                 {previewItem.theme && (
                   <div className="mb-4">
-                    <div className="text-indigo-600 font-semibold bg-indigo-50 px-3 py-2 rounded-lg inline-block">
-                      🎭 {previewItem.theme}
-                    </div>
+                    <div className="text-indigo-600 font-semibold bg-indigo-50 px-3 py-2 rounded-lg inline-block">🎭 {previewItem.theme}</div>
                   </div>
                 )}
 

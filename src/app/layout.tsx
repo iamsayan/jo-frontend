@@ -22,10 +22,8 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   title: {
-    template:
-      "%s - Jagadhatri Online™ | 10 Years of Being the #1 Puja Portal for Chandannagar Jagadhatri Puja",
-    default:
-      "Jagadhatri Online™ | the #1 Puja Portal for Chandannagar Jagadhatri Puja",
+    template: "%s - Jagadhatri Online™ | 10 Years of Being the #1 Puja Portal for Chandannagar Jagadhatri Puja",
+    default: "Jagadhatri Online™ | the #1 Puja Portal for Chandannagar Jagadhatri Puja",
   },
   description: `Celebrating 10 years of devotion, Jagadhatri Online™ is Chandannagar’s leading portal for Jagadhatri Puja – dedicated to the goddess Jagaddhatri, a serene form of Durga worshipped through Tantra and tradition in West Bengal.`,
   keywords: ["jagadhatri puja", "jagadhatri", "chandannagar"],
@@ -76,11 +74,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   const nonce = (await headers()).get("x-nonce") ?? "";
 
   return (
-    <html
-      lang="en"
-      data-theme="light"
-      suppressHydrationWarning={process.env.NODE_ENV === "production"}
-    >
+    <html lang="en" data-theme="light" suppressHydrationWarning={process.env.NODE_ENV === "production"}>
       {process.env.NODE_ENV === "production" && (
         <>
           <GoogleTagManager
@@ -107,16 +101,10 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                             var sc_security="13b4e93a";
                         `}
           </Script>
-          <Script
-            src="https://www.statcounter.com/counter/counter.js"
-            nonce={nonce}
-            async={true}
-          />
+          <Script src="https://www.statcounter.com/counter/counter.js" nonce={nonce} async={true} />
         </>
       )}
-      <body
-        className={`${rubik.className} ${rubik.variable} antialiased overflow-x-hidden fl-text-sm/base`}
-      >
+      <body className={`${rubik.className} ${rubik.variable} antialiased overflow-x-hidden fl-text-sm/base`}>
         <Providers siteData={siteData}>{children}</Providers>
       </body>
     </html>

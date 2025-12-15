@@ -2,12 +2,7 @@ import MainLayout from "@/components/main-layout";
 import Section from "@/components/section";
 import Tabs, { TabProps } from "@/components/tabs";
 import Info, { InfoItem } from "@/components/info";
-import {
-  formatDate,
-  getDateByIndex,
-  buildGoogleCalendarUrl,
-  extendPuja,
-} from "@/utils/functions";
+import { formatDate, getDateByIndex, buildGoogleCalendarUrl, extendPuja } from "@/utils/functions";
 import schema, { baseUrl } from "@/utils/schema";
 import Link from "next/link";
 import {
@@ -34,14 +29,7 @@ import { metadata as metadataSchema } from "@/app/layout";
 import type { Metadata } from "next";
 import cx from "classix";
 import { format } from "date-fns";
-import type {
-  Puja,
-  PageProps,
-  GlobalSite,
-  Procession,
-  SharedSchedule,
-  PujaExtended,
-} from "@/types";
+import type { Puja, PageProps, GlobalSite, Procession, SharedSchedule, PujaExtended } from "@/types";
 
 interface Params {
   year: string;
@@ -53,9 +41,7 @@ export async function generateStaticParams() {
   }));
 }
 
-export async function generateMetadata({
-  params,
-}: PageProps<Params>): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps<Params>): Promise<Metadata> {
   const { year } = await params;
   const queryYear = parseInt(year);
   const { data } = await getSingle<GlobalSite>("global", { populate: "*" });
@@ -83,35 +69,23 @@ export default async function Page({ params }: PageProps<Params>) {
   const { year } = await params;
   const queryYear = Number(year);
 
-  const [{ data: pujasData = [] }, { data: siteData = null }] =
-    await Promise.all([
-      getCollection<Puja>("pujas", {
-        populate: "*",
-        pagination: { page: 1, pageSize: 200 },
-        sort: ["sortOrder:asc"],
-      }),
-      getSingle<GlobalSite>("global", { populate: "*" }),
-    ]);
+  const [{ data: pujasData = [] }, { data: siteData = null }] = await Promise.all([
+    getCollection<Puja>("pujas", {
+      populate: "*",
+      pagination: { page: 1, pageSize: 200 },
+      sort: ["sortOrder:asc"],
+    }),
+    getSingle<GlobalSite>("global", { populate: "*" }),
+  ]);
 
-  const pujas: PujaExtended[] = pujasData.map((p: Puja) =>
-    extendPuja(p, queryYear),
-  );
+  const pujas: PujaExtended[] = pujasData.map((p: Puja) => extendPuja(p, queryYear));
   const displayDate = getDateByIndex(siteData?.schedules, 0);
   const dateIsCurrent = queryYear === displayDate.getFullYear();
-  const jubilee: PujaExtended[] = pujas.filter(
-    (data: PujaExtended) => data.jubilee === true,
-  );
-  const prejubilee: PujaExtended[] = pujas.filter(
-    (data: PujaExtended) => data.preJubilee === true,
-  );
+  const jubilee: PujaExtended[] = pujas.filter((data: PujaExtended) => data.jubilee === true);
+  const prejubilee: PujaExtended[] = pujas.filter((data: PujaExtended) => data.preJubilee === true);
   const pujaWithProcessions: PujaExtended[] = pujas
-    .filter(
-      (data: PujaExtended) => data.procession && data.procession.truckCount > 0,
-    )
-    .sort(
-      (a: PujaExtended, b: PujaExtended) =>
-        (a?.procession?.sortOrder ?? 0) - (b.procession?.sortOrder ?? 0),
-    );
+    .filter((data: PujaExtended) => data.procession && data.procession.truckCount > 0)
+    .sort((a: PujaExtended, b: PujaExtended) => (a?.procession?.sortOrder ?? 0) - (b.procession?.sortOrder ?? 0));
 
   const tabContent = (puja: PujaExtended[]) => {
     const items: InfoItem[] = [
@@ -123,28 +97,19 @@ export default async function Page({ params }: PageProps<Params>) {
       },
       {
         title: "Chandannagar",
-        description: puja.reduce(
-          (acc, p: PujaExtended) => acc + (p.zone === "chandannagar" ? 1 : 0),
-          0,
-        ),
+        description: puja.reduce((acc, p: PujaExtended) => acc + (p.zone === "chandannagar" ? 1 : 0), 0),
         icon: <LuBuilding2 />,
         variant: "from-rose-500 to-rose-300",
       },
       {
         title: "Bhadreswar",
-        description: puja.reduce(
-          (acc, p: PujaExtended) => acc + (p.zone === "bhadreswar" ? 1 : 0),
-          0,
-        ),
+        description: puja.reduce((acc, p: PujaExtended) => acc + (p.zone === "bhadreswar" ? 1 : 0), 0),
         icon: <LuBuilding />,
         variant: "from-blue-500 to-blue-300",
       },
       {
         title: "Adi Pujas",
-        description: puja.reduce(
-          (acc, p: PujaExtended) => acc + (p.adi === true ? 1 : 0),
-          0,
-        ),
+        description: puja.reduce((acc, p: PujaExtended) => acc + (p.adi === true ? 1 : 0), 0),
         icon: <LuCrown />,
         variant: "from-purple-500 to-purple-300",
       },
@@ -177,9 +142,7 @@ export default async function Page({ params }: PageProps<Params>) {
                     <td>{index + 1}</td>
                     <td>
                       <div className="flex items-center gap-2 whitespace-nowrap">
-                        <span className="text-left hover:text-green-700 transition-colors">
-                          {item.name}
-                        </span>
+                        <span className="text-left hover:text-green-700 transition-colors">{item.name}</span>
                         {(item.popular || item.adi) && (
                           <div className="flex gap-1">
                             {item.popular && (
@@ -269,45 +232,37 @@ export default async function Page({ params }: PageProps<Params>) {
               </tr>
             </thead>
             <tbody>
-              {siteData?.schedules?.map(
-                (item: SharedSchedule, index: number) => {
-                  return (
-                    <tr key={index} className="row">
-                      <td>{index + 1}</td>
-                      <td className="text-blue-800 whitespace-nowrap">
-                        {formatDate(item.date, "do MMMM yyyy")}
-                      </td>
-                      <td className="text-gray-600">
-                        {formatDate(item.date, "EEEE")}
-                      </td>
-                      <td>
-                        <span className="px-2.5 py-1 text-sm rounded-md whitespace-nowrap bg-pink-300/10 text-pink-700">
-                          {item.event}
-                        </span>
-                      </td>
-                      <td>
-                        <a
-                          className="btn btn-ghost btn-xs text-sky-600 bg-gray-100 rounded-md"
-                          target="_blank"
-                          href={buildGoogleCalendarUrl(
-                            {
-                              title: `${item.event} - Jagadhatri Puja ${formatDate(item.date, "yyyy")}`,
-                              location: "Chandannagar",
-                              description: item.description,
-                            },
-                            item.date,
-                            "00:00:00",
-                            "23:59:59",
-                          )}
-                          rel="noopener noreferrer"
-                        >
-                          <LuPlus /> Add
-                        </a>
-                      </td>
-                    </tr>
-                  );
-                },
-              )}
+              {siteData?.schedules?.map((item: SharedSchedule, index: number) => {
+                return (
+                  <tr key={index} className="row">
+                    <td>{index + 1}</td>
+                    <td className="text-blue-800 whitespace-nowrap">{formatDate(item.date, "do MMMM yyyy")}</td>
+                    <td className="text-gray-600">{formatDate(item.date, "EEEE")}</td>
+                    <td>
+                      <span className="px-2.5 py-1 text-sm rounded-md whitespace-nowrap bg-pink-300/10 text-pink-700">{item.event}</span>
+                    </td>
+                    <td>
+                      <a
+                        className="btn btn-ghost btn-xs text-sky-600 bg-gray-100 rounded-md"
+                        target="_blank"
+                        href={buildGoogleCalendarUrl(
+                          {
+                            title: `${item.event} - Jagadhatri Puja ${formatDate(item.date, "yyyy")}`,
+                            location: "Chandannagar",
+                            description: item.description,
+                          },
+                          item.date,
+                          "00:00:00",
+                          "23:59:59",
+                        )}
+                        rel="noopener noreferrer"
+                      >
+                        <LuPlus /> Add
+                      </a>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -317,11 +272,7 @@ export default async function Page({ params }: PageProps<Params>) {
 
   const tabProcessionList = () => {
     const totalVehicles =
-      pujaWithProcessions.reduce(
-        (sum: number, item: PujaExtended) =>
-          sum + (parseInt(String(item.procession?.truckCount)) || 0),
-        0,
-      ) || 0;
+      pujaWithProcessions.reduce((sum: number, item: PujaExtended) => sum + (parseInt(String(item.procession?.truckCount)) || 0), 0) || 0;
     const items: InfoItem[] = [
       {
         title: "Total Procession",
@@ -373,19 +324,13 @@ export default async function Page({ params }: PageProps<Params>) {
                   puja.jubilee && "bg-rose-300/10 text-rose-700",
                   puja.preJubilee && "bg-blue-300/10 text-blue-500",
                 );
-                const rowClass = cx(
-                  "row",
-                  puja.jubilee && "text-rose-500 font-medium",
-                  puja.preJubilee && "text-blue-500 font-medium",
-                );
+                const rowClass = cx("row", puja.jubilee && "text-rose-500 font-medium", puja.preJubilee && "text-blue-500 font-medium");
                 return (
                   <tr key={index} className={rowClass}>
                     <td>{index + 1}</td>
                     <td>
                       <div className="flex items-center gap-2 whitespace-nowrap">
-                        <span className="text-left hover:text-green-700 transition-colors">
-                          {puja.name}
-                        </span>
+                        <span className="text-left hover:text-green-700 transition-colors">{puja.name}</span>
                         {(puja.popular || puja.adi) && (
                           <div className="flex gap-1">
                             {puja.popular && (
@@ -404,20 +349,11 @@ export default async function Page({ params }: PageProps<Params>) {
                         )}
                       </div>
                     </td>
-                    <td>
-                      {procession.truckCount == 1
-                        ? 1
-                        : procession?.truckCount -
-                          1 +
-                          " + 1 = " +
-                          procession.truckCount}
-                    </td>
+                    <td>{procession.truckCount == 1 ? 1 : procession?.truckCount - 1 + " + 1 = " + procession.truckCount}</td>
                     <td>{procession.zone}</td>
                     <td>{puja.year}</td>
                     <td>
-                      <span className={celClass}>
-                        {puja.celebrating ? puja.celebrating : "-"}
-                      </span>
+                      <span className={celClass}>{puja.celebrating ? puja.celebrating : "-"}</span>
                     </td>
                     <td>{puja.psZone}</td>
                   </tr>
@@ -434,10 +370,7 @@ export default async function Page({ params }: PageProps<Params>) {
     {
       title: (
         <span key={queryYear} className="flex items-center gap-2">
-          Jubilee List{" "}
-          <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-300/10 text-blue-500">
-            {jubilee.length}
-          </span>
+          Jubilee List <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-300/10 text-blue-500">{jubilee.length}</span>
         </span>
       ),
       icon: <LuList />,
@@ -446,10 +379,7 @@ export default async function Page({ params }: PageProps<Params>) {
     {
       title: (
         <span key={queryYear} className="flex items-center gap-2">
-          Pre Jubilee List{" "}
-          <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-300/10 text-blue-500">
-            {prejubilee.length}
-          </span>
+          Pre Jubilee List <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-300/10 text-blue-500">{prejubilee.length}</span>
         </span>
       ),
       icon: <LuList />,
@@ -473,10 +403,7 @@ export default async function Page({ params }: PageProps<Params>) {
     tabs.push({
       title: (
         <span key={queryYear} className="flex items-center gap-2">
-          Puja Schedule{" "}
-          <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-300/10 text-blue-500">
-            {queryYear}
-          </span>
+          Puja Schedule <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-300/10 text-blue-500">{queryYear}</span>
         </span>
       ),
       icon: <LuCalendar />,
@@ -519,14 +446,8 @@ export default async function Page({ params }: PageProps<Params>) {
         url: baseUrl,
       },
       image: `${baseUrl}/og-image.jpg`,
-      startDate: format(
-        getDateByIndex(siteData?.schedules, 0, "06:00:00"),
-        "yyyy-MM-dd'T'HH:mm:ssXXX",
-      ),
-      endDate: format(
-        getDateByIndex(siteData?.schedules, 4, "23:59:59"),
-        "yyyy-MM-dd'T'HH:mm:ssXXX",
-      ),
+      startDate: format(getDateByIndex(siteData?.schedules, 0, "06:00:00"), "yyyy-MM-dd'T'HH:mm:ssXXX"),
+      endDate: format(getDateByIndex(siteData?.schedules, 4, "23:59:59"), "yyyy-MM-dd'T'HH:mm:ssXXX"),
       "@id": `${baseUrl}/${schemaData.path}/#schema-${queryYear}`, // ensure unique ID
       inLanguage: "en-IN",
       mainEntityOfPage: {
@@ -540,9 +461,7 @@ export default async function Page({ params }: PageProps<Params>) {
       title: (
         <span key={queryYear} className="flex items-center gap-2">
           Procession List{" "}
-          <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-300/10 text-blue-500">
-            {pujaWithProcessions.length}
-          </span>
+          <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-300/10 text-blue-500">{pujaWithProcessions.length}</span>
         </span>
       ),
       icon: <LuPartyPopper />,
@@ -552,10 +471,7 @@ export default async function Page({ params }: PageProps<Params>) {
 
   return (
     <MainLayout title={`Puja Details ${queryYear}`} jsonLd={jsonLd}>
-      <Section
-        title="Know More about"
-        description={`Puja Details ${queryYear}`}
-      >
+      <Section title="Know More about" description={`Puja Details ${queryYear}`}>
         <div className="flex flex-col space-y-6 text-justify mt-2">
           {dateIsCurrent && (
             <div className="bg-gradient-to-br from-orange-50 to-yellow-50 rounded-xl p-6 border border-orange-100">
@@ -563,26 +479,16 @@ export default async function Page({ params }: PageProps<Params>) {
                 <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center">
                   <span className="text-2xl">🎉</span>
                 </div>
-                <h3 className="text-xl font-semibold text-orange-800">
-                  Festival Introduction
-                </h3>
+                <h3 className="text-xl font-semibold text-orange-800">Festival Introduction</h3>
               </div>
               <p className="text-gray-700 leading-relaxed">
-                Bengalis have a popular saying: "Bangalir baro mashe tero
-                parbon," which translates to "Bengalis celebrate 13 festivals in
-                12 months." This phrase reflects their boundless enthusiasm for
-                festivals and celebrations. However, the most eagerly awaited
-                festival for the people of Chandannagar, Mankundu and Bhadreswar
-                is undoubtedly Jagadhatri Puja. Typically taking place in
-                November, Jagadhatri Puja is celebrated in Chandannagar,
-                Mankundu and Bhadreswar with unparalleled pomp and grandeur. It
-                stands out as a festival that spans five days, starting with
-                Sashti and continuing through Saptami, Ashtami, Nabami, and
-                culminating on Dashami with the immersion Procession of Goddess
-                Jagadhatri in water, known as "Bisarjan." Also on the day of
-                dashami, the procession of Goddess Jagadhatri is conducted in
-                the city of Chandannagar, which is the 2nd largest after
-                Brazil's city of Rio de Janeiro.
+                Bengalis have a popular saying: "Bangalir baro mashe tero parbon," which translates to "Bengalis celebrate 13 festivals in 12 months."
+                This phrase reflects their boundless enthusiasm for festivals and celebrations. However, the most eagerly awaited festival for the
+                people of Chandannagar, Mankundu and Bhadreswar is undoubtedly Jagadhatri Puja. Typically taking place in November, Jagadhatri Puja is
+                celebrated in Chandannagar, Mankundu and Bhadreswar with unparalleled pomp and grandeur. It stands out as a festival that spans five
+                days, starting with Sashti and continuing through Saptami, Ashtami, Nabami, and culminating on Dashami with the immersion Procession
+                of Goddess Jagadhatri in water, known as "Bisarjan." Also on the day of dashami, the procession of Goddess Jagadhatri is conducted in
+                the city of Chandannagar, which is the 2nd largest after Brazil's city of Rio de Janeiro.
               </p>
             </div>
           )}
@@ -591,21 +497,14 @@ export default async function Page({ params }: PageProps<Params>) {
               <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
                 <span className="text-2xl">✨</span>
               </div>
-              <h3 className="text-xl font-semibold text-purple-800">
-                Festival Significance
-              </h3>
+              <h3 className="text-xl font-semibold text-purple-800">Festival Significance</h3>
             </div>
             <p className="text-gray-700 leading-relaxed">
-              Jagadhatri Puja, an esteemed festival spanning five vibrant days
-              from Sashti to Dashami, holds a special place in the hearts of
-              devotees. The pinnacle of this celebration typically unfolds on
-              the seventh day. Much like the grandeur of Kolkata's revered Durga
-              Puja and Barasat's cherished Kali Puja, Chandannagar shines
-              brightly for its elaborate and culturally rich Jagadhatri Puja
-              festivities. The city comes alive with colorful decorations,
-              radiant illuminations, and a spirit of devoutness that unites both
-              locals and visitors, fostering an atmosphere steeped in religious
-              significance and communal harmony.
+              Jagadhatri Puja, an esteemed festival spanning five vibrant days from Sashti to Dashami, holds a special place in the hearts of
+              devotees. The pinnacle of this celebration typically unfolds on the seventh day. Much like the grandeur of Kolkata's revered Durga Puja
+              and Barasat's cherished Kali Puja, Chandannagar shines brightly for its elaborate and culturally rich Jagadhatri Puja festivities. The
+              city comes alive with colorful decorations, radiant illuminations, and a spirit of devoutness that unites both locals and visitors,
+              fostering an atmosphere steeped in religious significance and communal harmony.
             </p>
           </div>
           {dateIsCurrent && (
@@ -614,30 +513,16 @@ export default async function Page({ params }: PageProps<Params>) {
                 <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
                   <span className="text-2xl">📅</span>
                 </div>
-                <h3 className="text-xl font-semibold text-blue-800">
-                  Festival Schedule
-                </h3>
+                <h3 className="text-xl font-semibold text-blue-800">Festival Schedule</h3>
               </div>
               <p className="text-gray-700 leading-relaxed">
-                In {queryYear}, the grand festival of Jagadhatri Puja will be
-                celebrated with immense devotion and splendor beginning on{" "}
-                <span className="font-semibold">
-                  {format(displayDate, "EEEE, 'the' do 'of' MMMM yyyy")}
-                </span>
-                , which marks the auspicious day of Jagadhatri Puja itself, and
-                the festivities, cultural programs, and rituals will continue in
-                full spirit and grandeur for several consecutive days until{" "}
-                <span className="font-semibold">
-                  {format(
-                    getDateByIndex(siteData?.schedules, 4),
-                    "EEEE, 'the' do 'of' MMMM yyyy",
-                  )}
-                </span>
-                , making this sacred occasion a five-day-long celebration filled
-                with traditional worship, elaborate decorations, vibrant
-                processions, and community gatherings that unite devotees and
-                visitors alike in an atmosphere of joy, faith, and cultural
-                harmony..
+                In {queryYear}, the grand festival of Jagadhatri Puja will be celebrated with immense devotion and splendor beginning on{" "}
+                <span className="font-semibold">{format(displayDate, "EEEE, 'the' do 'of' MMMM yyyy")}</span>, which marks the auspicious day of
+                Jagadhatri Puja itself, and the festivities, cultural programs, and rituals will continue in full spirit and grandeur for several
+                consecutive days until{" "}
+                <span className="font-semibold">{format(getDateByIndex(siteData?.schedules, 4), "EEEE, 'the' do 'of' MMMM yyyy")}</span>, making this
+                sacred occasion a five-day-long celebration filled with traditional worship, elaborate decorations, vibrant processions, and community
+                gatherings that unite devotees and visitors alike in an atmosphere of joy, faith, and cultural harmony..
               </p>
             </div>
           )}
@@ -649,10 +534,7 @@ export default async function Page({ params }: PageProps<Params>) {
             className="border border-base-300"
             tabPanelClassName="bg-gray-50"
             tabListClassName="bg-gray-30 border-b border-base-300 pattern-dots w-full"
-            tabClassName={cx(
-              "py-4 px-6 border-b-2 border-transparent bg-gray-50",
-              Object.keys(tabs).length >= 4 && "w-full",
-            )}
+            tabClassName={cx("py-4 px-6 border-b-2 border-transparent bg-gray-50", Object.keys(tabs).length >= 4 && "w-full")}
             tabSelectedClassName="border-b-2 !border-blue-700 bg-white"
           />
         </div>

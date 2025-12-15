@@ -2,10 +2,7 @@
 
 import { useState, useCallback, ReactNode } from "react";
 import Image, { type ImageProps } from "next/image";
-import {
-  useInView,
-  type IntersectionOptions,
-} from "react-intersection-observer";
+import { useInView, type IntersectionOptions } from "react-intersection-observer";
 import { cn } from "@/utils/functions";
 import placeholder from "@/public/circle-logo.png";
 
@@ -47,25 +44,13 @@ export default function SmartImage({
   }, []);
 
   return (
-    <div
-      ref={ref}
-      className={cn(
-        "w-full h-full relative bg-gray-200",
-        error && "bg-red-100",
-        containerClassName,
-      )}
-    >
+    <div ref={ref} className={cn("w-full h-full relative bg-gray-200", error && "bg-red-100", containerClassName)}>
       {loader &&
         isLoading &&
         (loaderPlaceholder || (
           <div className="relative w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
             <div className="w-16 h-16 mb-3 bg-white rounded-full flex items-center justify-center shadow-lg">
-              <Image
-                src={placeholder}
-                alt="Image placeholder"
-                className="size-10 opacity-40"
-                priority={false}
-              />
+              <Image src={placeholder} alt="Image placeholder" className="size-10 opacity-40" priority={false} />
             </div>
           </div>
         ))}
@@ -78,11 +63,7 @@ export default function SmartImage({
           //loader={({ src }) => src}
         />
       )}
-      {error && (
-        <div className="absolute inset-0 flex items-center justify-center text-red-500">
-          Failed to load image
-        </div>
-      )}
+      {error && <div className="absolute inset-0 flex items-center justify-center text-red-500">Failed to load image</div>}
     </div>
   );
 }
