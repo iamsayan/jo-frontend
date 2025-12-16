@@ -251,11 +251,10 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
                             <button
                                 key={option.value}
                                 onClick={() => setFilter(option.value as Filter)}
-                                className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 touch-manipulation flex items-center gap-2 cursor-pointer ${
-                                    filter === option.value
-                                        ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white"
-                                        : "bg-white/80 backdrop-blur-sm text-gray-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700 border border-gray-200/50"
-                                }`}
+                                className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 touch-manipulation flex items-center gap-2 cursor-pointer ${filter === option.value
+                                    ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white"
+                                    : "bg-white/80 backdrop-blur-sm text-gray-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700 border border-gray-200/50"
+                                    }`}
                                 aria-pressed={filter === option.value}
                                 aria-label={`Filter by ${option.label}${filter === option.value ? " (currently active)" : ""}`}
                             >
@@ -377,9 +376,7 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
                                         e.stopPropagation();
                                         toggleFavorite(item.referenceId);
                                     }}
-                                    className={`cursor-pointer p-2 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 ${
-                                        favorites.has(item.referenceId) ? "bg-red-500 text-white" : "bg-white/90 hover:bg-white text-gray-700"
-                                    }`}
+                                    className={`cursor-pointer p-2 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 ${favorites.has(item.referenceId) ? "bg-red-500 text-white" : "bg-white/90 hover:bg-white text-gray-700"}`}
                                     aria-label={`${favorites.has(item.referenceId) ? "Remove from" : "Add to"} favorites`}
                                     title={favorites.has(item.referenceId) ? "Remove from Favorites" : "Add to Favorites"}
                                 >
@@ -600,11 +597,10 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
                                     </div>
                                     <button
                                         onClick={() => toggleFavorite(previewItem.referenceId)}
-                                        className={`cursor-pointer p-2 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 ${
-                                            favorites.has(previewItem.referenceId)
-                                                ? "bg-red-500 text-white"
-                                                : "bg-gray-100 hover:bg-gray-200 text-gray-700"
-                                        }`}
+                                        className={`cursor-pointer p-2 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 ${favorites.has(previewItem.referenceId)
+                                            ? "bg-red-500 text-white"
+                                            : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                                            }`}
                                         aria-label={`${favorites.has(previewItem.referenceId) ? "Remove from" : "Add to"} favorites`}
                                     >
                                         <LuHeart className={`w-5 h-5 ${favorites.has(previewItem.referenceId) ? "fill-current" : ""}`} />

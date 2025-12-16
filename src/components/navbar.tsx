@@ -86,13 +86,7 @@ const Navbar: React.FC = () => {
     return (
         <header className="bg-transparent relative z-10">
             {isInitialized && (
-                <div
-                    className={`navbar-container fixed w-full top-0 left-0 z-50 transition-all duration-300 ${
-                        isScrolled
-                            ? "animate-slide-down bg-white shadow-xs border-b-[1px] border-gray-300"
-                            : "bg-transparent border-b-[1px] border-[#ffffff14]"
-                    }`}
-                >
+                <div className={`navbar-container fixed w-full top-0 left-0 z-50 transition-all duration-300 ${isScrolled ? "animate-slide-down bg-white shadow-xs border-b-[1px] border-gray-300" : "bg-transparent border-b-[1px] border-[#ffffff14]"}`}>
                     <div className="navbar container mx-auto fl-px-5/0">
                         <div className="navbar-start">
                             <div className="dropdown">
@@ -104,9 +98,7 @@ const Navbar: React.FC = () => {
                                         <li key={index}>
                                             {item.subMenu ? (
                                                 <details>
-                                                    <summary className="font-bold">
-                                                        {item.path !== "#" ? <Link href={item.path}>{item.name}</Link> : item.name}
-                                                    </summary>
+                                                    <summary className="font-bold">{item.path !== "#" ? <Link href={item.path}>{item.name}</Link> : item.name}</summary>
                                                     <ul className="p-2">
                                                         {item.subMenu.map((subItem, subIndex) => (
                                                             <li key={subIndex}>
@@ -126,11 +118,7 @@ const Navbar: React.FC = () => {
                                     ))}
                                     {/* Store */}
                                     <li className="mt-2">
-                                        <a
-                                            href="https://store.jagadhatrionline.co.in"
-                                            target="_blank"
-                                            className="flex items-center gap-2 font-bold bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-md relative group"
-                                        >
+                                        <a href="https://store.jagadhatrionline.co.in" target="_blank" className="flex items-center gap-2 font-bold bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-md relative group">
                                             <LuShoppingBag className="text-lg" />
                                             <span>Store</span>
                                             <LuGift className="text-yellow-300 absolute right-2 top-1/2 -translate-y-1/2 animate-bounce" />
@@ -140,55 +128,31 @@ const Navbar: React.FC = () => {
                             </div>
                             <div className="hidden lg:block">
                                 <Link href="/">
-                                    <Image
-                                        src={isScrolled ? circleLogo : logo}
-                                        alt="Jagadhatri Online Logo"
-                                        className={isScrolled ? "size-10" : "py-1 h-12 w-auto"}
-                                        priority={true}
-                                    />
+                                    <Image src={isScrolled ? circleLogo : logo} alt="Jagadhatri Online Logo" className={isScrolled ? "size-10" : "py-1 h-12 w-auto"} priority={true} />
                                 </Link>
                             </div>
                         </div>
                         <div className="navbar-center">
                             <div className="lg:hidden">
                                 <Link href="/">
-                                    <Image
-                                        src={isScrolled ? circleLogo : logo}
-                                        alt="Jagadhatri Online Logo"
-                                        className={isScrolled ? "size-10" : "py-1 h-12 w-auto"}
-                                        priority={true}
-                                    />
+                                    <Image src={isScrolled ? circleLogo : logo} alt="Jagadhatri Online Logo" className={isScrolled ? "size-10" : "py-1 h-12 w-auto"} priority={true} />
                                 </Link>
                             </div>
                             <ul className="menu menu-horizontal px-1 gap-2 uppercase font-bold hidden lg:flex">
                                 {items.map((item, index) => {
                                     const isActive = pathname === item.path || item.subMenu?.some((subItem) => pathname === subItem.path);
-                                    const classes = cn(
-                                        isScrolled
-                                            ? "text-slate-600"
-                                            : "text-slate-300 focus:!text-white focus:!bg-transparent focus:!text-yellow-500 active:!bg-transparent",
-                                        isActive && "!text-yellow-500",
-                                    );
+                                    const classes = cn(isScrolled ? "text-slate-600" : "text-slate-300 focus:!text-white focus:!bg-transparent focus:!text-yellow-500 active:!bg-transparent", isActive && "!text-yellow-500");
                                     return (
                                         <li key={index}>
                                             {item.subMenu ? (
                                                 <details>
-                                                    <summary className={classes}>
-                                                        {item.path !== "#" ? <Link href={item.path}>{item.name}</Link> : item.name}
-                                                    </summary>
+                                                    <summary className={classes}>{item.path !== "#" ? <Link href={item.path}>{item.name}</Link> : item.name}</summary>
                                                     <ul className={cn("p-2 w-28 right-0 text-slate-600", item.className)}>
                                                         {item.subMenu.map((subItem, subIndex) => {
-                                                            const innerClasses = cn(
-                                                                !isScrolled && "text-slate-600",
-                                                                pathname === subItem.path && "!text-yellow-500",
-                                                            );
+                                                            const innerClasses = cn(!isScrolled && "text-slate-600", pathname === subItem.path && "!text-yellow-500");
                                                             return (
                                                                 <li key={subIndex}>
-                                                                    <Link
-                                                                        href={subItem.path}
-                                                                        target={subItem.target ?? "_self"}
-                                                                        className={innerClasses}
-                                                                    >
+                                                                    <Link href={subItem.path} target={subItem.target ?? "_self"} className={innerClasses}>
                                                                         {subItem.name}
                                                                     </Link>
                                                                 </li>
@@ -238,13 +202,7 @@ const Navbar: React.FC = () => {
                             {/* <a className="hidden lg:flex items-center gap-2 btn bg-yellow-500 border-0 uppercase py-2.5 px-5 h-auto shadow-none rounded-md hover:bg-yellow-400" href="https://vr.jagadhatrionline.co.in/" target="_blank">
                                 360° Virtual Tours
                             </a> */}
-                            <a
-                                className="cursor-pointer hidden lg:block"
-                                href="https://store.jagadhatrionline.co.in/"
-                                target="_blank"
-                                title="JO Store"
-                                aria-label="JO Store"
-                            >
+                            <a className="cursor-pointer hidden lg:block" href="https://store.jagadhatrionline.co.in/" target="_blank" title="JO Store" aria-label="JO Store">
                                 <LuShoppingBag className={`size-5 ${isScrolled ? "" : "text-white"}`} />
                             </a>
                         </div>

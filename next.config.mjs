@@ -62,7 +62,9 @@ const nextConfig = {
                     },
                     {
                         key: "Access-Control-Allow-Origin",
-                        value: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
+                        value:
+                            process.env.NEXT_PUBLIC_SITE_URL ||
+                            "http://localhost:3000",
                     },
                 ],
             },

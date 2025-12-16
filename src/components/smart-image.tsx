@@ -60,7 +60,7 @@ export default function SmartImage({
                     {...rest}
                     onLoad={handleLoad}
                     onError={handleError}
-                    //loader={({ src }) => src}
+                // loader={({ src }) => src}
                 />
             )}
             {error && <div className="absolute inset-0 flex items-center justify-center text-red-500">Failed to load image</div>}

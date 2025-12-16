@@ -69,9 +69,7 @@ function GalleryFilter({ className, images }: GalleryFilterProps) {
                                 return newYear;
                             });
                         }}
-                        className={`text-sm px-4 py-2 rounded-lg cursor-pointer ${
-                            selectedYear === String(item) ? "bg-yellow-500 text-white" : "bg-gray-200 hover:bg-gray-300"
-                        }`}
+                        className={`text-sm px-4 py-2 rounded-lg cursor-pointer ${selectedYear === String(item) ? "bg-yellow-500 text-white" : "bg-gray-200 hover:bg-gray-300"}`}
                     >
                         {String(item).toUpperCase()}
                     </button>

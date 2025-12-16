@@ -4,7 +4,6 @@ import type { Puja } from "@/types";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const { data = [] } = await getCollection<Puja>("pujas", {
-        populate: ["partnerships"],
         pagination: {
             page: 1,
             pageSize: 200,
