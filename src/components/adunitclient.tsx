@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { usePathname, useSearchParams } from "next/navigation";
-import React, { ReactNode, useEffect } from "react";
+import { usePathname, useSearchParams } from 'next/navigation';
+import React, { ReactNode, useEffect } from 'react';
 
 declare global {
     interface Window {
@@ -13,7 +13,9 @@ interface GoogleAdUnitClientProps {
     children: ReactNode;
 }
 
-const GoogleAdUnitClient: React.FC<GoogleAdUnitClientProps> = ({ children }) => {
+const GoogleAdUnitClient: React.FC<GoogleAdUnitClientProps> = ({
+    children,
+}) => {
     const pathname = usePathname();
     const searchParams = useSearchParams();
 

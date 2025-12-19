@@ -1,7 +1,7 @@
-@use "tailwindcss";
-@plugin "daisyui";
-@plugin "fluid-tailwindcss";
-@plugin "tailwind-scrollbar";
+@use 'tailwindcss';
+@plugin 'daisyui';
+@plugin 'fluid-tailwindcss';
+@plugin 'tailwind-scrollbar';
 
 @theme {
     --animate-top-to-bottom: topToBottom 400ms ease-in-out;
@@ -90,7 +90,10 @@ html {
 
 body {
     .pattern-dots {
-        background-image: radial-gradient(rgba(79, 70, 229, 0.2) 1px, transparent 1px);
+        background-image: radial-gradient(
+            rgba(79, 70, 229, 0.2) 1px,
+            transparent 1px
+        );
         background-size: 20px 20px;
     }
 
@@ -119,9 +122,9 @@ body {
     svg.instagram {
         fill: #c82424;
     }
-}
 
-.writing-mode-vertical {
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
+    .writing-mode-vertical {
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+    }
 }

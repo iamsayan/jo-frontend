@@ -1,27 +1,31 @@
-import cx, { ClassName } from "classix";
-import { twMerge } from "fluid-tailwindcss/tailwind-merge";
-import { parseISO, format } from "date-fns";
-import { formatInTimeZone } from "date-fns-tz";
-import type { Puja, PujaExtended, SharedSchedule } from "@/types";
+import cx, { ClassName } from 'classix';
+import { twMerge } from 'fluid-tailwindcss/tailwind-merge';
+import { parseISO, format } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
+import type { Puja, PujaExtended, SharedSchedule } from '@/types';
 
 export function cn(...classes: ClassName[]) {
     return twMerge(cx(...classes));
 }
 
-export const jubilees: number[] = [25, 50, 60, 75, 100, 125, 150, 160, 175, 200, 225, 250, 260, 275, 300];
-export const preJubilees: number[] = [24, 49, 59, 74, 99, 124, 149, 159, 174, 199, 224, 249, 259, 274, 299];
+export const jubilees: number[] = [
+    25, 50, 60, 75, 100, 125, 150, 160, 175, 200, 225, 250, 260, 275, 300,
+];
+export const preJubilees: number[] = [
+    24, 49, 59, 74, 99, 124, 149, 159, 174, 199, 224, 249, 259, 274, 299,
+];
 
 export function extendPuja(puja: Puja, year?: number): PujaExtended {
     const y = getYear(puja.estd, year);
     const cel = getCelebrating(y);
-    const zone = puja.zone === "bhadreswar" ? "Bhadreswar" : "Chandannagar";
+    const zone = puja.zone === 'bhadreswar' ? 'Bhadreswar' : 'Chandannagar';
 
     return {
         ...puja,
         year: y,
         celebrating: cel,
-        popular: (puja.tags ?? []).includes("popular"),
-        adi: (puja.tags ?? []).includes("adi"),
+        popular: (puja.tags ?? []).includes('popular'),
+        adi: (puja.tags ?? []).includes('adi'),
         jubilee: jubilees.includes(Number(y)),
         preJubilee: preJubilees.includes(Number(y)),
         psZone: zone,
@@ -31,52 +35,67 @@ export function extendPuja(puja: Puja, year?: number): PujaExtended {
 }
 
 export function getCelebrating(year: number | string): string {
-    const parsedYear = typeof year === "string" ? parseInt(year) : year;
-    return jubilees.includes(parsedYear) ? populateCel(parsedYear) : preJubilees.includes(parsedYear) ? populateCel(parsedYear, true) : "";
+    const parsedYear = typeof year === 'string' ? parseInt(year) : year;
+    return jubilees.includes(parsedYear)
+        ? populateCel(parsedYear)
+        : preJubilees.includes(parsedYear)
+          ? populateCel(parsedYear, true)
+          : '';
 }
 
 export function populateCel(year: number, pre: boolean = false): string {
     const adjustedYear = pre ? year + 1 : year;
-    let name = "";
+    let name = '';
 
     switch (adjustedYear) {
         case 25:
-            name = "Silver";
+            name = 'Silver';
             break;
         case 50:
-            name = "Golden";
+            name = 'Golden';
             break;
         case 60:
-            name = "Diamond";
+            name = 'Diamond';
             break;
         case 75:
-            name = "Platinum";
+            name = 'Platinum';
             break;
         case 100:
-            name = "Centennial";
+            name = 'Centennial';
             break;
     }
-    name = pre ? "Pre " + name : name;
+    name = pre ? 'Pre ' + name : name;
 
-    return name ? name + " Jubilee" : "Jubilee";
+    return name ? name + ' Jubilee' : 'Jubilee';
 }
 
-export function getYear(estd: number | string | null, year: number = new Date().getFullYear()): number {
-    const parsedEstd = typeof estd === "string" ? parseInt(estd) : estd;
+export function getYear(
+    estd: number | string | null,
+    year: number = new Date().getFullYear(),
+): number {
+    const parsedEstd = typeof estd === 'string' ? parseInt(estd) : estd;
     return parsedEstd ? year - parsedEstd + 1 : 0;
 }
 
 export const setTime = (date: Date, time?: string): Date => {
     if (time) {
-        const [hh, mm, ss] = time?.split(":").map(Number);
+        const [hh, mm, ss] = time?.split(':').map(Number);
         date.setHours(hh || 0, mm || 0, ss || 0, 0);
     }
     return date;
 };
 
 export function createDate(date: string, time?: string): Date;
-export function createDate(date: string, time: string | undefined, dateFormat: string): string;
-export function createDate(date: string, time?: string, dateFormat?: string): Date | string {
+export function createDate(
+    date: string,
+    time: string | undefined,
+    dateFormat: string,
+): string;
+export function createDate(
+    date: string,
+    time?: string,
+    dateFormat?: string,
+): Date | string {
     let baseDate = parseISO(date);
     if (time) baseDate = setTime(baseDate, time);
     return dateFormat ? format(baseDate, dateFormat) : baseDate;
@@ -85,13 +104,21 @@ export function createDate(date: string, time?: string, dateFormat?: string): Da
 export function formatDate(date: string): Date;
 export function formatDate(date: string, dateFormat: string): string;
 export function formatDate(date: string, dateFormat?: string): Date | string {
-    return dateFormat ? createDate(date, undefined, dateFormat) : createDate(date);
+    return dateFormat
+        ? createDate(date, undefined, dateFormat)
+        : createDate(date);
 }
 
-export function getDateByIndex(dates: SharedSchedule[] | undefined, index: number | "last", time?: string, addDays: number = 0): Date {
+export function getDateByIndex(
+    dates: SharedSchedule[] | undefined,
+    index: number | 'last',
+    time?: string,
+    addDays: number = 0,
+): Date {
     if (!dates || dates.length === 0) return setTime(new Date(), time);
 
-    const resolvedIndex = index === "last" ? Math.max(dates.length - 1, 0) : index;
+    const resolvedIndex =
+        index === 'last' ? Math.max(dates.length - 1, 0) : index;
     const raw = dates[resolvedIndex].date;
     if (!raw) return setTime(new Date(), time);
 
@@ -102,12 +129,17 @@ export function getDateByIndex(dates: SharedSchedule[] | undefined, index: numbe
     return date;
 }
 
-export function buildGoogleCalendarUrl({ title = "", description = "", location = "" }, date: string, startTime: string, endTime: string): string {
-    const base = "https://calendar.google.com/calendar/render?action=TEMPLATE";
+export function buildGoogleCalendarUrl(
+    { title = '', description = '', location = '' },
+    date: string,
+    startTime: string,
+    endTime: string,
+): string {
+    const base = 'https://calendar.google.com/calendar/render?action=TEMPLATE';
     const startDate = createDate(date, startTime);
     const endDate = createDate(date, endTime);
 
-    const dates = `${formatInTimeZone(startDate, "UTC", "yyyyMMdd'T'HHmmss'Z'")}/${formatInTimeZone(endDate, "UTC", "yyyyMMdd'T'HHmmss'Z'")}`;
+    const dates = `${formatInTimeZone(startDate, 'UTC', "yyyyMMdd'T'HHmmss'Z'")}/${formatInTimeZone(endDate, 'UTC', "yyyyMMdd'T'HHmmss'Z'")}`;
     const params = new URLSearchParams({
         text: title,
         details: description,
@@ -118,12 +150,14 @@ export function buildGoogleCalendarUrl({ title = "", description = "", location 
 }
 
 export function stripHtmlAndLimit(text: string, limit: number = 160): string {
-    const strippedText = text.replace(/<\/?[^>]+(>|$)/g, "");
-    return strippedText.length > limit ? strippedText.substring(0, limit).trim() + "..." : strippedText;
+    const strippedText = text.replace(/<\/?[^>]+(>|$)/g, '');
+    return strippedText.length > limit
+        ? strippedText.substring(0, limit).trim() + '...'
+        : strippedText;
 }
 
 export function sanitizeSearchQuery(query: string | number): string {
-    if (typeof query !== "string") {
+    if (typeof query !== 'string') {
         query = String(query);
     }
 
@@ -131,21 +165,21 @@ export function sanitizeSearchQuery(query: string | number): string {
         query
             .trim()
             .slice(0, 100) // Limit to 100 characters
-            .replace(/[<>{}[\]\\\/]/g, "") // Remove potentially dangerous characters
+            .replace(/[<>{}[\]\\\/]/g, '') // Remove potentially dangerous characters
             //.replace(/[&]/g, ' and ') // Replace & with 'and'
-            .replace(/\s+/g, " ")
+            .replace(/\s+/g, ' ')
     ); // Replace multiple spaces with single space
 }
 
 export function capitalizeFirst(name?: string): string {
-    if (!name) return "";
+    if (!name) return '';
     return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
 }
 
 export function toUpper(name: string): string {
-    return name?.toUpperCase() ?? "";
+    return name?.toUpperCase() ?? '';
 }
 
 export function toLower(name: string): string {
-    return name?.toLowerCase() ?? "";
+    return name?.toLowerCase() ?? '';
 }

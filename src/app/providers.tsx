@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { ProgressProvider } from "@bprogress/next/app";
-import CommandBar from "@/components/command-bar";
-import { SiteDataProvider } from "@/contexts/siteDataContext";
-import type { GlobalSite } from "@/types";
+import { ProgressProvider } from '@bprogress/next/app';
+import CommandBar from '@/components/command-bar';
+import { SiteDataProvider } from '@/contexts/siteDataContext';
+import type { GlobalSite } from '@/types';
 
 interface ProvidersProps {
     children: React.ReactNode;

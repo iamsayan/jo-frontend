@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import { useCallback, useRef } from "react";
-import { useSearchParams, useParams } from "next/navigation";
-import { useRouter } from "@bprogress/next/app";
-import { capitalizeFirst, cn } from "@/utils/functions";
-import Gallery from "@/components/gallery";
-import SmartImage from "@/components/smart-image";
-import ReactPaginate from "react-paginate";
-import { LuCamera, LuChevronLeft, LuChevronRight } from "react-icons/lu";
-import imageUrl from "@/utils/transform";
-import { renderToString } from "react-dom/server";
-import type { Image } from "@/types";
+import { useCallback, useRef } from 'react';
+import { useSearchParams, useParams } from 'next/navigation';
+import { useRouter } from '@bprogress/next/app';
+import { capitalizeFirst, cn } from '@/utils/functions';
+import Gallery from '@/components/gallery';
+import SmartImage from '@/components/smart-image';
+import ReactPaginate from 'react-paginate';
+import { LuCamera, LuChevronLeft, LuChevronRight } from 'react-icons/lu';
+import imageUrl from '@/utils/transform';
+import { renderToString } from 'react-dom/server';
+import type { Image } from '@/types';
 
 interface GalleryPaginateProps {
     className?: string;
@@ -19,15 +19,20 @@ interface GalleryPaginateProps {
     total: number;
 }
 
-function GalleryPaginate({ className, images, itemsPerPage, total }: GalleryPaginateProps) {
+function GalleryPaginate({
+    className,
+    images,
+    itemsPerPage,
+    total,
+}: GalleryPaginateProps) {
     const router = useRouter();
     const params = useParams();
     const searchParams = useSearchParams();
     const lightGallery = useRef<any>(null);
 
-    const classes = cn("gallery-filter mt-4", className);
+    const classes = cn('gallery-filter mt-4', className);
     const pageCount = Math.ceil(total / itemsPerPage);
-    const currentPage = Number(searchParams.get("page") ?? 1);
+    const currentPage = Number(searchParams.get('page') ?? 1);
     const currentYear = params.year ?? new Date().getFullYear();
 
     const handlePageClick = (event: any) => {
@@ -43,11 +48,14 @@ function GalleryPaginate({ className, images, itemsPerPage, total }: GalleryPagi
     const subHtml = (item: any) => {
         return (
             <div className="flex flex-col items-center justify-center gap-1.5">
-                <div className="font-bold text-xl">{item?.puja?.name}</div>
+                <div className="text-xl font-bold">{item?.puja?.name}</div>
                 <div className="flex items-center justify-center gap-1.5">
                     <LuCamera className="inline-block size-3.5" />
                     <div className="text-xs">
-                        Captured by: <span className="font-bold">{capitalizeFirst(item?.uploadedBy)}</span>
+                        Captured by:{' '}
+                        <span className="font-bold">
+                            {capitalizeFirst(item?.uploadedBy)}
+                        </span>
                     </div>
                 </div>
             </div>
@@ -55,7 +63,9 @@ function GalleryPaginate({ className, images, itemsPerPage, total }: GalleryPagi
     };
 
     const dynamicEl = images.map((item: Image, index: number) => {
-        const imagePath = imageUrl(`${item.year}/${item.puja?.referenceId}/${item.name}`);
+        const imagePath = imageUrl(
+            `${item.year}/${item.puja?.referenceId}/${item.name}`,
+        );
         return {
             key: item.documentId ?? index,
             src: imagePath,
@@ -80,21 +90,25 @@ function GalleryPaginate({ className, images, itemsPerPage, total }: GalleryPagi
                 {images.map((item: Image, index: number) => (
                     <div
                         key={item.documentId ?? index}
-                        className="relative aspect-[4/5] overflow-hidden rounded-2xl group cursor-pointer"
+                        className="group relative aspect-[4/5] cursor-pointer overflow-hidden rounded-2xl"
                         onClick={() => lightGallery.current.openGallery(index)}
                     >
                         <SmartImage
                             key={item.documentId ?? index}
-                            src={imageUrl(`${item.year}/${item.puja?.referenceId}/${item.name}`)}
+                            src={imageUrl(
+                                `${item.year}/${item.puja?.referenceId}/${item.name}`,
+                            )}
                             fill={true}
-                            className="object-cover pointer-events-none text-transparent transform transition-all duration-700 group-hover:scale-110"
+                            className="pointer-events-none transform object-cover text-transparent transition-all duration-700 group-hover:scale-110"
                             alt={item.puja?.name ?? item.name}
                         />
                         {/* <span className="absolute bottom-0 left-0 right-0 text-center bg-yellow-500 p-1.5 text-xs">{item?.puja_entry_id?.puja_name}</span> */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                        <div className="absolute inset-0 flex items-end left-0 right-0 text-center bottom-0">
-                            <div className="text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 w-full group-hover:mb-3">
-                                <div className="font-medium mb-2 max-w-50 mx-auto fl-text-xs/sm">{item.puja?.name ?? item.name}</div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                        <div className="absolute inset-0 right-0 bottom-0 left-0 flex items-end text-center">
+                            <div className="w-full translate-y-full transform text-white transition-transform duration-300 group-hover:mb-3 group-hover:translate-y-0">
+                                <div className="fl-text-xs/sm mx-auto mb-2 max-w-50 font-medium">
+                                    {item.puja?.name ?? item.name}
+                                </div>
                                 {/* <div className="text-sm text-white/80">Click to expand</div> */}
                             </div>
                         </div>
@@ -121,7 +135,11 @@ function GalleryPaginate({ className, images, itemsPerPage, total }: GalleryPagi
                     breakClassName="join-item"
                     breakLinkClassName="rounded-none btn btn-disabled"
                     activeLinkClassName="btn-active"
-                    hrefBuilder={(page, pageCount, selected) => (page >= 1 && page <= pageCount ? `/gallery/${currentYear}?page=${page}` : "#")}
+                    hrefBuilder={(page, pageCount, selected) =>
+                        page >= 1 && page <= pageCount
+                            ? `/gallery/${currentYear}?page=${page}`
+                            : '#'
+                    }
                     hrefAllControls
                 />
             )}

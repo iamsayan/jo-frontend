@@ -1,44 +1,42 @@
-"use client";
+'use client';
 
-import React from "react";
-import Countdown, { CountdownRendererFn } from "react-countdown";
-import { paytoneOne } from "@/fonts";
-import { cn } from "@/utils/functions";
-import { useState, useEffect } from "react";
+import React from 'react';
+import Countdown, { CountdownRendererFn } from 'react-countdown';
+import { cn } from '@/utils/functions';
 
 interface CountdownTimerProps {
     className?: string;
     targetDate: Date;
 }
 
-const CountdownTimer: React.FC<CountdownTimerProps> = ({ className, targetDate }) => {
-    const classes = cn("countdown-area", className);
-    const [isLoaded, setIsLoaded] = useState<boolean>(false);
+const CountdownTimer: React.FC<CountdownTimerProps> = ({
+    className,
+    targetDate,
+}) => {
+    const classes = cn('countdown-area', className);
 
-    useEffect(() => {
-        setIsLoaded(true);
-    }, []);
-
-    if (!isLoaded) {
-        return null;
-    }
-
-    const renderer: CountdownRendererFn = ({ days, hours, minutes, seconds, completed }) => {
+    const renderer: CountdownRendererFn = ({
+        days,
+        hours,
+        minutes,
+        seconds,
+        completed,
+    }) => {
         const timer = [
             {
-                label: "Days",
+                label: 'Days',
                 value: days,
             },
             {
-                label: "Hours",
+                label: 'Hours',
                 value: hours,
             },
             {
-                label: "Minutes",
+                label: 'Minutes',
                 value: minutes,
             },
             {
-                label: "Seconds",
+                label: 'Seconds',
                 value: seconds,
             },
         ];
@@ -47,15 +45,22 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ className, targetDate }
             return <span>Countdown has ended!</span>;
         } else {
             return (
-                <div className={`grid grid-flow-col gap-3 justify-center text-center auto-cols-max ${classes}`}>
+                <div
+                    className={`grid auto-cols-max grid-flow-col justify-center gap-3 text-center ${classes}`}
+                >
                     {timer.map((item, index) => (
-                        <div className="flex flex-col items-center gap-2 border-slate-800 border-2 fl-p-3/5 rounded-sm bg-gray-100" key={index}>
-                            <span className={`countdown fl-text-2xl/5xl text-yellow-500 font-bold`}>
+                        <div
+                            className="fl-p-3/5 flex flex-col items-center gap-2 rounded-sm border-2 border-slate-800 bg-gray-100"
+                            key={index}
+                        >
+                            <span
+                                className={`countdown fl-text-2xl/5xl font-bold text-yellow-500`}
+                            >
                                 <span
                                     style={
                                         {
-                                            "--value": item.value,
-                                            "--digits": 2,
+                                            '--value': item.value,
+                                            '--digits': 2,
                                         } as React.CSSProperties
                                     }
                                     aria-live="polite"
@@ -64,7 +69,9 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ className, targetDate }
                                     {item.value}
                                 </span>
                             </span>
-                            <span className="countdown-label fl-text-sm/md">{item.label}</span>
+                            <span className="countdown-label fl-text-sm/md">
+                                {item.label}
+                            </span>
                         </div>
                     ))}
                 </div>

@@ -28,7 +28,7 @@ export interface DocumentResponseCollection<T extends Document = Document> {
 }
 
 // Image format keys - generated from upload plugin config
-export type StrapiImageFormatKey = "thumbnail";
+export type StrapiImageFormatKey = 'thumbnail';
 
 export interface StrapiImageFormat {
     name: string;
@@ -93,7 +93,7 @@ export type StrapiMarkdownField = string;
 
 // Rich Text Blocks Types
 export interface StrapiRichTextBlocksText {
-    type: "text";
+    type: 'text';
     text: string;
     bold?: boolean;
     italic?: boolean;
@@ -103,46 +103,46 @@ export interface StrapiRichTextBlocksText {
 }
 
 export interface StrapiRichTextBlocksLink {
-    type: "link";
+    type: 'link';
     url: string;
     children: StrapiRichTextBlocksNode[];
 }
 
 export interface StrapiRichTextBlocksImage {
-    type: "image";
+    type: 'image';
     image: StrapiImage;
     children: StrapiRichTextBlocksNode[];
 }
 
 export interface StrapiRichTextBlocksParagraph {
-    type: "paragraph";
+    type: 'paragraph';
     children: StrapiRichTextBlocksNode[];
 }
 
 export interface StrapiRichTextBlocksHeading {
-    type: "heading";
+    type: 'heading';
     level: 1 | 2 | 3 | 4 | 5 | 6;
     children: StrapiRichTextBlocksNode[];
 }
 
 export interface StrapiRichTextBlocksList {
-    type: "list";
-    format: "ordered" | "unordered";
+    type: 'list';
+    format: 'ordered' | 'unordered';
     children: StrapiRichTextBlocksListItem[];
 }
 
 export interface StrapiRichTextBlocksListItem {
-    type: "list-item";
+    type: 'list-item';
     children: StrapiRichTextBlocksNode[];
 }
 
 export interface StrapiRichTextBlocksQuote {
-    type: "quote";
+    type: 'quote';
     children: StrapiRichTextBlocksNode[];
 }
 
 export interface StrapiRichTextBlocksCode {
-    type: "code";
+    type: 'code';
     language?: string;
     children: StrapiRichTextBlocksNode[];
 }
@@ -174,14 +174,14 @@ export interface LocationPickerFieldType {
 }
 
 export interface AwardsCategory {
-    __component: "awards.category";
+    __component: 'awards.category';
     id: number;
     category: string;
     positions: AwardsPosition[] | null;
 }
 
 export interface AwardsPosition {
-    __component: "awards.position";
+    __component: 'awards.position';
     id: number;
     position: string;
     pujas?: Puja[];
@@ -189,7 +189,7 @@ export interface AwardsPosition {
 }
 
 export interface SharedAchievement {
-    __component: "shared.achievement";
+    __component: 'shared.achievement';
     id: number;
     year: number;
     title: string;
@@ -197,7 +197,7 @@ export interface SharedAchievement {
 }
 
 export interface SharedAshsParticipant {
-    __component: "shared.ashs-participant";
+    __component: 'shared.ashs-participant';
     id: number;
     title: string;
     puja?: Puja;
@@ -207,16 +207,16 @@ export interface SharedAshsParticipant {
 }
 
 export interface SharedLink {
-    __component: "shared.link";
+    __component: 'shared.link';
     id: number;
     title: string;
     url: string;
-    target: "_self" | "_blank";
+    target: '_self' | '_blank';
     alt?: string;
 }
 
 export interface SharedSchedule {
-    __component: "shared.schedule";
+    __component: 'shared.schedule';
     id: number;
     date: string;
     event: string;
@@ -225,7 +225,7 @@ export interface SharedSchedule {
 }
 
 export interface SharedVideo {
-    __component: "shared.video";
+    __component: 'shared.video';
     id: number;
     title: string;
     video?: VideoFieldType;
@@ -235,7 +235,7 @@ export interface SharedVideo {
 export interface Artist extends Document {
     id: number;
     name: string;
-    type: "idol" | "decoration" | "light" | "theme";
+    type: 'idol' | 'decoration' | 'light' | 'theme';
     businessName?: string;
     contact?: string;
     email?: string;
@@ -274,17 +274,17 @@ export interface Image extends Document {
     id: number;
     puja?: Puja;
     category:
-        | "puja"
-        | "preparation"
-        | "banner"
-        | "events"
-        | "idolmaking"
-        | "eyecreation"
-        | "procession"
-        | "immersion"
-        | "lighting"
-        | "pandal"
-        | "kathamo-puja";
+        | 'puja'
+        | 'preparation'
+        | 'banner'
+        | 'events'
+        | 'idolmaking'
+        | 'eyecreation'
+        | 'procession'
+        | 'immersion'
+        | 'lighting'
+        | 'pandal'
+        | 'kathamo-puja';
     name: string;
     year: number;
     uploadedBy?: string;
@@ -312,7 +312,7 @@ export interface Procession extends Document {
     id: number;
     title?: string;
     puja?: Puja;
-    zone: "A" | "B" | "C" | "D";
+    zone: 'A' | 'B' | 'C' | 'D';
     truckCount: number;
     sortOrder: number;
 }
@@ -320,7 +320,7 @@ export interface Procession extends Document {
 export interface Puja extends Document {
     id: number;
     name: string;
-    zone: "chandannagar" | "bhadreswar";
+    zone: 'chandannagar' | 'bhadreswar';
     estd: number;
     tags: string[];
     info?: StrapiMarkdownField | string;

@@ -1,6 +1,6 @@
-"use server";
+'use server';
 
-import Razorpay from "razorpay";
+import Razorpay from 'razorpay';
 
 const razorpay = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID!,
@@ -24,13 +24,13 @@ export async function createRazorpayOrder(formData: RazorpayFormData) {
         if (!amount || !email || !name || !phone) {
             return {
                 success: false,
-                error: "Missing required fields",
+                error: 'Missing required fields',
             };
         }
 
         const order = await razorpay.orders.create({
             amount: amount,
-            currency: "INR",
+            currency: 'INR',
             receipt: `receipt_${Date.now()}`,
             notes: {
                 email,
@@ -44,11 +44,11 @@ export async function createRazorpayOrder(formData: RazorpayFormData) {
             orderId: order.id,
         };
     } catch (error) {
-        console.error("Error creating sortOrder:", error);
+        console.error('Error creating sortOrder:', error);
 
         return {
             success: false,
-            error: "Error creating order",
+            error: 'Error creating order',
         };
     }
 }

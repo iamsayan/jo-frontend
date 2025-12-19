@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import useWeb3Forms from "@web3forms/react";
-import React, { useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import useWeb3Forms from '@web3forms/react';
+import React, { useState } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
 
 interface IFormInput {
     botcheck: boolean;
@@ -18,7 +18,7 @@ const Contact: React.FC = () => {
         reset,
         formState: { errors, isSubmitSuccessful, isSubmitting },
     } = useForm<IFormInput>({
-        mode: "onTouched",
+        mode: 'onTouched',
     });
 
     const [isSuccess, setIsSuccess] = useState<boolean>(false);
@@ -27,8 +27,8 @@ const Contact: React.FC = () => {
     const { submit: onSubmit } = useWeb3Forms({
         access_key: process.env.WEB3_FORM_API_KEY!,
         settings: {
-            from_name: "Jagadhatri Online Website",
-            subject: "New Contact Message from Website",
+            from_name: 'Jagadhatri Online Website',
+            subject: 'New Contact Message from Website',
         },
         onSuccess: (msg: string) => {
             setIsSuccess(true);
@@ -43,19 +43,29 @@ const Contact: React.FC = () => {
 
     return (
         <>
-            <form onSubmit={handleSubmit(onSubmit as SubmitHandler<IFormInput>)} className="flex flex-col gap-5">
-                <input type="checkbox" className="hidden" style={{ display: "none" }} {...register("botcheck")} />
+            <form
+                onSubmit={handleSubmit(onSubmit as SubmitHandler<IFormInput>)}
+                className="flex flex-col gap-5"
+            >
+                <input
+                    type="checkbox"
+                    className="hidden"
+                    style={{ display: 'none' }}
+                    {...register('botcheck')}
+                />
 
                 <div>
                     <input
                         type="text"
                         placeholder="Full Name"
                         autoComplete="false"
-                        className={`h-10 border mt-1 rounded-sm px-4 w-full bg-gray-50 ${
-                            errors.name ? "border-red-600 focus:border-red-600" : "border-gray-300 focus:border-gray-600"
+                        className={`mt-1 h-10 w-full rounded-sm border bg-gray-50 px-4 ${
+                            errors.name
+                                ? 'border-red-600 focus:border-red-600'
+                                : 'border-gray-300 focus:border-gray-600'
                         }`}
-                        {...register("name", {
-                            required: "Full name is required",
+                        {...register('name', {
+                            required: 'Full name is required',
                             maxLength: 80,
                         })}
                     />
@@ -75,14 +85,16 @@ const Contact: React.FC = () => {
                         type="email"
                         placeholder="Email Address"
                         autoComplete="false"
-                        className={`h-10 border mt-1 rounded-sm px-4 w-full bg-gray-50 ${
-                            errors.email ? "border-red-600 focus:border-red-600" : "border-gray-300 focus:border-gray-600"
+                        className={`mt-1 h-10 w-full rounded-sm border bg-gray-50 px-4 ${
+                            errors.email
+                                ? 'border-red-600 focus:border-red-600'
+                                : 'border-gray-300 focus:border-gray-600'
                         }`}
-                        {...register("email", {
-                            required: "Enter your email",
+                        {...register('email', {
+                            required: 'Enter your email',
                             pattern: {
                                 value: /^\S+@\S+$/i,
-                                message: "Please enter a valid email",
+                                message: 'Please enter a valid email',
                             },
                         })}
                     />
@@ -96,11 +108,13 @@ const Contact: React.FC = () => {
                 <div>
                     <textarea
                         placeholder="Your Message"
-                        className={`px-4 py-3 border mt-1 rounded-sm w-full bg-gray-50 h-36 ${
-                            errors.message ? "border-red-600 focus:border-red-600" : "border-gray-300 focus:border-gray-600"
+                        className={`mt-1 h-36 w-full rounded-sm border bg-gray-50 px-4 py-3 ${
+                            errors.message
+                                ? 'border-red-600 focus:border-red-600'
+                                : 'border-gray-300 focus:border-gray-600'
                         }`}
-                        {...register("message", {
-                            required: "Enter your Message",
+                        {...register('message', {
+                            required: 'Enter your Message',
                         })}
                     />
                     {errors.message && (
@@ -112,11 +126,23 @@ const Contact: React.FC = () => {
 
                 <button
                     type="submit"
-                    className="w-full py-3 font-semibold text-white transition-colors bg-yellow-500 rounded-md hover:bg-gray-800 focus:outline-hidden hover:text-white px-6"
+                    className="w-full rounded-md bg-yellow-500 px-6 py-3 font-semibold text-white transition-colors hover:bg-gray-800 hover:text-white focus:outline-hidden"
                 >
                     {isSubmitting ? (
-                        <svg className="w-5 h-5 mx-auto text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <svg
+                            className="mx-auto h-5 w-5 animate-spin text-white"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                        >
+                            <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                            ></circle>
                             <path
                                 className="opacity-75"
                                 fill="currentColor"
@@ -124,16 +150,20 @@ const Contact: React.FC = () => {
                             ></path>
                         </svg>
                     ) : (
-                        "Send Message"
+                        'Send Message'
                     )}
                 </button>
             </form>
 
             {isSubmitSuccessful && isSuccess && (
-                <div className="mt-3 text-sm text-center text-green-500">{message || "Success. Message sent successfully"}</div>
+                <div className="mt-3 text-center text-sm text-green-500">
+                    {message || 'Success. Message sent successfully'}
+                </div>
             )}
             {isSubmitSuccessful && !isSuccess && (
-                <div className="mt-3 text-sm text-center text-red-500">{message || "Something went wrong. Please try later."}</div>
+                <div className="mt-3 text-center text-sm text-red-500">
+                    {message || 'Something went wrong. Please try later.'}
+                </div>
             )}
         </>
     );
