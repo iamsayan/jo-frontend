@@ -151,7 +151,7 @@ export default async function Page({ params }: PageProps<Params>) {
         };
     });
 
-    let array: PujaExtended[] = [];
+    const array: PujaExtended[] = [];
     pujas.forEach((item: PujaExtended, index: number) => {
         if (item.referenceId === id) {
             array.push(pujas?.[0 < index ? index - 1 : pujas?.length - 1]);
@@ -238,7 +238,7 @@ export default async function Page({ params }: PageProps<Params>) {
             icon: FaGlobe,
         },
     ]
-        .map((item: any) => {
+        .map((item) => {
             return {
                 ...item,
                 link:
@@ -301,7 +301,7 @@ export default async function Page({ params }: PageProps<Params>) {
         },
         ...(pujaImages
             ? {
-                  image: pujaImages?.map((item: any) => imageUrl(item.src)),
+                  image: pujaImages?.map((item) => imageUrl(item.src)),
               }
             : {}),
         startDate: `${format(getDateByIndex(siteData?.schedules, 0, '06:00:00'), "yyyy-MM-dd'T'HH:mm:ssXXX")}`,
@@ -712,26 +712,24 @@ export default async function Page({ params }: PageProps<Params>) {
                                                 `mx-auto grid grid-cols-1 md:grid-cols-2 lg:max-w-screen-xl lg:grid-cols-${info.length} fl-gap-4/6 mt-8 justify-center border-t border-purple-100 pt-8`,
                                             )}
                                         >
-                                            {info.map(
-                                                (item: any, index: number) => (
-                                                    <div
-                                                        key={index}
-                                                        className="flex items-start gap-4"
-                                                    >
-                                                        <div className="rounded-xl bg-purple-100 p-3">
-                                                            {item.icon}
+                                            {info.map((item, index: number) => (
+                                                <div
+                                                    key={index}
+                                                    className="flex items-start gap-4"
+                                                >
+                                                    <div className="rounded-xl bg-purple-100 p-3">
+                                                        {item.icon}
+                                                    </div>
+                                                    <div className="whitespace-nowrap">
+                                                        <div className="mb-1 font-semibold text-gray-800">
+                                                            {item.title}
                                                         </div>
-                                                        <div className="whitespace-nowrap">
-                                                            <div className="mb-1 font-semibold text-gray-800">
-                                                                {item.title}
-                                                            </div>
-                                                            <div className="text-sm text-gray-600">
-                                                                {item.value}
-                                                            </div>
+                                                        <div className="text-sm text-gray-600">
+                                                            {item.value}
                                                         </div>
                                                     </div>
-                                                ),
-                                            )}
+                                                </div>
+                                            ))}
                                         </div>
                                     )}
                                 </div>

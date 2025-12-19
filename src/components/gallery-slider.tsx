@@ -4,30 +4,31 @@ import { useCallback, useRef } from 'react';
 import SmartImage from '@/components/smart-image';
 import Gallery from '@/components/gallery';
 import { cn } from '@/utils/functions';
-
-// @ts-ignore
-import { Splide, SplideSlide, SplideProps } from '@splidejs/react-splide';
+import { Splide, SplideSlide, SplideProps } from 'react-splide-ts';
 import { Grid } from '@splidejs/splide-extension-grid';
 import { Intersection } from '@splidejs/splide-extension-intersection';
 import { AutoScroll } from '@splidejs/splide-extension-auto-scroll';
 import { GalleryItem } from 'lightgallery/lg-utils';
 import imageUrl from '@/utils/transform';
-import '@splidejs/splide/css';
+import 'react-splide-ts/css';
+import type { LightGalleryProps } from 'lightgallery/react';
+import type { LightGallery } from 'lightgallery/lightgallery';
 
-interface GallerySliderProps {
+type GallerySliderProps = LightGalleryProps & {
     slides: GalleryItem[];
     sliderOptions: SplideProps['options'];
     sliderClass?: string;
     sliderItemClass?: string;
-    [key: string]: any;
-}
+};
 
 export default function GallerySlider({
     slides,
     sliderOptions,
+    sliderClass,
+    sliderItemClass,
     ...props
 }: GallerySliderProps) {
-    const lightGallery = useRef<any>(null);
+    const lightGallery = useRef<LightGallery | null>(null);
     const defaultOptions: SplideProps['options'] = {
         type: 'loop',
     };
@@ -37,7 +38,7 @@ export default function GallerySlider({
         ...sliderOptions,
     };
 
-    const onInit = useCallback((detail: any) => {
+    const onInit = useCallback((detail: { instance: LightGallery }) => {
         if (detail) {
             lightGallery.current = detail.instance;
         }
@@ -47,10 +48,10 @@ export default function GallerySlider({
         return null;
     }
 
-    slides = slides.map((item: any) => {
+    slides = slides.map((item: GalleryItem) => {
         return {
             ...item,
-            src: imageUrl(item.src),
+            src: imageUrl(item.src as string),
         };
     });
 
@@ -58,21 +59,21 @@ export default function GallerySlider({
         <Gallery {...props} onInit={onInit} dynamicEl={slides} dynamic={true}>
             <Splide
                 options={sliderOptions}
-                className={cn('slider-container', props.sliderClass)}
+                className={cn('slider-container', sliderClass)}
                 extensions={{ Grid, AutoScroll, Intersection }}
             >
-                {slides.map((item: any, index: number) => (
+                {slides.map((item: GalleryItem, index: number) => (
                     <SplideSlide
                         key={index}
-                        onClick={() => lightGallery.current.openGallery(index)}
+                        onClick={() => lightGallery.current?.openGallery(index)}
                         className={cn(
                             'relative cursor-pointer',
-                            props.sliderItemClass,
+                            sliderItemClass,
                         )}
                     >
                         <SmartImage
-                            src={item.src}
-                            alt={item.alt}
+                            src={item.src as string}
+                            alt={item.alt as string}
                             className="pointer-events-none transform object-cover text-transparent transition-all duration-700 group-hover:scale-110"
                             fill={true}
                             quality={item?.quality ?? 70}

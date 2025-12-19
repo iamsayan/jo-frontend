@@ -38,20 +38,17 @@ type SortOption = 'name' | 'year' | 'estd' | 'popular';
 type SortDirection = 'asc' | 'desc';
 
 export default function PujaList({ data }: { data: PujaExtended[] }) {
-    const [hydrated, setHydrated] = useState<boolean>(false);
     const [search, setSearch] = useState<string>('');
     const [filter, setFilter] = useState<Filter>('all');
     const [sortBy, setSortBy] = useState<SortOption>('name');
     const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
-    const [value] = useDebounce(search, 400);
+    const [value] = useDebounce(search, 300);
     const [filteredData, setFilteredData] = useState<PujaExtended[]>(data);
-    const [isSearching, setIsSearching] = useState<boolean>(false);
     const [favorites, setFavorites] = useState<Set<string>>(new Set());
     const [previewItem, setPreviewItem] = useState<PujaExtended | null>(null);
     const [showPreview, setShowPreview] = useState<boolean>(false);
 
     useEffect(() => {
-        setIsSearching(true);
         const timer = setTimeout(() => {
             let filtered = data;
 
@@ -59,7 +56,7 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
             if (value) {
                 filtered = filtered.filter((item: PujaExtended) =>
                     [item.name, item.year, item.theme, item.address].some(
-                        (val: any) =>
+                        (val) =>
                             String(val)
                                 .toLowerCase()
                                 .includes(value.toLowerCase()),
@@ -110,15 +107,10 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
             });
 
             setFilteredData(filtered);
-            setIsSearching(false);
         }, 100);
 
         return () => clearTimeout(timer);
-    }, [value, filter, sortBy, sortDirection, data]);
-
-    useEffect(() => {
-        setHydrated(true);
-    }, []);
+    }, [value, filter, sortBy, sortDirection, data, favorites]);
 
     const toggleFavorite = (referenceId: string) => {
         setFavorites((prev) => {
@@ -171,48 +163,6 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
         },
     ];
 
-    if (!hydrated) {
-        return (
-            <div className="space-y-8">
-                {/* Search and Filter Skeleton */}
-                <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-                    <div className="skeleton h-12 w-full rounded-xl sm:w-96"></div>
-                    <div className="flex gap-2">
-                        <div className="skeleton h-12 w-32 rounded-xl"></div>
-                        <div className="skeleton h-12 w-24 rounded-xl"></div>
-                    </div>
-                </div>
-
-                {/* Cards Skeleton */}
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                    {[...Array(8)].map((_, index) => (
-                        <div
-                            key={index}
-                            className="overflow-hidden rounded-2xl border border-gray-200/60 bg-white"
-                            style={{ animationDelay: `${index * 100}ms` }}
-                        >
-                            <div className="skeleton aspect-[3/2] w-full rounded-b-none"></div>
-                            <div className="space-y-4 p-6">
-                                <div className="flex items-start justify-between">
-                                    <div className="flex-1 space-y-2">
-                                        <div className="skeleton h-6 w-3/4"></div>
-                                        <div className="skeleton h-4 w-1/2"></div>
-                                    </div>
-                                    <div className="skeleton h-6 w-16 rounded-full"></div>
-                                </div>
-                                <div className="space-y-3">
-                                    <div className="skeleton h-4 w-full"></div>
-                                    <div className="skeleton h-4 w-2/3"></div>
-                                </div>
-                                <div className="skeleton h-4 w-1/3"></div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        );
-    }
-
     return (
         <div className="space-y-8">
             {/* Enhanced Search and Filter Section */}
@@ -246,11 +196,6 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
                             >
                                 <LuX className="h-5 w-5" />
                             </button>
-                        )}
-                        {isSearching && (
-                            <div className="absolute top-1/2 right-12 -translate-y-1/2 transform">
-                                <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-400 border-t-transparent"></div>
-                            </div>
                         )}
                     </div>
                 </div>
@@ -338,35 +283,23 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
                         aria-live="polite"
                         aria-atomic="true"
                     >
-                        {isSearching ? (
-                            <span className="flex items-center gap-2">
-                                <div className="h-3 w-3 animate-spin rounded-full border-2 border-blue-400 border-t-transparent"></div>
-                                Searching...
+                        Showing{' '}
+                        <span className="font-semibold text-blue-600">
+                            {filteredData.length}
+                        </span>{' '}
+                        of <span className="font-semibold">{data.length}</span>{' '}
+                        pujas
+                        {search && (
+                            <span className="ml-2 text-gray-500">
+                                for "{search}"
                             </span>
-                        ) : (
-                            <>
-                                Showing{' '}
-                                <span className="font-semibold text-blue-600">
-                                    {filteredData.length}
-                                </span>{' '}
-                                of{' '}
-                                <span className="font-semibold">
-                                    {data.length}
-                                </span>{' '}
-                                pujas
-                                {search && (
-                                    <span className="ml-2 text-gray-500">
-                                        for "{search}"
-                                    </span>
-                                )}
-                            </>
                         )}
                     </div>
                 </div>
             </section>
 
             {/* Empty State */}
-            {filteredData.length === 0 && !isSearching && (
+            {filteredData.length === 0 && (
                 <div
                     className="rounded-2xl border border-white/20 bg-white/80 py-16 text-center ring-1 ring-gray-100/50 backdrop-blur-md"
                     role="status"
@@ -416,7 +349,7 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
             )}
             {/* Cards Grid */}
             <div className="fl-gap-4/6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {filteredData.map((item: PujaExtended, index: number) => {
+                {filteredData.map((item: PujaExtended) => {
                     const image = item.images?.[0];
                     return (
                         <div key={item.referenceId} className="group relative">

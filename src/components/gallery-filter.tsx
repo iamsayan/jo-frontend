@@ -3,18 +3,21 @@
 import { useCallback, useRef } from 'react';
 import { useState } from 'react';
 import SmartImage from '@/components/smart-image';
-import { cn } from '@/utils/functions';
+import { capitalizeFirst, cn } from '@/utils/functions';
 import Gallery from '@/components/gallery';
 import ReactPaginate from 'react-paginate';
 import imageUrl from '@/utils/transform';
+import type { LightGallery } from 'lightgallery/lightgallery';
+import type { ReactPaginateProps } from 'react-paginate';
+import type { Image } from '@/types';
 
 interface GalleryFilterProps {
     className?: string;
-    images: any;
+    images: Image[];
 }
 
 function GalleryFilter({ className, images }: GalleryFilterProps) {
-    const lightGallery = useRef<any>(null);
+    const lightGallery = useRef<LightGallery | null>(null);
 
     const classes = cn('gallery-filter mt-4', className);
     const [selectedYear, setSelectedYear] = useState<string>('all');
@@ -30,40 +33,32 @@ function GalleryFilter({ className, images }: GalleryFilterProps) {
         selectedYear === 'all'
             ? images.toReversed()
             : images
-                  .filter((item: { year: any }) => item.year == selectedYear)
+                  .filter((item: Image) => item.year === parseInt(selectedYear))
                   .toReversed();
     const paginatedImages = filteredImages.slice(itemOffset, endOffset);
     const pageCount = Math.ceil(filteredImages.length / itemsPerPage);
 
-    const handlePageClick = (event: any) => {
+    const handlePageClick: ReactPaginateProps['onPageChange'] = (event) => {
         const newOffset =
             (event.selected * itemsPerPage) % filteredImages.length;
         setItemOffset(newOffset);
     };
 
-    const onInit = useCallback((detail: any) => {
+    const onInit = useCallback((detail: { instance: LightGallery }) => {
         if (detail) {
             lightGallery.current = detail.instance;
         }
     }, []);
 
-    const dynamicEl = paginatedImages.map((item: any, index: number) => {
+    const dynamicEl = paginatedImages.map((item: Image) => {
         const imagePath = imageUrl(
-            `${item?.year}/${item?.reference_id}/${item?.image_name}`,
+            `${item.year}/${item.reference_id}/${item.name}`,
         );
         return {
             src: imagePath,
             thumb: imagePath,
-            alt: item?.puja_entry_id?.puja_name,
-            subHtml: `<h4>${item?.puja_entry_id?.puja_name}</h4><p>By: ${item?.uploaded_by
-                .trim()
-                .split(' ')
-                .map(
-                    (word: string) =>
-                        word.charAt(0).toUpperCase() +
-                        word.slice(1).toLowerCase(),
-                )
-                .join(' ')}</p>`,
+            alt: item.puja?.name,
+            subHtml: `<h4>${item.puja?.name}</h4><p>By: ${capitalizeFirst(item.uploadedBy)}</p>`,
         };
     });
 
@@ -99,25 +94,27 @@ function GalleryFilter({ className, images }: GalleryFilterProps) {
                 dynamicEl={dynamicEl}
                 dynamic={true}
             >
-                {paginatedImages.map((item: any, index: number) => (
+                {paginatedImages.map((item: Image, index: number) => (
                     <div
-                        key={item?._id + index}
+                        key={item.documentId ?? index}
                         className="group relative aspect-[4/5] cursor-pointer overflow-hidden rounded-2xl"
-                        onClick={() => lightGallery.current.openGallery(index)}
+                        onClick={() => lightGallery.current?.openGallery(index)}
                     >
                         <SmartImage
-                            key={item?._id + index + selectedYear}
-                            src={`${item?.year}/${item?.reference_id}/${item?.image_name}`}
+                            key={item.documentId ?? index}
+                            src={imageUrl(
+                                `${item.year}/${item.puja?.referenceId}/${item.name}`,
+                            )}
                             fill={true}
                             className="pointer-events-none h-full w-full transform object-cover text-transparent transition-all duration-700 group-hover:scale-110"
-                            alt={item?.puja_entry_id?.puja_name}
+                            alt={item.puja?.name ?? item.name}
                         />
-                        {/* <span className="absolute bottom-0 left-0 right-0 text-center bg-yellow-500 p-1.5 text-xs">{item?.puja_entry_id?.puja_name}</span> */}
+                        {/* <span className="absolute bottom-0 left-0 right-0 text-center bg-yellow-500 p-1.5 text-xs">alt={item.puja?.name ?? item.name}</span> */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                         <div className="absolute inset-0 right-0 bottom-0 left-0 flex items-end text-center">
                             <div className="w-full translate-y-full transform text-white transition-transform duration-300 group-hover:mb-3 group-hover:translate-y-0">
                                 <div className="fl-text-xs/sm mx-auto mb-2 max-w-50 font-medium">
-                                    {item?.puja_entry_id?.puja_name}
+                                    alt={item.puja?.name ?? item.name}
                                 </div>
                                 {/* <div className="text-sm text-white/80">Click to expand</div> */}
                             </div>

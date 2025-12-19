@@ -29,7 +29,7 @@ export default function SmartImage({
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<boolean>(false);
 
-    const { ref, inView, entry } = useInView({
+    const { ref, inView } = useInView({
         triggerOnce: true,
         rootMargin: '100px 50px',
         fallbackInView: true,

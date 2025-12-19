@@ -11,6 +11,7 @@ import {
     useKBar,
     useMatches,
     Action,
+    ActionImpl,
 } from 'kbar';
 import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from '@bprogress/next/app';
@@ -37,12 +38,18 @@ interface CommandBarProps {
 }
 
 interface DynamicActionsLoaderProps {
-    onInput?: (searchQuery: string, currentRootActionId: any) => void;
+    onInput?: (
+        searchQuery: string,
+        currentRootActionId: string | undefined,
+    ) => void;
     onSearch?: (isSearching: boolean) => void;
 }
 
 interface RenderResultsProps {
-    onRender?: (results: object, rootActionId: any) => void;
+    onRender?: (
+        results: (string | ActionImpl)[],
+        rootActionId: string | undefined,
+    ) => void;
 }
 
 function Search() {
@@ -205,7 +212,7 @@ function DynamicActionsLoader({
     );
 
     useEffect(() => {
-        onInput?.(searchQuery, currentRootActionId);
+        onInput?.(searchQuery, currentRootActionId as string);
         if (typeof currentRootActionId === 'string' && currentRootActionId) {
             debouncedQuery(sanitizeSearchQuery(searchQuery));
         }
@@ -220,7 +227,7 @@ function RenderResults({ onRender }: RenderResultsProps) {
     const { results, rootActionId } = useMatches();
 
     useEffect(() => {
-        onRender?.(results, rootActionId);
+        onRender?.(results, rootActionId as string);
     }, [results, rootActionId, onRender]);
 
     return (
@@ -267,9 +274,11 @@ function RenderResults({ onRender }: RenderResultsProps) {
 
 const CommandBar = ({ children }: CommandBarProps) => {
     const [showLoader, setShowLoader] = useState<boolean>(false);
-    const [searchQuery, setSearchQuery] = useState<any>('');
-    const [searchResults, setSearchResults] = useState<any>([]);
-    const [parentId, setParentId] = useState<any>('');
+    const [searchQuery, setSearchQuery] = useState<string>('');
+    const [searchResults, setSearchResults] = useState<(string | ActionImpl)[]>(
+        [],
+    );
+    const [parentId, setParentId] = useState<string>('');
 
     return (
         <KBarProvider actions={[]}>
@@ -277,7 +286,7 @@ const CommandBar = ({ children }: CommandBarProps) => {
                 onSearch={(state) => setShowLoader(state)}
                 onInput={(query, parent) => {
                     setSearchQuery(query);
-                    setParentId(parent);
+                    setParentId(parent as string);
                 }}
             />
             <Suspense>

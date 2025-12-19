@@ -3,7 +3,7 @@ export interface Document {
     documentId: string;
     createdAt: string;
     updatedAt: string;
-    [key: string]: any;
+    [key: string]: unknown;
 }
 
 export interface Pagination {
@@ -201,9 +201,9 @@ export interface SharedAshsParticipant {
     id: number;
     title: string;
     puja?: Puja;
-    details: Record<string, any>;
+    details: Record<string, unknown>;
     voteCount: number;
-    voteDetails: Record<string, any>;
+    voteDetails: Record<string, unknown>;
 }
 
 export interface SharedLink {
@@ -303,7 +303,7 @@ export interface Partnership extends Document {
     phone: string;
     planName: string;
     planValue: number;
-    addons?: Record<string, any>;
+    addons?: Record<string, unknown>;
     note?: string;
     fullPaid: boolean;
 }

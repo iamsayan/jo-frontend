@@ -2,7 +2,7 @@
 
 export async function submitModel(
     model: string,
-    data: any,
+    data: Record<string, unknown | unknown[]>,
     documentId: string | null = null,
 ) {
     if (!process.env.API_URL || !process.env.API_KEY) {

@@ -9,10 +9,11 @@ import { createRazorpayOrder } from '@/app/actions/razorpay';
 import { submitModel } from '@/app/actions/model';
 import { loadRazorpayScript } from '@/utils/load-razorpay';
 import type { Partnership, PujaExtended } from '@/types';
+import type { SingleValue } from 'react-select';
 
 declare global {
     interface Window {
-        Razorpay: any;
+        Razorpay: new (options: unknown) => { open(): void };
     }
 }
 
@@ -49,8 +50,7 @@ const plans: Plan[] = [
         name: 'Premium',
         price: 11999,
         basicPrice: 20999,
-        description:
-            '1 cinematic video, 3 reels (pre-puja, puja days, post-puja), Nabami + Dashami full day, pre-puja, drone + normal camera shoots.',
+        description: `1 cinematic video, 3 reels (pre-puja, puja days, post-puja), Nabami + Dashami full day, pre-puja, drone + normal camera shoots.`,
     },
     {
         id: 'basic',
@@ -235,7 +235,7 @@ export default function CinematicsPlans({
                     pujaName: pujaName,
                     year: formData.year,
                 },
-                handler: async function (response: any) {
+                handler: async function (response: Record<string, string>) {
                     setSuccess({ paymentId: response.razorpay_payment_id });
                     setProcessing(false);
 
@@ -514,9 +514,12 @@ export default function CinematicsPlans({
                             instanceId={useId()}
                             options={pujaDataOptions}
                             placeholder="Select a Puja"
-                            onChange={(value: any) =>
-                                setSelectedPuja(value.value ?? null)
-                            }
+                            onChange={(
+                                value: SingleValue<{
+                                    value: string;
+                                    label: string;
+                                }>,
+                            ) => setSelectedPuja(value?.value ?? null)}
                             className="w-full"
                             styles={{
                                 control: (base, state) => ({

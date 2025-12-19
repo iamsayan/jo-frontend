@@ -1,50 +1,17 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { LuArrowUp } from 'react-icons/lu';
+import React from 'react';
+import ScrollToTop from 'react-scroll-to-top';
 
-const ScrollToTopButton: React.FC = () => {
-    const [isVisible, setIsVisible] = useState<boolean>(false);
+const ScrollTop: React.FC = () => (
+    <ScrollToTop
+        smooth
+        className="flex items-center justify-center !bg-yellow-400"
+        width="15"
+        height="15"
+        viewBox="0 0 20 20"
+        svgPath="M10,0L9.4,0.6L0.8,9.1l1.2,1.2l7.1-7.1V20h1.7V3.3l7.1,7.1l1.2-1.2l-8.5-8.5L10,0z"
+    />
+);
 
-    useEffect(() => {
-        const controller = new AbortController();
-
-        let ticking = false;
-        const onScroll = () => {
-            if (!ticking) {
-                ticking = true;
-                requestAnimationFrame(() => {
-                    setIsVisible(window.scrollY >= 20);
-                    ticking = false;
-                });
-            }
-        };
-
-        onScroll();
-        window.addEventListener('scroll', onScroll, {
-            signal: controller.signal,
-            passive: true,
-        });
-
-        return () => controller.abort();
-    }, []);
-
-    const scrollToTop = () => {
-        isVisible &&
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth',
-            });
-    };
-
-    return (
-        <button
-            className={`fixed right-10 bottom-10 flex cursor-pointer items-center justify-center rounded-lg bg-yellow-400 p-3 text-black shadow-md transition-opacity duration-200 outline-none ${isVisible ? 'opacity-100' : 'opacity-0'}`}
-            onClick={scrollToTop}
-        >
-            <LuArrowUp />
-        </button>
-    );
-};
-
-export default ScrollToTopButton;
+export default ScrollTop;

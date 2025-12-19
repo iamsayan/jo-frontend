@@ -11,6 +11,8 @@ import { LuCamera, LuChevronLeft, LuChevronRight } from 'react-icons/lu';
 import imageUrl from '@/utils/transform';
 import { renderToString } from 'react-dom/server';
 import type { Image } from '@/types';
+import type { LightGallery } from 'lightgallery/lightgallery';
+import type { ReactPaginateProps } from 'react-paginate';
 
 interface GalleryPaginateProps {
     className?: string;
@@ -28,24 +30,24 @@ function GalleryPaginate({
     const router = useRouter();
     const params = useParams();
     const searchParams = useSearchParams();
-    const lightGallery = useRef<any>(null);
+    const lightGallery = useRef<LightGallery | null>(null);
 
-    const classes = cn('gallery-filter mt-4', className);
+    const classes = cn('gallery-paginate mt-4', className);
     const pageCount = Math.ceil(total / itemsPerPage);
     const currentPage = Number(searchParams.get('page') ?? 1);
     const currentYear = params.year ?? new Date().getFullYear();
 
-    const handlePageClick = (event: any) => {
+    const handlePageClick: ReactPaginateProps['onPageChange'] = (event) => {
         router.push(`/gallery/${currentYear}?page=${event.selected + 1}`);
     };
 
-    const onInit = useCallback((detail: any) => {
+    const onInit = useCallback((detail: { instance: LightGallery }) => {
         if (detail) {
             lightGallery.current = detail.instance;
         }
     }, []);
 
-    const subHtml = (item: any) => {
+    const subHtml = (item: Image) => {
         return (
             <div className="flex flex-col items-center justify-center gap-1.5">
                 <div className="text-xl font-bold">{item?.puja?.name}</div>
@@ -91,7 +93,7 @@ function GalleryPaginate({
                     <div
                         key={item.documentId ?? index}
                         className="group relative aspect-[4/5] cursor-pointer overflow-hidden rounded-2xl"
-                        onClick={() => lightGallery.current.openGallery(index)}
+                        onClick={() => lightGallery.current?.openGallery(index)}
                     >
                         <SmartImage
                             key={item.documentId ?? index}
@@ -135,7 +137,7 @@ function GalleryPaginate({
                     breakClassName="join-item"
                     breakLinkClassName="rounded-none btn btn-disabled"
                     activeLinkClassName="btn-active"
-                    hrefBuilder={(page, pageCount, selected) =>
+                    hrefBuilder={(page, pageCount) =>
                         page >= 1 && page <= pageCount
                             ? `/gallery/${currentYear}?page=${page}`
                             : '#'

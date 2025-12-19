@@ -19,7 +19,7 @@ interface SchemaOptions {
 interface SchemaItem {
     '@type': string;
     '@id': string;
-    [key: string]: any;
+    [key: string]: unknown;
 }
 
 interface BreadcrumbItem {

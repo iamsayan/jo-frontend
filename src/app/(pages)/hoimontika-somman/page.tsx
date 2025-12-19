@@ -17,7 +17,7 @@ import { metadata as metadataSchema } from '@/app/layout';
 import Tabs, { TabProps } from '@/components/tabs';
 import { createElement } from 'react';
 import type { Metadata } from 'next';
-import type { Award, AwardsCategory, AwardsPosition } from '@/types';
+import type { Award, AwardsCategory, AwardsPosition, Puja } from '@/types';
 
 export const metadata: Metadata = {
     title: 'Amie Srestho Hoimantika Somman',
@@ -58,7 +58,7 @@ export default async function Page() {
         ],
     });
 
-    let tabs: TabProps[] = [];
+    const tabs: TabProps[] = [];
 
     const tabContent = (award: Award) => {
         return (
@@ -108,7 +108,7 @@ export default async function Page() {
                                                         </div>
                                                         {position.pujas?.map(
                                                             (
-                                                                puja: any,
+                                                                puja: Puja,
                                                                 pujaIdx: number,
                                                             ) => (
                                                                 <div
@@ -119,7 +119,7 @@ export default async function Page() {
                                                                 >
                                                                     &bull;{' '}
                                                                     <Link
-                                                                        href={`/puja/${puja?.slug}/${puja?.referenceId}`}
+                                                                        href={`/puja/${puja.slug}/${puja.referenceId}`}
                                                                     >
                                                                         {
                                                                             puja.name

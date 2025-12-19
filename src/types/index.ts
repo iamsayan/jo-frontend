@@ -1,6 +1,9 @@
 import type { Puja } from '@/types/interfaces';
 
-export interface PageProps<TParams = {}, TSearchParams = {}> {
+export interface PageProps<
+    TParams = Record<string, string>,
+    TSearchParams = Record<string, string | string[]>,
+> {
     params: Promise<TParams>;
     searchParams: Promise<TSearchParams>;
 }

@@ -1,6 +1,6 @@
 'use server';
 
-export async function submitForm(data: any) {
+export async function submitForm(data: Record<string, string | string[]>) {
     if (!process.env.API_URL || !process.env.API_KEY) {
         console.error('Missing API_URL or API_KEY environment variable');
         return { success: false, error: 'Server configuration error' };

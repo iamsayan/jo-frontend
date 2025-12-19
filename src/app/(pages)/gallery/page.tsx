@@ -106,9 +106,7 @@ export default async function Page() {
                             if (yearImages.length === 0) return null;
                             const randomImage =
                                 yearImages[
-                                    Math.floor(
-                                        Math.random() * yearImages.length,
-                                    )
+                                    Math.floor(year % yearImages.length)
                                 ];
 
                             return (
