@@ -1,6 +1,6 @@
 'use client';
 
-import SmartImage from '@/components/smart-image';
+import RemoteImage from '@/components/remote-image';
 import type { PujaExtended } from '@/types';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -25,7 +25,6 @@ import {
 import { useDebounce } from 'use-debounce';
 
 import placeholder from '@/public/circle-logo.png';
-import imageUrl from '@/utils/transform';
 
 type Filter =
   | 'all'
@@ -390,10 +389,8 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
 
                   {image ? (
                     <div className="relative h-full w-full">
-                      <SmartImage
-                        src={imageUrl(
-                          `${image.year}/${item.referenceId}/${image.name}`
-                        )}
+                      <RemoteImage
+                        src={`${image.year}/${item.referenceId}/${image.name}`}
                         fill={true}
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         className="object-cover transition-transform duration-500 group-hover:scale-110"
@@ -557,10 +554,8 @@ export default function PujaList({ data }: { data: PujaExtended[] }) {
               {previewItem.images?.[0] && (
                 <div className="relative aspect-[2/1] bg-gradient-to-br from-gray-100 to-gray-200">
                   <div className="relative h-full w-full">
-                    <SmartImage
-                      src={imageUrl(
-                        `${previewItem.images[0].year}/${previewItem.referenceId}/${previewItem.images[0].name}`
-                      )}
+                    <RemoteImage
+                      src={`${previewItem.images[0].year}/${previewItem.referenceId}/${previewItem.images[0].name}`}
                       fill={true}
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       className="object-cover transition-transform duration-500 group-hover:scale-110"

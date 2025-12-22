@@ -1,7 +1,7 @@
 'use client';
 
 import Gallery from '@/components/gallery';
-import SmartImage from '@/components/smart-image';
+import RemoteImage from '@/components/remote-image';
 import { cn } from '@/utils/functions';
 import imageUrl from '@/utils/transform';
 import { AutoScroll } from '@splidejs/splide-extension-auto-scroll';
@@ -48,15 +48,18 @@ export default function GallerySlider({
     return null;
   }
 
-  slides = slides.map((item: GalleryItem) => {
-    return {
-      ...item,
-      src: imageUrl(item.src as string),
-    };
-  });
-
   return (
-    <Gallery {...props} onInit={onInit} dynamicEl={slides} dynamic={true}>
+    <Gallery
+      {...props}
+      onInit={onInit}
+      dynamicEl={slides.map((item: GalleryItem) => {
+        return {
+          ...item,
+          src: imageUrl(item.src as string),
+        };
+      })}
+      dynamic={true}
+    >
       <Splide
         options={sliderOptions}
         className={cn('slider-container', sliderClass)}
@@ -68,15 +71,14 @@ export default function GallerySlider({
             onClick={() => lightGallery.current?.openGallery(index)}
             className={cn('relative cursor-pointer', sliderItemClass)}
           >
-            <SmartImage
+            <RemoteImage
               src={item.src as string}
               alt={item.alt as string}
               className="pointer-events-none transform object-cover text-transparent transition-all duration-700 group-hover:scale-110"
               fill={true}
               quality={item?.quality ?? 70}
               lazy={false}
-              loader={false}
-              loading="lazy"
+              loaderPlaceholder={false}
             />
             {item?.subHtml && (
               <>

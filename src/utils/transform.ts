@@ -1,7 +1,7 @@
-interface Params {
-  width?: number;
-  quality?: number;
-  height?: number;
+export interface TransformParams {
+  twidth?: number;
+  tquality?: number;
+  theight?: number;
   fit?: 'cover' | 'contain';
   blur?: number;
   grayscale?: boolean;
@@ -9,11 +9,14 @@ interface Params {
   transform?: boolean;
 }
 
-export default function imageUrl(src: string, params?: Params): string {
+export default function imageUrl(
+  src: string,
+  params?: TransformParams
+): string {
   const {
-    width,
-    height,
-    quality = 80,
+    twidth,
+    theight,
+    tquality = 80,
     fit,
     blur,
     grayscale,
@@ -26,16 +29,13 @@ export default function imageUrl(src: string, params?: Params): string {
 
   const url = new URL(`${baseUrl}/transform`);
 
-  url.searchParams.set(
-    'src',
-    Buffer.from(src, 'utf8').toString('base64').replace(/=/g, '')
-  );
-  if (width) url.searchParams.set('w', width.toString());
-  if (height) url.searchParams.set('h', height.toString());
+  url.searchParams.set('src', src);
+  if (twidth) url.searchParams.set('w', twidth.toString());
+  if (theight) url.searchParams.set('h', theight.toString());
   if (fit) url.searchParams.set('fit', fit);
   if (blur) url.searchParams.set('blur', blur.toString());
   if (grayscale) url.searchParams.set('gray', '1');
-  if (quality) url.searchParams.set('quality', quality.toString());
+  if (tquality) url.searchParams.set('quality', tquality.toString());
   if (format && format !== 'auto') url.searchParams.set('format', format);
 
   return url.toString();

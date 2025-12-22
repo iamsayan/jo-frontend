@@ -1,8 +1,8 @@
 import { metadata as metadataSchema } from '@/app/layout';
 import Gallery from '@/components/gallery';
 import MainLayout from '@/components/main-layout';
+import RemoteImage from '@/components/remote-image';
 import Section from '@/components/section';
-import SmartImage from '@/components/smart-image';
 import type { Image } from '@/types';
 import { getCollection } from '@/utils/fetch';
 import { capitalizeFirst } from '@/utils/functions';
@@ -73,7 +73,7 @@ export default async function Page() {
                 className="group relative aspect-[3/4] cursor-pointer overflow-hidden rounded-lg"
                 data-sub-html={`<h4>${image.puja?.name}</h4><p>By: ${capitalizeFirst(image.uploadedBy)}</p>`}
               >
-                <SmartImage
+                <RemoteImage
                   src={imageUrl(
                     `${image.year}/${image.puja?.referenceId}/${image.name}`
                   )}
@@ -112,7 +112,7 @@ export default async function Page() {
                   href={`/gallery/${year}`}
                   className="group relative aspect-[3/4] cursor-pointer overflow-hidden rounded-lg md:aspect-square"
                 >
-                  <SmartImage
+                  <RemoteImage
                     src={imageUrl(
                       `${randomImage.year}/${randomImage.puja?.referenceId}/${randomImage.name}`
                     )}

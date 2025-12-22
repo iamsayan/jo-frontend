@@ -1,7 +1,6 @@
 'use client';
 
-import SmartImage from '@/components/smart-image';
-import imageUrl from '@/utils/transform';
+import RemoteImage from '@/components/remote-image';
 import React, { ReactNode, useEffect, useState } from 'react';
 
 const images = [
@@ -37,14 +36,15 @@ const HeroSlider: React.FC<ImageSliderProps> = ({ children }) => {
             key={index}
             className={`absolute inset-0 h-full w-full bg-cover bg-center transition-opacity duration-1000 ease-in-out ${index === currentImageIndex ? 'opacity-100' : 'opacity-0'}`}
           >
-            <SmartImage
-              src={imageUrl(image.src, { quality: 90 })}
+            <RemoteImage
+              src={image.src}
               alt={image.alt}
               fill={true}
               quality={90}
               lazy={false}
               className="object-cover"
-              loader={false}
+              loaderPlaceholder={false}
+              tquality={90}
             />
             <div className="absolute inset-0 bg-black/60"></div>
           </div>

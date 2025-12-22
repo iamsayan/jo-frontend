@@ -96,7 +96,7 @@ export async function generateMetadata({
         return {
           url: imageUrl(
             `${item.year}/${currentPuja?.referenceId}/${item.name}`,
-            { quality: 60 }
+            { tquality: 60 }
           ),
           alt: currentPuja?.name ?? '',
         };

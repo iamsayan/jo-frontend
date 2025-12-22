@@ -63,7 +63,7 @@ export async function generateMetadata({
       images: images.slice(0, 3)?.map((item: Image) => {
         return {
           url: imageUrl(`${item.year}/${item.puja?.referenceId}/${item.name}`, {
-            quality: 60,
+            tquality: 60,
           }),
           alt: item.puja?.name ?? item.name,
         };

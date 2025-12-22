@@ -1,7 +1,7 @@
 'use client';
 
 import Gallery from '@/components/gallery';
-import SmartImage from '@/components/smart-image';
+import RemoteImage from '@/components/remote-image';
 import type { Image } from '@/types';
 import { capitalizeFirst, cn } from '@/utils/functions';
 import imageUrl from '@/utils/transform';
@@ -95,11 +95,9 @@ function GalleryPaginate({
             className="group relative aspect-[4/5] cursor-pointer overflow-hidden rounded-2xl"
             onClick={() => lightGallery.current?.openGallery(index)}
           >
-            <SmartImage
+            <RemoteImage
               key={item.documentId ?? index}
-              src={imageUrl(
-                `${item.year}/${item.puja?.referenceId}/${item.name}`
-              )}
+              src={`${item.year}/${item.puja?.referenceId}/${item.name}`}
               fill={true}
               className="pointer-events-none transform object-cover text-transparent transition-all duration-700 group-hover:scale-110"
               alt={item.puja?.name ?? item.name}
