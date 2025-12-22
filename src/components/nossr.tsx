@@ -1,9 +1,9 @@
-import React, { ReactNode } from 'react';
 import dynamic from 'next/dynamic';
+import React, { ReactNode } from 'react';
 
 // Define the type for the props of the NoSsr component
 interface NoSsrProps {
-    children: ReactNode;
+  children: ReactNode;
 }
 
 // Define the NoSsr functional component

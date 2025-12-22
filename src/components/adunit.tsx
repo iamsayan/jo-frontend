@@ -1,25 +1,23 @@
-import React, { Suspense } from 'react';
 import GoogleAdUnitClient from '@/components/adunitclient';
+import React, { Suspense } from 'react';
 
 interface GoogleAdUnitProps extends React.HTMLAttributes<HTMLElement> {
-    'data-ad-client'?: string;
+  'data-ad-client'?: string;
 }
 
 const GoogleAdUnit: React.FC<GoogleAdUnitProps> = (props) => {
-    return (
-        <Suspense fallback={<div className="skeleton h-16 w-full"></div>}>
-            <GoogleAdUnitClient>
-                <ins
-                    className="adsbygoogle"
-                    style={{ display: 'block' }}
-                    data-ad-client={
-                        process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID
-                    }
-                    {...props}
-                ></ins>
-            </GoogleAdUnitClient>
-        </Suspense>
-    );
+  return (
+    <Suspense fallback={<div className="skeleton h-16 w-full"></div>}>
+      <GoogleAdUnitClient>
+        <ins
+          className="adsbygoogle"
+          style={{ display: 'block' }}
+          data-ad-client={process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID}
+          {...props}
+        ></ins>
+      </GoogleAdUnitClient>
+    </Suspense>
+  );
 };
 
 export default GoogleAdUnit;

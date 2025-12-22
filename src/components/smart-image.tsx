@@ -1,90 +1,90 @@
 'use client';
 
-import { useState, useCallback, ReactNode } from 'react';
-import Image, { type ImageProps } from 'next/image';
-import {
-    useInView,
-    type IntersectionOptions,
-} from 'react-intersection-observer';
-import { cn } from '@/utils/functions';
 import placeholder from '@/public/circle-logo.png';
+import { cn } from '@/utils/functions';
+import Image, { type ImageProps } from 'next/image';
+import { ReactNode, useCallback, useState } from 'react';
+import {
+  useInView,
+  type IntersectionOptions,
+} from 'react-intersection-observer';
 
 type SmartImageProps = Omit<ImageProps, 'loader'> & {
-    lazy?: boolean;
-    loader?: boolean;
-    loaderPlaceholder?: ReactNode;
-    containerClassName?: string;
-    intersectionOptions?: IntersectionOptions;
+  lazy?: boolean;
+  loader?: boolean;
+  loaderPlaceholder?: ReactNode;
+  containerClassName?: string;
+  intersectionOptions?: IntersectionOptions;
 };
 
 export default function SmartImage({
-    alt,
-    lazy = true,
-    loader = true,
-    loaderPlaceholder,
-    containerClassName,
-    intersectionOptions,
-    ...rest
+  alt,
+  lazy = true,
+  loader = true,
+  loaderPlaceholder,
+  containerClassName,
+  intersectionOptions,
+  ...rest
 }: SmartImageProps) {
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [error, setError] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<boolean>(false);
 
-    const { ref, inView } = useInView({
-        triggerOnce: true,
-        rootMargin: '100px 50px',
-        fallbackInView: true,
-        ...intersectionOptions,
-        skip: !lazy,
-    });
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    rootMargin: '100px 50px',
+    fallbackInView: true,
+    ...intersectionOptions,
+    skip: !lazy,
+  });
 
-    const handleLoad = useCallback(() => {
-        setIsLoading(false);
-        setError(false);
-    }, []);
+  const handleLoad = useCallback(() => {
+    setIsLoading(false);
+    setError(false);
+  }, []);
 
-    const handleError = useCallback(() => {
-        setError(true);
-        setIsLoading(false);
-    }, []);
+  const handleError = useCallback(() => {
+    setError(true);
+    setIsLoading(false);
+  }, []);
 
-    return (
-        <div
-            ref={ref}
-            className={cn(
-                'relative h-full w-full bg-gray-200',
-                error && 'bg-red-100',
-                containerClassName,
-            )}
-        >
-            {loader &&
-                isLoading &&
-                (loaderPlaceholder || (
-                    <div className="relative flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-                        <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-lg">
-                            <Image
-                                src={placeholder}
-                                alt="Image placeholder"
-                                className="size-10 opacity-40"
-                                priority={false}
-                            />
-                        </div>
-                    </div>
-                ))}
-            {(!lazy || inView) && (
-                <Image
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    {...rest}
-                    alt={alt}
-                    onLoad={handleLoad}
-                    onError={handleError}
-                    // loader={({ src }) => src}
-                />
-            )}
-            {error && (
-                <div className="absolute inset-0 flex items-center justify-center text-red-500">
-                    Failed to load image
-                </div>
-            )}
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        'relative h-full w-full bg-gray-200',
+        error && 'bg-red-100',
+        containerClassName
+      )}
+    >
+      {loader &&
+        isLoading &&
+        (loaderPlaceholder || (
+          <div className="relative flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+            <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-lg">
+              <Image
+                src={placeholder}
+                alt="Image placeholder"
+                className="size-10 opacity-40"
+                priority={false}
+              />
+            </div>
+          </div>
+        ))}
+      {(!lazy || inView) && (
+        <Image
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          {...rest}
+          alt={alt}
+          onLoad={handleLoad}
+          onError={handleError}
+          // loader={({ src }) => src}
+        />
+      )}
+      {error && (
+        <div className="absolute inset-0 flex items-center justify-center text-red-500">
+          Failed to load image
         </div>
-    );
+      )}
+    </div>
+  );
 }
