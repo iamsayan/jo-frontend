@@ -126,7 +126,6 @@ export default function RemoteImage({
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 75vw, 50vw"
           onLoad={handleLoad}
           onError={handleError}
-          unoptimized
           {...rest}
         />
       )}
