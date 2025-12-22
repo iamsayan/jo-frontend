@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "lint-fix": "eslint . --fix",
+    "lint:fix": "eslint . --fix",
     "postinstall": "next telemetry disable"
   },
   "dependencies": {

@@ -1,3 +1,5 @@
+import { timeOrigin } from '@/utils/functions';
+
 interface Parent {
   title: string;
   slug: string;
@@ -131,7 +133,7 @@ export default function schema({
         url: `${baseUrl}/${path}`,
         name: `${title} - Jagadhatri Online™ | the #1 Popular Jagadhatri Puja Portal`,
         datePublished: dates?.published ?? '2016-05-06T00:00:00+05:30',
-        dateModified: dates?.modified ?? '2024-11-01T11:26:00+05:30',
+        dateModified: dates?.modified ?? timeOrigin("yyyy-MM-dd'T'HH:mm:ssXXX"),
         isPartOf: {
           '@id': `${baseUrl}/#website`,
         },

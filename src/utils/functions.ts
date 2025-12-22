@@ -183,3 +183,12 @@ export function toUpper(name: string): string {
 export function toLower(name: string): string {
   return name?.toLowerCase() ?? '';
 }
+
+export function timeOrigin(dateFormat: string): string {
+  const timestamp =
+    typeof performance !== 'undefined' && performance.timeOrigin
+      ? performance.timeOrigin
+      : Date.now() - process.uptime() * 1000;
+
+  return format(new Date(timestamp), dateFormat);
+}

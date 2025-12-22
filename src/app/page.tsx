@@ -12,6 +12,7 @@ import {
   cn,
   formatDate,
   getDateByIndex,
+  timeOrigin,
 } from '@/utils/functions';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -218,7 +219,7 @@ export default async function Home() {
         url: process.env.NEXT_PUBLIC_SITE_URL,
         name: 'Jagadhatri Online | the #1 Puja Portal for Chandannagar Jagadhatri Puja',
         datePublished: '2016-05-06T00:00:00+05:30',
-        dateModified: '2024-11-01T11:26:00+05:30',
+        dateModified: timeOrigin("yyyy-MM-dd'T'HH:mm:ssXXX"),
         isPartOf: {
           '@id': `${process.env.NEXT_PUBLIC_SITE_URL}/#website`,
         },

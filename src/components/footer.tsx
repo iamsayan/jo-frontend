@@ -2,7 +2,7 @@
 
 import ScrollTop from '@/components/scroll-top';
 import { useSiteData } from '@/contexts/siteDataContext';
-import { getDateByIndex } from '@/utils/functions';
+import { getDateByIndex, timeOrigin } from '@/utils/functions';
 import { format } from 'date-fns';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -334,6 +334,9 @@ export default function Footer() {
             <div className="text-xs text-slate-400">
               Unauthorized copying or representation of any content, photograph,
               illustration, or artwork from this website is strictly prohibited.
+            </div>
+            <div className="mt-1 text-xs text-slate-400">
+              Last Updated: {timeOrigin('MMMM dd, yyyy')}
             </div>
             {/* <div className="inline-flex items-center space-x-2 bg-slate-800/50 border border-slate-600/50 rounded-lg px-4 py-3">
                             <div className="flex-shrink-0">
