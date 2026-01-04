@@ -102,10 +102,10 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           />
           <Script id="statcounter">
             {`
-                            var sc_project=11108007;
-                            var sc_invisible=1;
-                            var sc_security="13b4e93a";
-                        `}
+              var sc_project=11108007;
+              var sc_invisible=1;
+              var sc_security="13b4e93a";
+            `}
           </Script>
           <Script
             src="https://www.statcounter.com/counter/counter.js"

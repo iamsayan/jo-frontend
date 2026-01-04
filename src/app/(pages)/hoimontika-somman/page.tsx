@@ -149,7 +149,7 @@ export default async function Page() {
     tabs.push({
       title: (
         <span key={award.year} className="flex items-center gap-2">
-          {award.year}{' '}
+          {award.year}
           <span className="rounded-full bg-blue-300/10 px-2.5 py-1 text-xs font-medium text-blue-500">
             {totalAwards}
           </span>

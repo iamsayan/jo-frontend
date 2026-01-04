@@ -1,13 +1,19 @@
 'use client';
 
 import { cn } from '@/utils/functions';
+import dynamic from 'next/dynamic';
 import React from 'react';
-import Countdown, { CountdownRendererFn } from 'react-countdown';
+import { CountdownRendererFn } from 'react-countdown';
 
 interface CountdownTimerProps {
   className?: string;
   targetDate: Date;
 }
+
+const Countdown = dynamic(
+  () => import('react-countdown').then((mod) => mod.default),
+  { ssr: false }
+);
 
 const CountdownTimer: React.FC<CountdownTimerProps> = ({
   className,
