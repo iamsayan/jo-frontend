@@ -68,21 +68,16 @@ export default function Page() {
       role: 'Executive Member',
       icon: 'subhodeep.png',
     },
-    // {
-    //     name: "Sinjan Das",
-    //     role: "Executive Member",
-    //     icon: "sinjan.png"
-    // },
     {
       name: 'Raunak Pal',
       role: 'Executive Member',
       icon: 'raunak.png',
     },
-    {
-      name: 'Rupen Sen',
-      role: 'Executive Member',
-      icon: 'rupen.png',
-    },
+    // {
+    //   name: 'Rupen Sen',
+    //   role: 'Executive Member',
+    //   icon: 'rupen.png',
+    // },
     {
       name: 'Suman Bhagat',
       role: 'Executive Member',
