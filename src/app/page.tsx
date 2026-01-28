@@ -138,7 +138,7 @@ export default async function Home() {
   const stats: StatsItem[] = [
     {
       title: 'Followers',
-      stat: '76.1K',
+      stat: '75.1K',
       icon: FaFacebook,
       statDesc: '5.6M',
       description: 'views in last 30 days',
