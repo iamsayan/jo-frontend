@@ -165,7 +165,7 @@ export default function Footer() {
                   aria-label={social.name}
                   title={social.name}
                   target="_blank"
-                  rel="noopener"
+                  rel="noopener noreferrer"
                   className={`rounded-full border-2 border-slate-700/50 bg-slate-700/50 p-2 transition-all duration-300 hover:bg-slate-600/50 ${social.color}`}
                 >
                   <social.icon className="fl-size-3/4" />

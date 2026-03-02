@@ -5,9 +5,13 @@ import schema from '@/utils/schema';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy',
+  title: 'Privacy Policy - Jagadhatri Online',
   description:
     'See how Jagadhatri Online™ protects your data. Your trust is our top priority during puja season and beyond.',
+  keywords: [
+    'jagadhatri online privacy policy',
+    'privacy policy jagadhatri online',
+  ],
   openGraph: {
     ...metadataSchema.openGraph,
     url: '/privacy-policy',

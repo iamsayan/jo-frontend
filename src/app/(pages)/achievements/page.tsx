@@ -9,9 +9,17 @@ import type { Metadata } from 'next';
 import { LuCircleCheck } from 'react-icons/lu';
 
 export const metadata: Metadata = {
-  title: 'Achievements',
+  title: 'Achievements - Jagadhatri Online Milestones & Awards',
   description:
-    'Celebrating a decade of digital service—view our milestones, media features, and honors as Chandannagar’s official online puja archive.',
+    "Celebrating a decade of digital service — view our milestones, media features, and honors as Chandannagar's official online puja archive since 2016.",
+  keywords: [
+    'jagadhatri online achievements',
+    'chandannagar puja portal milestones',
+    'jagadhatri puja awards',
+    'jagadhatri online history',
+    'digital puja platform india',
+    'chandannagar cultural documentation',
+  ],
   openGraph: {
     ...metadataSchema.openGraph,
     url: '/achievements',

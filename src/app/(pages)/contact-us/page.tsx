@@ -6,9 +6,16 @@ import schema from '@/utils/schema';
 import { GoogleMapsEmbed } from '@next/third-parties/google';
 import type { Metadata } from 'next';
 export const metadata: Metadata = {
-  title: 'Contact Us',
+  title: 'Contact Jagadhatri Online - Chandannagar, West Bengal',
   description:
-    'Contact Jagadhatri Online™ for coverage, collaboration, or festival queries. Based in Chandannagar, we’re here to help 24×7 during puja season.',
+    "Contact Jagadhatri Online™ for coverage, collaboration, or festival queries about Chandannagar Jagadhatri Puja. Based in Chandannagar, West Bengal — we're here to help 24×7 during puja season.",
+  keywords: [
+    'contact jagadhatri online',
+    'jagadhatri puja contact',
+    'chandannagar puja portal contact',
+    'jagadhatri online email',
+    'chandannagar west bengal contact',
+  ],
   openGraph: {
     ...metadataSchema.openGraph,
     url: '/contact-us',
@@ -21,8 +28,20 @@ export const metadata: Metadata = {
 export default function Page() {
   const jsonLd = schema({
     path: 'contact-us',
-    title: 'Contact Us',
+    title: 'Contact Jagadhatri Online',
   });
+
+  // Add ContactPage schema
+  jsonLd['@graph'].push({
+    '@type': 'ContactPage',
+    '@id': `${process.env.NEXT_PUBLIC_SITE_URL}/contact-us/#contactpage`,
+    name: 'Contact Jagadhatri Online',
+    description:
+      'Get in touch with Jagadhatri Online for Chandannagar Jagadhatri Puja coverage, collaboration, or festival-related queries.',
+    mainEntity: {
+      '@id': `${process.env.NEXT_PUBLIC_SITE_URL}/#organization`,
+    },
+  } as any);
 
   return (
     <MainLayout title="Contact Us" jsonLd={jsonLd}>

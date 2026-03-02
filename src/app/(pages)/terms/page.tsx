@@ -4,9 +4,13 @@ import Section from '@/components/section';
 import schema from '@/utils/schema';
 import type { Metadata } from 'next';
 export const metadata: Metadata = {
-  title: 'Terms & Conditions',
+  title: 'Terms & Conditions - Jagadhatri Online',
   description:
     'Read the user terms for Jagadhatri Online, outlining site usage, copyrights, and community interaction guidelines.',
+  keywords: [
+    'jagadhatri online terms',
+    'terms and conditions jagadhatri online',
+  ],
   openGraph: {
     ...metadataSchema.openGraph,
     url: '/terms',

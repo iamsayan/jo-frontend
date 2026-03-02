@@ -52,8 +52,15 @@ export async function generateMetadata({
   const currentPage = Number(page ?? 0);
 
   return {
-    title: `Photo Gallery of ${year}`,
-    description: `View Jagadhatri Puja ${year} photos from Chandannagar, Mankundu, and nearby Bhadreswar—featuring award-winning pandals and themes.`,
+    title: `Jagadhatri Puja Photo Gallery ${year} - Chandannagar`,
+    description: `View stunning Jagadhatri Puja ${year} photos from Chandannagar, Mankundu, and Bhadreswar — featuring award-winning pandals, themes, lighting, and procession.`,
+    keywords: [
+      `jagadhatri puja ${year} photos`,
+      `jagadhatri puja ${year} images`,
+      `chandannagar jagadhatri puja ${year} gallery`,
+      `jagadhatri puja pandal photos ${year}`,
+      `chandannagar puja ${year}`,
+    ],
     openGraph: {
       ...metadataSchema.openGraph,
       url:

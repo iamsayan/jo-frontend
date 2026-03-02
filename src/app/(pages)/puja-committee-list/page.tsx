@@ -21,9 +21,22 @@ import {
 } from 'react-icons/lu';
 
 export const metadata: Metadata = {
-  title: 'Jagadhatri Puja Committee List',
+  title: 'Jagadhatri Puja Committee List - Chandannagar, Mankundu & Bhadreswar',
   description:
-    'Find verified Jagadhatri Puja committees from Chandannagar, Mankundu, and Bhadreswar with locations, years, and contact details.',
+    'Find verified Jagadhatri Puja committees from Chandannagar, Mankundu, and Bhadreswar — with locations, established years, jubilee celebrations, and contact details for 170+ committees.',
+  keywords: [
+    'jagadhatri puja committee list',
+    'chandannagar puja committee',
+    'bhadreswar puja committee',
+    'mankundu puja committee list',
+    'jagadhatri puja committees chandannagar',
+    'puja committee details',
+    'chandannagar jagadhatri puja list',
+    'puja jubilee list chandannagar',
+    'adi puja chandannagar',
+    'oldest puja committee chandannagar',
+    'CCJPC committee list',
+  ],
   openGraph: {
     ...metadataSchema.openGraph,
     url: '/puja-committee-list',

@@ -72,19 +72,40 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'yearly',
       priority: 0.2,
     },
+    {
+      url: `${process.env.NEXT_PUBLIC_SITE_URL}/hoimontika-somman`,
+      lastModified: new Date(),
+      changeFrequency: 'yearly',
+      priority: 0.7,
+    },
+    {
+      url: `${process.env.NEXT_PUBLIC_SITE_URL}/digital-media-partnership`,
+      lastModified: new Date(),
+      changeFrequency: 'yearly',
+      priority: 0.4,
+    },
+    {
+      url: `${process.env.NEXT_PUBLIC_SITE_URL}/jagadhatri-puja`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
   ];
 
-  const galleryYears = Array.from({ length: 2 }, (_, i) => i + 2023);
+  const currentYear = new Date().getFullYear();
+  const galleryYears = Array.from(
+    { length: currentYear - 2015 },
+    (_, i) => i + 2016
+  ).reverse();
   galleryYears.forEach((year: number, index: number) => {
     sitemaps.push({
       url: `${process.env.NEXT_PUBLIC_SITE_URL}/gallery/${year}`,
       lastModified: new Date(),
       changeFrequency: 'yearly',
-      priority: galleryYears.length - index > 1 ? 0.8 : 0.9,
+      priority: index === 0 ? 0.9 : 0.8,
     });
   });
 
-  const currentYear = new Date().getFullYear();
   const pujaYears = Array.from(
     { length: currentYear - 1998 },
     (_, i) => i + 2000

@@ -5,9 +5,26 @@ import schema from '@/utils/schema';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'History of Jagadhatri Puja',
+  title: 'History of Jagadhatri Puja in Chandannagar',
   description:
-    'Discover the rich history of Jagadhatri Puja in Chandannagar—from ancient origins to today’s massive public celebrations.',
+    "Discover the rich history of Jagadhatri Puja in Chandannagar — from its ancient origins before 1750 to today's massive community celebrations with 190+ committees. Learn about Goddess Jagadhatri, the French colonial influence, and the world-famous illumination procession.",
+  keywords: [
+    'history of jagadhatri puja',
+    'jagadhatri puja history chandannagar',
+    'who started jagadhatri puja',
+    'origin of jagadhatri puja',
+    'chandannagar jagadhatri puja history',
+    'indranarayan chowdhury jagadhatri puja',
+    'krishnachandra jagadhatri puja',
+    'goddess jagadhatri history',
+    'jagadhatri puja significance',
+    'chandannagar french connection',
+    'chandannagar lighting history',
+    'jagadhatri puja procession history',
+    'oldest jagadhatri puja chandannagar',
+    'bose family jagadhatri puja palpara',
+    'anandamath jagaddhatri',
+  ],
   openGraph: {
     ...metadataSchema.openGraph,
     url: '/puja-history',
@@ -20,8 +37,56 @@ export const metadata: Metadata = {
 export default function Page() {
   const jsonLd = schema({
     path: 'puja-history',
-    title: 'History of Jagadhatri Puja',
+    title: 'History of Jagadhatri Puja in Chandannagar',
   });
+
+  // Add FAQPage schema for rich snippets
+  jsonLd['@graph'].push({
+    '@type': 'FAQPage',
+    '@id': `${process.env.NEXT_PUBLIC_SITE_URL}/puja-history/#faq`,
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'When did Jagadhatri Puja start in Chandannagar?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'The beginning of Jagadhatri Puja in Chandannagar probably dates back earlier than 1750. Indranarayan Choudhury performed the Jagadhatri Puja at his own house in Chandannagar. The Bose family of Palpara has records dating their puja back to 1640.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Who started Jagadhatri Puja in Chandannagar?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Indranarayan Choudhury is believed to have introduced Jagadhatri Puja in Chandannagar, even before Maharaja Krishnachandra of Krishnanagar started it in 1762. The Bose family of Palpara also has an ancient tradition dating back to 1788.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Why is Chandannagar famous for Jagadhatri Puja?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Chandannagar is famous for its grand Jagadhatri Puja celebrations featuring spectacular lighting and illumination, artistic idol-making with sola decorations, and the immersion procession which is the 2nd largest in the world after Rio de Janeiro. Over 190 community pujas are organized annually.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'What is the difference between Durga and Jagadhatri?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'According to Sankhya philosophy, Jagadhatri symbolizes Sattva (calmness, purity) associated with creation, Durga symbolizes Rajas (activity) associated with preservation, and Kali symbolizes Tamas (inertia) associated with destruction for better creation. Jagadhatri is a pleasant form of Goddess Durga.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'How many days is Jagadhatri Puja celebrated?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Jagadhatri Puja is celebrated for five days, starting with Sashti and continuing through Saptami, Ashtami, Nabami, and culminating on Dashami with the immersion procession (Bisarjan) of Goddess Jagadhatri.',
+        },
+      },
+    ],
+  } as any);
 
   return (
     <MainLayout title="Puja History" jsonLd={jsonLd}>

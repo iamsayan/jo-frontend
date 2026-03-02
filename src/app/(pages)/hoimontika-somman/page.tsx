@@ -20,9 +20,20 @@ import {
 } from 'react-icons/lu';
 
 export const metadata: Metadata = {
-  title: 'Amie Srestho Hoimantika Somman',
+  title: 'Amie Srestho Hoimantika Somman - Jagadhatri Puja Awards Chandannagar',
   description:
-    'The Amie Srestho Hoimantika Somman is a prestigious award that has been celebrating creativity and craftsmanship during Jagadhatri Puja in Chandannagar since 2016.',
+    'The Amie Srestho Hoimantika Somman is a prestigious award celebrating creativity and craftsmanship during Jagadhatri Puja in Chandannagar since 2016 — honoring the best pandals, idols, decoration, and themes.',
+  keywords: [
+    'hoimantika somman',
+    'amie srestho award',
+    'jagadhatri puja awards',
+    'chandannagar puja awards',
+    'best jagadhatri puja pandal award',
+    'jagadhatri puja competition',
+    'chandannagar puja decoration award',
+    'jagadhatri puja idol award',
+    'best puja chandannagar',
+  ],
   openGraph: {
     ...metadataSchema.openGraph,
     url: '/hoimontika-somman',
@@ -162,7 +173,7 @@ export default async function Page() {
 
   const jsonLd = schema({
     path: 'hoimontika-somman',
-    title: 'History of Jagadhatri Puja',
+    title: 'Amie Srestho Hoimantika Somman',
   });
 
   return (

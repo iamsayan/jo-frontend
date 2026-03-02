@@ -11,9 +11,21 @@ import Link from 'next/link';
 import { LuCalendar, LuHistory, LuMapPin, LuUsers } from 'react-icons/lu';
 
 export const metadata: Metadata = {
-  title: 'Jagadhatri Puja Jubilee, Pre Jubilee List, Schedule',
+  title: 'Jagadhatri Puja Schedule, Jubilee & Pre Jubilee List - Chandannagar',
   description:
-    'Learn about the Jagadhatri Puja traditions in Chandannagar and Mankundu, with extended coverage of Bhadreswar’s growing celebrations.',
+    'View the complete Jagadhatri Puja schedule, jubilee and pre-jubilee celebrations list for Chandannagar, Mankundu, and Bhadreswar. Explore 350+ years of tradition with 177+ committees.',
+  keywords: [
+    'jagadhatri puja schedule',
+    'jagadhatri puja jubilee list',
+    'jagadhatri puja pre jubilee list',
+    'chandannagar puja schedule',
+    'jagadhatri puja dates',
+    'jagadhatri puja 5 days',
+    'chandannagar puja celebrations',
+    'jagadhatri puja golden jubilee',
+    'jagadhatri puja silver jubilee',
+    'jagadhatri puja diamond jubilee',
+  ],
   openGraph: {
     ...metadataSchema.openGraph,
     url: '/jagadhatri-puja',

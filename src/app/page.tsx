@@ -178,16 +178,55 @@ export default async function Home() {
     },
   ];
 
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL;
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
       {
-        '@type': 'Organization',
-        '@id': `${process.env.NEXT_PUBLIC_SITE_URL}/#organization`,
+        '@type': ['Organization', 'LocalBusiness'],
+        '@id': `${baseUrl}/#organization`,
         name: 'Jagadhatri Online',
-        url: process.env.NEXT_PUBLIC_SITE_URL,
-        logo: `${process.env.NEXT_PUBLIC_SITE_URL}/circle-logo.png`,
+        alternateName: 'Jagadhatri Online™',
+        url: baseUrl,
+        logo: `${baseUrl}/circle-logo.png`,
+        image: `${baseUrl}/circle-logo.png`,
         email: 'info@jagadhatrionline.co.in',
+        description:
+          "Jagadhatri Online™ is Chandannagar's leading digital portal celebrating Jagadhatri Puja since 2016. We document puja committees, photo galleries, videos, pandal locations, schedules, jubilee lists, and the rich cultural heritage of Goddess Jagadhatri across Chandannagar, Mankundu, and Bhadreswar.",
+        foundingDate: '2016-05-06',
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: 'Station Road',
+          addressLocality: 'Chandannagar',
+          addressRegion: 'West Bengal',
+          postalCode: '712136',
+          addressCountry: 'IN',
+        },
+        geo: {
+          '@type': 'GeoCoordinates',
+          latitude: 22.8671,
+          longitude: 88.3674,
+        },
+        areaServed: [
+          { '@type': 'City', name: 'Chandannagar' },
+          { '@type': 'City', name: 'Mankundu' },
+          { '@type': 'City', name: 'Bhadreswar' },
+          { '@type': 'State', name: 'West Bengal' },
+        ],
+        contactPoint: {
+          '@type': 'ContactPoint',
+          email: 'info@jagadhatrionline.co.in',
+          contactType: 'customer service',
+          availableLanguage: ['English', 'Bengali', 'Hindi'],
+        },
+        knowsAbout: [
+          'Jagadhatri Puja',
+          'Chandannagar Jagadhatri Puja',
+          'Chandannagar Festival',
+          'Chandannagar Illumination',
+        ],
+        knowsLanguage: ['en', 'bn', 'hi'],
         sameAs: [
           'https://www.facebook.com/JagadhatriOnlineOfficial/',
           'https://www.youtube.com/c/JagadhatriOnline?sub_confirmation=1',
@@ -200,31 +239,114 @@ export default async function Home() {
       },
       {
         '@type': 'WebSite',
-        '@id': `${process.env.NEXT_PUBLIC_SITE_URL}/#website`,
-        url: process.env.NEXT_PUBLIC_SITE_URL,
+        '@id': `${baseUrl}/#website`,
+        url: baseUrl,
         name: 'Jagadhatri Online',
         publisher: {
-          '@id': `${process.env.NEXT_PUBLIC_SITE_URL}/#organization`,
+          '@id': `${baseUrl}/#organization`,
         },
         inLanguage: 'en-IN',
         potentialAction: {
           '@type': 'SearchAction',
-          target: `${process.env.NEXT_PUBLIC_SITE_URL}/?q={search_term_string}`,
+          target: `${baseUrl}/?q={search_term_string}`,
           'query-input': 'required name=search_term_string',
         },
       },
       {
         '@type': 'WebPage',
-        '@id': `${process.env.NEXT_PUBLIC_SITE_URL}/#webpage`,
-        url: process.env.NEXT_PUBLIC_SITE_URL,
-        name: 'Jagadhatri Online | the #1 Puja Portal for Chandannagar Jagadhatri Puja',
+        '@id': `${baseUrl}/#webpage`,
+        url: baseUrl,
+        name: 'Jagadhatri Online™ | the #1 Puja Portal for Chandannagar Jagadhatri Puja',
         datePublished: '2016-05-06T00:00:00+05:30',
         dateModified: timeOrigin("yyyy-MM-dd'T'HH:mm:ssXXX"),
         isPartOf: {
-          '@id': `${process.env.NEXT_PUBLIC_SITE_URL}/#website`,
+          '@id': `${baseUrl}/#website`,
         },
         inLanguage: 'en-IN',
       },
+      {
+        '@type': 'SiteNavigationElement',
+        '@id': `${baseUrl}/#navigation`,
+        name: 'Main Navigation',
+        hasPart: [
+          { '@type': 'WebPage', name: 'Home', url: baseUrl },
+          {
+            '@type': 'WebPage',
+            name: 'Puja History',
+            url: `${baseUrl}/puja-history`,
+          },
+          {
+            '@type': 'WebPage',
+            name: 'Photo Gallery',
+            url: `${baseUrl}/gallery`,
+          },
+          {
+            '@type': 'WebPage',
+            name: 'Jagadhatri Puja Schedule',
+            url: `${baseUrl}/jagadhatri-puja`,
+          },
+          {
+            '@type': 'WebPage',
+            name: 'Puja Committee List',
+            url: `${baseUrl}/puja-committee-list`,
+          },
+          {
+            '@type': 'WebPage',
+            name: 'About Us',
+            url: `${baseUrl}/about-us`,
+          },
+          {
+            '@type': 'WebPage',
+            name: 'Contact Us',
+            url: `${baseUrl}/contact-us`,
+          },
+        ],
+      },
+      ...(data?.schedules
+        ? [
+            {
+              '@type': 'Event',
+              '@id': `${baseUrl}/#event-${btnYear}`,
+              name: `Chandannagar Jagadhatri Puja ${btnYear}`,
+              description: `The grand celebration of Jagadhatri Puja ${btnYear} in Chandannagar, featuring 190+ community pujas, spectacular lighting and illumination, artistic idol-making, and the world-famous immersion procession.`,
+              startDate: data.schedules[0]?.date
+                ? `${data.schedules[0].date}T06:00:00+05:30`
+                : undefined,
+              endDate: data.schedules[data.schedules.length - 1]?.date
+                ? `${data.schedules[data.schedules.length - 1].date}T23:59:59+05:30`
+                : undefined,
+              eventStatus: 'https://schema.org/EventScheduled',
+              eventAttendanceMode:
+                'https://schema.org/OfflineEventAttendanceMode',
+              location: {
+                '@type': 'Place',
+                name: 'Chandannagar',
+                address: {
+                  '@type': 'PostalAddress',
+                  addressLocality: 'Chandannagar',
+                  addressRegion: 'West Bengal',
+                  addressCountry: 'IN',
+                  postalCode: '712136',
+                },
+                geo: {
+                  '@type': 'GeoCoordinates',
+                  latitude: 22.8671,
+                  longitude: 88.3674,
+                },
+                url: 'https://en.wikipedia.org/wiki/Chandannagar',
+                hasMap:
+                  'https://www.google.com/maps/search/?api=1&query=Chandannagar,Hooghly,West+Bengal',
+              },
+              organizer: {
+                '@id': `${baseUrl}/#organization`,
+              },
+              image: `${baseUrl}/circle-logo.png`,
+              inLanguage: 'en-IN',
+              isAccessibleForFree: true,
+              maximumAttendeeCapacity: 1000000,
+            },
+          ]
+        : []),
     ],
   };
 

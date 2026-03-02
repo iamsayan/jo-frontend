@@ -87,8 +87,16 @@ export async function generateMetadata({
   const currentPuja = pujas.find((item: Puja) => item.referenceId === id);
 
   return {
-    title: `${currentPuja?.name} Sarbajanin, ${currentPuja?.zone === 'bhadreswar' ? 'Bhadreswar' : 'Chandannagar'}`,
+    title: `${currentPuja?.name} Sarbajanin, ${currentPuja?.zone === 'bhadreswar' ? 'Bhadreswar' : 'Chandannagar'} - Jagadhatri Puja`,
     description: stripHtmlAndLimit(currentPuja?.info ?? ''),
+    keywords: [
+      `${currentPuja?.name?.toLowerCase()} sarbajanin`,
+      `${currentPuja?.name?.toLowerCase()} jagadhatri puja`,
+      `${currentPuja?.name?.toLowerCase()} puja committee`,
+      `jagadhatri puja ${currentPuja?.zone === 'bhadreswar' ? 'bhadreswar' : 'chandannagar'}`,
+      'jagadhatri puja committee details',
+      'chandannagar puja pandal',
+    ],
     openGraph: {
       ...metadataSchema.openGraph,
       url: `/puja/${slug}/${id}`,

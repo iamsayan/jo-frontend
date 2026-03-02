@@ -63,8 +63,18 @@ export async function generateMetadata({
   const dateIsCurrent = queryYear === displayDate.getFullYear();
 
   return {
-    title: `Jagadhatri Puja ${queryYear} Jubilee, Pre Jubilee List${dateIsCurrent ? ', Schedule' : ''}`,
-    description: `Explore the Jubilee List${dateIsCurrent ? ', Schedule, Puja Updates' : ''} and Latest Information about Jagadhatri Puja ${queryYear} the great festival of Chandannagar.`,
+    title: `Jagadhatri Puja ${queryYear} Jubilee, Pre Jubilee List${dateIsCurrent ? ', Schedule' : ''} - Chandannagar`,
+    description: `Explore the complete Jubilee List${dateIsCurrent ? ', Schedule, Puja Updates' : ''} and latest information about Jagadhatri Puja ${queryYear} — the grand festival of Chandannagar, Mankundu & Bhadreswar.`,
+    keywords: [
+      `jagadhatri puja ${queryYear}`,
+      `chandannagar jagadhatri puja ${queryYear}`,
+      `jagadhatri puja jubilee list ${queryYear}`,
+      `jagadhatri puja schedule ${queryYear}`,
+      `jagadhatri puja dates ${queryYear}`,
+      `jagadhatri puja pre jubilee ${queryYear}`,
+      'jagadhatri puja chandannagar',
+      'chandannagar puja celebrations',
+    ],
     openGraph: {
       ...metadataSchema.openGraph,
       url: `/jagadhatri-puja/${queryYear}`,

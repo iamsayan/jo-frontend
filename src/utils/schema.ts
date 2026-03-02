@@ -19,7 +19,7 @@ interface SchemaOptions {
 }
 
 interface SchemaItem {
-  '@type': string;
+  '@type': string | string[];
   '@id': string;
   [key: string]: unknown;
 }
@@ -90,12 +90,64 @@ export default function schema({
     '@context': 'https://schema.org',
     '@graph': [
       {
-        '@type': 'Organization',
+        '@type': ['Organization', 'LocalBusiness'],
         '@id': `${baseUrl}/#organization`,
         name: 'Jagadhatri Online',
+        alternateName: 'Jagadhatri Online™',
         url: baseUrl,
         logo: `${baseUrl}/circle-logo.png`,
+        image: `${baseUrl}/circle-logo.png`,
         email: 'info@jagadhatrionline.co.in',
+        description:
+          "Jagadhatri Online™ is Chandannagar's leading digital portal celebrating Jagadhatri Puja since 2016. We document puja committees, photo galleries, videos, pandal locations, schedules, jubilee lists, and the rich cultural heritage of Goddess Jagadhatri across Chandannagar, Mankundu, and Bhadreswar.",
+        foundingDate: '2016-05-06',
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: 'Station Road',
+          addressLocality: 'Chandannagar',
+          addressRegion: 'West Bengal',
+          postalCode: '712136',
+          addressCountry: 'IN',
+        },
+        geo: {
+          '@type': 'GeoCoordinates',
+          latitude: 22.8671,
+          longitude: 88.3674,
+        },
+        areaServed: [
+          {
+            '@type': 'City',
+            name: 'Chandannagar',
+          },
+          {
+            '@type': 'City',
+            name: 'Mankundu',
+          },
+          {
+            '@type': 'City',
+            name: 'Bhadreswar',
+          },
+          {
+            '@type': 'State',
+            name: 'West Bengal',
+          },
+        ],
+        contactPoint: {
+          '@type': 'ContactPoint',
+          email: 'info@jagadhatrionline.co.in',
+          contactType: 'customer service',
+          availableLanguage: ['English', 'Bengali', 'Hindi'],
+        },
+        knowsAbout: [
+          'Jagadhatri Puja',
+          'Chandannagar Jagadhatri Puja',
+          'Chandannagar Festival',
+          'Chandannagar Illumination',
+          'Jagadhatri Puja Procession',
+          'Bengali Religious Festival',
+          'Cultural Heritage Preservation',
+        ],
+        knowsLanguage: ['en', 'bn', 'hi'],
         sameAs: [
           'https://www.facebook.com/JagadhatriOnlineOfficial/',
           'https://www.youtube.com/c/JagadhatriOnline?sub_confirmation=1',

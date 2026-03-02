@@ -11,8 +11,19 @@ import {
 } from 'react-icons/fa6';
 
 export const metadata: Metadata = {
-  title: 'About Us',
-  description: `Jagadhatri Online is the leading digital portal covering Jagadhatri Pujas in Chandannagar, Mankundu, and Bhadreswar—celebrating 10 years of cultural storytelling.`,
+  title: "About Jagadhatri Online - Chandannagar's Leading Puja Portal",
+  description: `Jagadhatri Online is the leading digital portal covering Jagadhatri Pujas in Chandannagar, Mankundu, and Bhadreswar — celebrating 10 years of documenting cultural heritage, pandal locations, photos, videos, and festival guides.`,
+  keywords: [
+    'about jagadhatri online',
+    'jagadhatri online team',
+    'chandannagar puja portal',
+    'jagadhatri puja website',
+    'who runs jagadhatri online',
+    'chandannagar digital heritage',
+    'jagadhatri puja documentation',
+    'sayan datta jagadhatri online',
+    'pritam mitra jagadhatri online',
+  ],
   openGraph: {
     ...metadataSchema.openGraph,
     url: '/about-us',
@@ -102,8 +113,20 @@ export default function Page() {
 
   const jsonLd = schema({
     path: 'about-us',
-    title: 'About Us',
+    title: 'About Jagadhatri Online',
   });
+
+  // Add AboutPage schema
+  jsonLd['@graph'].push({
+    '@type': 'AboutPage',
+    '@id': `${process.env.NEXT_PUBLIC_SITE_URL}/about-us/#aboutpage`,
+    name: 'About Jagadhatri Online',
+    description:
+      'Learn about Jagadhatri Online — the #1 digital portal for Chandannagar, Mankundu & Bhadreswar Jagadhatri Puja since 2016.',
+    mainEntity: {
+      '@id': `${process.env.NEXT_PUBLIC_SITE_URL}/#organization`,
+    },
+  } as any);
 
   return (
     <MainLayout title="About Us" jsonLd={jsonLd}>

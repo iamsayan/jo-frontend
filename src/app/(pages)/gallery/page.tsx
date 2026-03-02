@@ -12,8 +12,20 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Photo Gallery',
-  description: `Browse Jagadhatri Puja photos from Chandannagar, Mankundu, and Bhadreswar—capturing pandals, lighting, idols, and themes from 2016 to ${new Date().getFullYear()}.`,
+  title: 'Jagadhatri Puja Photo Gallery - Chandannagar, Mankundu & Bhadreswar',
+  description: `Browse stunning Jagadhatri Puja photos from Chandannagar, Mankundu, and Bhadreswar — capturing pandals, lighting, idols, themes, and processions from 2016 to ${new Date().getFullYear()}.`,
+  keywords: [
+    'jagadhatri puja photos',
+    'jagadhatri puja images',
+    'chandannagar jagadhatri puja gallery',
+    'jagadhatri puja pandal photos',
+    'chandannagar lighting photos',
+    'jagadhatri idol images',
+    'jagadhatri puja procession photos',
+    'chandannagar puja decoration',
+    'bhadreswar jagadhatri puja photos',
+    'mankundu jagadhatri puja images',
+  ],
   openGraph: {
     ...metadataSchema.openGraph,
     url: '/gallery',
@@ -47,11 +59,27 @@ export default async function Page() {
 
   const jsonLd = schema({
     path: 'gallery',
-    title: 'Photo Gallery',
+    title: 'Jagadhatri Puja Photo Gallery',
     type: {
       collection: true,
     },
   });
+
+  // Add ImageGallery schema
+  jsonLd['@graph'].push({
+    '@type': 'ImageGallery',
+    '@id': `${process.env.NEXT_PUBLIC_SITE_URL}/gallery/#gallery`,
+    name: 'Chandannagar Jagadhatri Puja Photo Gallery',
+    description:
+      'A curated collection of photographs capturing the grandeur of Jagadhatri Puja celebrations in Chandannagar, Mankundu, and Bhadreswar — featuring pandals, lighting, idols, themes, and processions.',
+    about: {
+      '@type': 'Event',
+      name: 'Chandannagar Jagadhatri Puja',
+    },
+    isPartOf: {
+      '@id': `${process.env.NEXT_PUBLIC_SITE_URL}/#website`,
+    },
+  } as any);
 
   return (
     <MainLayout title="Photo Gallery" jsonLd={jsonLd}>

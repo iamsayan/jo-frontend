@@ -49,7 +49,7 @@ const NotFound: React.FC = () => {
                 <a
                   href="https://store.jagadhatrionline.co.in"
                   target="_blank"
-                  rel="noopener"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-yellow-500 to-orange-600 px-6 py-3 font-medium text-white transition-opacity hover:opacity-90"
                 >
                   <span>Visit Our Store</span>

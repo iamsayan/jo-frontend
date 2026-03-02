@@ -7,9 +7,19 @@ import Link from 'next/link';
 import { LuCheck, LuCircleCheck, LuX } from 'react-icons/lu';
 
 export const metadata: Metadata = {
-  title: 'JO Cinematics Programme',
+  title:
+    'JO Cinematics Programme - Digital Media Partnership for Jagadhatri Puja',
   description:
-    'JO Cinematics Programme is a collaboration program for Jagadhatri Puja Commitees across Chandannagar Mankundu and Bhadreswar.',
+    'JO Cinematics Programme is a digital media collaboration program for Jagadhatri Puja committees across Chandannagar, Mankundu, and Bhadreswar — offering cinematic reels, drone shoots, and online promotion.',
+  keywords: [
+    'jagadhatri puja cinematics',
+    'chandannagar puja media partnership',
+    'puja committee digital promotion',
+    'jagadhatri puja video coverage',
+    'chandannagar puja reels',
+    'jo cinematics programme',
+    'puja drone shoot chandannagar',
+  ],
   openGraph: {
     ...metadataSchema.openGraph,
     url: '/digital-media-partnership',
