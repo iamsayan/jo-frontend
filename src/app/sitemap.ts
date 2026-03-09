@@ -93,10 +93,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   const currentYear = new Date().getFullYear();
-  const galleryYears = Array.from(
-    { length: currentYear - 2015 },
-    (_, i) => i + 2016
-  ).reverse();
+  const galleryYears = Array.from({ length: 2 }, (_, i) => i + 2023).reverse();
   galleryYears.forEach((year: number, index: number) => {
     sitemaps.push({
       url: `${process.env.NEXT_PUBLIC_SITE_URL}/gallery/${year}`,
