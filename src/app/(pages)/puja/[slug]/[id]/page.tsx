@@ -1,11 +1,13 @@
 import { metadata as metadataSchema } from '@/app/layout';
 import Breadcrumbs from '@/components/breadcrumbs';
+import PujaCountdown from '@/components/puja-countdown';
 
 import LeafletMap from '@/components/leaflet-map';
 import Main from '@/components/main';
 import Markdown from '@/components/markdown';
 import PujaGallery from '@/components/puja-gallery';
 import RemoteImage from '@/components/remote-image';
+import ShareBar from '@/components/share-bar';
 import type {
   Artist,
   GlobalSite,
@@ -148,12 +150,12 @@ export default async function Page({ params }: PageProps<Params>) {
   const hasCoordinates =
     !!currentPuja.location?.coordinates?.lat &&
     !!currentPuja.location?.coordinates?.lng;
-  const contactEmail =
-    currentPuja.links?.find((l: SharedLink) => l.title === 'email')?.url ||
-    'dgfdg@gmail.com';
-  const contactPhone =
-    currentPuja.links?.find((l: SharedLink) => l.title === 'phone')?.url ||
-    '9876543210';
+  const contactEmail = currentPuja.links?.find(
+    (l: SharedLink) => l.title === 'email'
+  )?.url;
+  const contactPhone = currentPuja.links?.find(
+    (l: SharedLink) => l.title === 'phone'
+  )?.url;
 
   const placeholderTags = [
     'Jagadhatri Puja',
@@ -298,7 +300,7 @@ export default async function Page({ params }: PageProps<Params>) {
   return (
     <Main jsonLd={jsonLd}>
       {/* ══════ HERO ══════ */}
-      <header className="relative flex w-full items-center justify-center overflow-hidden pt-28 pb-24 md:min-h-[88vh] md:pt-36 md:pb-32">
+      <header className="relative flex w-full items-center justify-center overflow-hidden pt-28 pb-32 md:min-h-[88vh] md:pt-36 md:pb-40">
         {/* BG */}
         <div className="absolute inset-0 -z-10" aria-hidden="true">
           {hasHeroImage ? (
@@ -451,17 +453,8 @@ export default async function Page({ params }: PageProps<Params>) {
       </header>
 
       {/* ══════ STATUS RIBBON ══════ */}
-      <section aria-label="Puja status" className="relative w-full">
-        <div
-          className="absolute inset-0 bg-gradient-to-b from-[#0f0a1e] to-transparent"
-          style={{ height: '50%' }}
-          aria-hidden="true"
-        />
-        <div
-          className="pattern-dots absolute inset-0 top-1/2 bg-gradient-to-b from-purple-50/30 to-white"
-          aria-hidden="true"
-        />
-        <div className="relative container mx-auto px-4">
+      <section aria-label="Puja status" className="relative z-10 -mt-12 w-full">
+        <div className="container mx-auto px-4">
           <div
             className={cn(
               'fl-gap-4/6 mx-auto grid grid-cols-1 items-stretch',
@@ -471,7 +464,7 @@ export default async function Page({ params }: PageProps<Params>) {
             )}
           >
             {/* Celebration */}
-            <article className="group overflow-hidden rounded-2xl border border-white/20 bg-white/95 p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1">
+            <article className="group overflow-hidden rounded-2xl border border-gray-100 bg-white p-5 shadow-xl shadow-black/8 transition-all duration-300 hover:-translate-y-1">
               <div className="flex items-center gap-4">
                 <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-purple-700 text-white">
                   <LuPartyPopper className="text-xl" />
@@ -490,7 +483,7 @@ export default async function Page({ params }: PageProps<Params>) {
               </div>
             </article>
             {/* Zone */}
-            <article className="group overflow-hidden rounded-2xl border border-white/20 bg-white/95 p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1">
+            <article className="group overflow-hidden rounded-2xl border border-gray-100 bg-white p-5 shadow-xl shadow-black/8 transition-all duration-300 hover:-translate-y-1">
               <div className="flex items-center gap-4">
                 <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 text-white">
                   <LuMapPin className="text-xl" />
@@ -507,7 +500,7 @@ export default async function Page({ params }: PageProps<Params>) {
             </article>
             {/* Procession */}
             {currentPuja.procession?.truckCount && (
-              <article className="group overflow-hidden rounded-2xl border border-white/20 bg-white/95 p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1">
+              <article className="group overflow-hidden rounded-2xl border border-gray-100 bg-white p-5 shadow-xl shadow-black/8 transition-all duration-300 hover:-translate-y-1">
                 <div className="flex items-center gap-4">
                   <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 text-white">
                     <LuTruck className="text-xl" />
@@ -526,6 +519,47 @@ export default async function Page({ params }: PageProps<Params>) {
           </div>
         </div>
       </section>
+
+      {/* ══════ COUNTDOWN + SHARE ══════ */}
+      {siteData?.schedules &&
+        siteData.schedules.length > 0 &&
+        (() => {
+          const firstDate = new Date(siteData.schedules[0].date);
+          const now = new Date();
+          const lastDate = new Date(
+            siteData.schedules[siteData.schedules.length - 1].date
+          );
+          lastDate.setDate(lastDate.getDate() + 1);
+          if (now < lastDate) {
+            const targetDate =
+              firstDate > now
+                ? firstDate
+                : new Date(
+                    siteData.schedules.find((s) => new Date(s.date) > now)
+                      ?.date || firstDate
+                  );
+            const targetEvent = siteData.schedules.find(
+              (s) => new Date(s.date).getTime() === targetDate.getTime()
+            );
+            return (
+              <section className="w-full bg-white py-8">
+                <div className="container mx-auto px-4">
+                  <PujaCountdown
+                    targetDate={targetDate}
+                    eventName={targetEvent?.event}
+                  />
+                  <div className="mt-5 flex justify-center">
+                    <ShareBar
+                      title={`${currentPuja.name} - Jagadhatri Puja`}
+                      url={`https://www.jagadhatrionline.co.in/puja/${currentPuja.slug}/${currentPuja.referenceId}`}
+                    />
+                  </div>
+                </div>
+              </section>
+            );
+          }
+          return null;
+        })()}
 
       {/* ══════ ABOUT / PUJA INFO ══════ */}
       <section
@@ -1028,6 +1062,110 @@ export default async function Page({ params }: PageProps<Params>) {
           )}
         </div>
       </section>
+
+      {/* ══════ NEARBY PUJAS ══════ */}
+      {(() => {
+        const nearbyPujas = pujas
+          .filter(
+            (p) =>
+              p.referenceId !== currentPuja.referenceId &&
+              p.zone === currentPuja.zone
+          )
+          .map((p) => {
+            let distance = Infinity;
+            if (
+              currentPuja.location?.coordinates?.lat &&
+              currentPuja.location?.coordinates?.lng &&
+              p.location?.coordinates?.lat &&
+              p.location?.coordinates?.lng
+            ) {
+              const R = 6371;
+              const dLat =
+                ((p.location.coordinates.lat -
+                  currentPuja.location.coordinates.lat) *
+                  Math.PI) /
+                180;
+              const dLon =
+                ((p.location.coordinates.lng -
+                  currentPuja.location.coordinates.lng) *
+                  Math.PI) /
+                180;
+              const a =
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(
+                  (currentPuja.location.coordinates.lat * Math.PI) / 180
+                ) *
+                  Math.cos((p.location.coordinates.lat * Math.PI) / 180) *
+                  Math.sin(dLon / 2) *
+                  Math.sin(dLon / 2);
+              distance = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            }
+            return { ...p, distance };
+          })
+          .sort((a, b) => a.distance - b.distance)
+          .slice(0, 6);
+
+        if (nearbyPujas.length === 0) return null;
+
+        return (
+          <section
+            aria-labelledby="nearby-heading"
+            className="w-full bg-white py-16"
+          >
+            <div className="container mx-auto px-4">
+              <div className="mb-10 text-center">
+                <span className="mb-3 inline-flex items-center gap-2 rounded-full bg-emerald-100/70 px-4 py-1.5 text-xs font-semibold tracking-wider text-emerald-700 uppercase">
+                  <LuMapPin className="text-sm" /> Nearby
+                </span>
+                <h2
+                  id="nearby-heading"
+                  className="fl-text-2xl/3xl mb-2 font-bold text-gray-800"
+                >
+                  Explore Nearby Pujas
+                </h2>
+                <p className="text-sm text-gray-500">
+                  Other puja committees in{' '}
+                  {currentPuja.zone === 'bhadreswar'
+                    ? 'Bhadreswar'
+                    : 'Chandannagar'}
+                </p>
+              </div>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {nearbyPujas.map((p) => (
+                  <Link
+                    key={p.referenceId}
+                    href={`/puja/${p.slug}/${p.referenceId}`}
+                    className="group flex items-center gap-4 rounded-2xl border border-gray-100 bg-gray-50/50 p-4 transition-all hover:border-purple-200 hover:bg-purple-50/30"
+                  >
+                    <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 text-sm font-bold text-white">
+                      {p.name?.slice(0, 2).toUpperCase()}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="truncate text-sm font-semibold text-gray-800 group-hover:text-purple-700">
+                        {p.name}
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-gray-400">
+                        <span>Est. {p.estd}</span>
+                        {p.distance !== Infinity && (
+                          <>
+                            <span className="text-gray-200">·</span>
+                            <span>
+                              {p.distance < 1
+                                ? `${Math.round(p.distance * 1000)}m`
+                                : `${p.distance.toFixed(1)}km`}
+                            </span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                    <LuArrowRight className="flex-shrink-0 text-gray-300 transition-transform group-hover:translate-x-1 group-hover:text-purple-500" />
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+      })()}
 
       {/* ══════ QUICK ACTIONS + PREV/NEXT ══════ */}
       <section
