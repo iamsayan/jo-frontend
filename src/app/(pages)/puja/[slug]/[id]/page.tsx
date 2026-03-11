@@ -60,6 +60,80 @@ import {
   LuTruck,
 } from 'react-icons/lu';
 import { format } from 'date-fns';
+import pluralize from 'pluralize';
+
+/* ─── Module-scope constants (never re-created) ─── */
+
+const TAG_COLORS = [
+  'bg-indigo-50 text-indigo-600 ring-indigo-100',
+  'bg-violet-50 text-violet-600 ring-violet-100',
+  'bg-fuchsia-50 text-fuchsia-600 ring-fuchsia-100',
+  'bg-rose-50 text-rose-600 ring-rose-100',
+  'bg-amber-50 text-amber-600 ring-amber-100',
+  'bg-emerald-50 text-emerald-600 ring-emerald-100',
+  'bg-blue-50 text-blue-600 ring-blue-100',
+  'bg-purple-50 text-purple-600 ring-purple-100',
+] as const;
+
+const EVENT_PALETTE = [
+  {
+    gradient: 'from-indigo-500 to-violet-600',
+    text: 'text-indigo-600',
+    hoverBorder: 'hover:border-indigo-200',
+  },
+  {
+    gradient: 'from-violet-500 to-purple-600',
+    text: 'text-violet-600',
+    hoverBorder: 'hover:border-violet-200',
+  },
+  {
+    gradient: 'from-fuchsia-500 to-pink-600',
+    text: 'text-fuchsia-600',
+    hoverBorder: 'hover:border-fuchsia-200',
+  },
+  {
+    gradient: 'from-rose-500 to-red-500',
+    text: 'text-rose-600',
+    hoverBorder: 'hover:border-rose-200',
+  },
+  {
+    gradient: 'from-amber-500 to-orange-600',
+    text: 'text-amber-600',
+    hoverBorder: 'hover:border-amber-200',
+  },
+  {
+    gradient: 'from-emerald-500 to-teal-600',
+    text: 'text-emerald-600',
+    hoverBorder: 'hover:border-emerald-200',
+  },
+] as const;
+
+const CELEBRATION_TEXT: Record<string, string> = {
+  'Silver Jubilee': '25 years of devotion and community celebration.',
+  'Golden Jubilee': '50 years of preserving cultural heritage.',
+  'Diamond Jubilee': '60 years of unwavering faith and tradition.',
+  'Platinum Jubilee': '75 years of spiritual journey and community bonding.',
+  'Centennial Jubilee': '100 years of an incredible legacy.',
+  Jubilee: 'A significant milestone in our spiritual journey.',
+};
+
+/** Haversine distance in km between two lat/lng pairs. */
+function haversineKm(
+  lat1: number,
+  lng1: number,
+  lat2: number,
+  lng2: number
+): number {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lng2 - lng1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
 
 interface Params {
   slug: string;
@@ -138,28 +212,29 @@ export default async function Page({ params }: PageProps<Params>) {
   if (slug !== currentPuja.slug)
     permanentRedirect(`/puja/${currentPuja.slug}/${currentPuja.referenceId}`);
 
-  const pujaImages = currentPuja?.images?.map((item: Image) => ({
-    src: `${item?.year}/${currentPuja.referenceId}/${item.name}`,
-    thumb: `${item?.year}/${currentPuja.referenceId}/${item.name}`,
-    alt: currentPuja.name,
-    subHtml: `<p>By: ${capitalizeFirst(item?.uploadedBy)}</p>`,
-  }));
+  const pujaImages = currentPuja.images?.map((item: Image) => {
+    const path = `${item.year}/${currentPuja.referenceId}/${item.name}`;
+    return {
+      src: path,
+      thumb: path,
+      alt: currentPuja.name,
+      subHtml: `<p>By: ${capitalizeFirst(item.uploadedBy)}</p>`,
+    };
+  });
 
-  const heroImage = currentPuja?.images?.[0];
+  const zoneName = currentPuja.psZone;
+  const heroImage = currentPuja.images?.[0];
   const hasHeroImage = !!heroImage;
-  const hasCoordinates =
-    !!currentPuja.location?.coordinates?.lat &&
-    !!currentPuja.location?.coordinates?.lng;
-  const contactEmail = currentPuja.links?.find(
-    (l: SharedLink) => l.title === 'email'
-  )?.url;
-  const contactPhone = currentPuja.links?.find(
-    (l: SharedLink) => l.title === 'phone'
-  )?.url;
+  const coords = currentPuja.location?.coordinates;
+  const hasCoordinates = !!coords?.lat && !!coords?.lng;
+  const findLink = (type: string) =>
+    currentPuja.links?.find((l: SharedLink) => l.title === type)?.url;
+  const contactEmail = findLink('email');
+  const contactPhone = findLink('phone');
 
   const placeholderTags = [
     'Jagadhatri Puja',
-    currentPuja.zone === 'bhadreswar' ? 'Bhadreswar' : 'Chandannagar',
+    zoneName,
     currentPuja.adi ? 'Adi Puja' : 'Traditional',
     currentPuja.popular ? 'Popular' : null,
     currentPuja.celebrating || null,
@@ -169,13 +244,9 @@ export default async function Page({ params }: PageProps<Params>) {
     currentPuja.procession ? 'Procession Participant' : null,
   ].filter(Boolean) as string[];
 
-  const array: PujaExtended[] = [];
-  pujas.forEach((item: PujaExtended, index: number) => {
-    if (item.referenceId === id) {
-      array.push(pujas?.[0 < index ? index - 1 : pujas?.length - 1]);
-      array.push(pujas?.[pujas?.length - 1 > index ? index + 1 : 0]);
-    }
-  });
+  const currentIndex = pujas.findIndex((p) => p.referenceId === id);
+  const prevPuja = pujas[(currentIndex - 1 + pujas.length) % pujas.length];
+  const nextPuja = pujas[(currentIndex + 1) % pujas.length];
 
   const gMapLink =
     currentPuja.location?.coordinates?.lat &&
@@ -463,59 +534,56 @@ export default async function Page({ params }: PageProps<Params>) {
                 : 'max-w-3xl sm:grid-cols-2'
             )}
           >
-            {/* Celebration */}
-            <article className="group overflow-hidden rounded-2xl border border-gray-100 bg-white p-5 shadow-xl shadow-black/8 transition-all duration-300 hover:-translate-y-1">
-              <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-purple-700 text-white">
-                  <LuPartyPopper className="text-xl" />
-                </div>
-                <div>
-                  <div className="fl-text-xl/2xl font-bold text-gray-900">
-                    {currentPuja.celebrating ||
-                      (currentPuja.year ? currentPuja.year : '300+')}
-                  </div>
-                  <div className="text-xs text-gray-500">
-                    {currentPuja.celebrating
-                      ? `${currentPuja.year} years' celebration`
-                      : 'Years of Celebration'}
-                  </div>
-                </div>
-              </div>
-            </article>
-            {/* Zone */}
-            <article className="group overflow-hidden rounded-2xl border border-gray-100 bg-white p-5 shadow-xl shadow-black/8 transition-all duration-300 hover:-translate-y-1">
-              <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 text-white">
-                  <LuMapPin className="text-xl" />
-                </div>
-                <div>
-                  <div className="fl-text-xl/2xl font-bold text-gray-900">
-                    {currentPuja.psZone}
-                  </div>
-                  <div className="text-xs text-gray-500">
-                    Police Station Zone
-                  </div>
-                </div>
-              </div>
-            </article>
-            {/* Procession */}
-            {currentPuja.procession?.truckCount && (
-              <article className="group overflow-hidden rounded-2xl border border-gray-100 bg-white p-5 shadow-xl shadow-black/8 transition-all duration-300 hover:-translate-y-1">
+            {[
+              {
+                icon: <LuPartyPopper className="text-xl" />,
+                gradient: 'from-purple-500 to-purple-700',
+                title:
+                  currentPuja.celebrating ||
+                  (currentPuja.year ? currentPuja.year : '300+'),
+                subtitle: currentPuja.celebrating
+                  ? `${currentPuja.year} years' celebration`
+                  : 'Years of Celebration',
+              },
+              {
+                icon: <LuMapPin className="text-xl" />,
+                gradient: 'from-blue-500 to-blue-700',
+                title: currentPuja.psZone,
+                subtitle: 'Police Station Zone',
+              },
+              ...(currentPuja.procession?.truckCount
+                ? [
+                    {
+                      icon: <LuTruck className="text-xl" />,
+                      gradient: 'from-emerald-500 to-emerald-700',
+                      title: 'Participating',
+                      subtitle: `${currentPuja.procession.truckCount} ${pluralize('Vehicle', currentPuja.procession.truckCount)} in Procession`,
+                    },
+                  ]
+                : []),
+            ].map((card, i) => (
+              <article
+                key={i}
+                className="group overflow-hidden rounded-2xl border border-gray-100 bg-white p-5 shadow-xl shadow-black/8 transition-all duration-300 hover:-translate-y-1"
+              >
                 <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 text-white">
-                    <LuTruck className="text-xl" />
+                  <div
+                    className={cn(
+                      'flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br text-white',
+                      card.gradient
+                    )}
+                  >
+                    {card.icon}
                   </div>
                   <div>
                     <div className="fl-text-xl/2xl font-bold text-gray-900">
-                      Participating
+                      {card.title}
                     </div>
-                    <div className="text-xs text-gray-500">
-                      {`${currentPuja.procession.truckCount} Vehicle${currentPuja.procession.truckCount > 1 ? 's' : ''} in Procession`}
-                    </div>
+                    <div className="text-xs text-gray-500">{card.subtitle}</div>
                   </div>
                 </div>
               </article>
-            )}
+            ))}
           </div>
         </div>
       </section>
@@ -630,20 +698,10 @@ export default async function Page({ params }: PageProps<Params>) {
                         🎉 Celebrating {currentPuja.celebrating}!
                       </h3>
                       <p className="text-sm text-amber-700/80">
-                        {currentPuja.celebrating === 'Silver Jubilee' &&
-                          '25 years of devotion and community celebration.'}
-                        {currentPuja.celebrating === 'Golden Jubilee' &&
-                          '50 years of preserving cultural heritage.'}
-                        {currentPuja.celebrating === 'Diamond Jubilee' &&
-                          '60 years of unwavering faith and tradition.'}
-                        {currentPuja.celebrating === 'Platinum Jubilee' &&
-                          '75 years of spiritual journey and community bonding.'}
-                        {currentPuja.celebrating === 'Centennial Jubilee' &&
-                          '100 years of an incredible legacy.'}
-                        {currentPuja.celebrating === 'Jubilee' &&
-                          'A significant milestone in our spiritual journey.'}
-                        {currentPuja.celebrating.includes('Pre') &&
-                          `${currentPuja.celebrating}: Gearing up for a landmark celebration.`}
+                        {CELEBRATION_TEXT[currentPuja.celebrating] ||
+                          (currentPuja.celebrating.includes('Pre')
+                            ? `${currentPuja.celebrating}: Gearing up for a landmark celebration.`
+                            : '')}
                       </p>
                     </div>
                   </div>
@@ -776,30 +834,18 @@ export default async function Page({ params }: PageProps<Params>) {
                 role="list"
                 aria-label="Puja tags"
               >
-                {placeholderTags.map((tag, i) => {
-                  const tagColors = [
-                    'bg-indigo-50 text-indigo-600 ring-indigo-100',
-                    'bg-violet-50 text-violet-600 ring-violet-100',
-                    'bg-fuchsia-50 text-fuchsia-600 ring-fuchsia-100',
-                    'bg-rose-50 text-rose-600 ring-rose-100',
-                    'bg-amber-50 text-amber-600 ring-amber-100',
-                    'bg-emerald-50 text-emerald-600 ring-emerald-100',
-                    'bg-blue-50 text-blue-600 ring-blue-100',
-                    'bg-purple-50 text-purple-600 ring-purple-100',
-                  ];
-                  return (
-                    <span
-                      key={i}
-                      role="listitem"
-                      className={cn(
-                        'inline-flex cursor-default items-center rounded-lg px-3 py-1.5 text-xs font-semibold ring-1 transition-transform duration-200 hover:scale-105',
-                        tagColors[i % tagColors.length]
-                      )}
-                    >
-                      {tag}
-                    </span>
-                  );
-                })}
+                {placeholderTags.map((tag, i) => (
+                  <span
+                    key={i}
+                    role="listitem"
+                    className={cn(
+                      'inline-flex cursor-default items-center rounded-lg px-3 py-1.5 text-xs font-semibold ring-1 transition-transform duration-200 hover:scale-105',
+                      TAG_COLORS[i % TAG_COLORS.length]
+                    )}
+                  >
+                    {tag}
+                  </span>
+                ))}
               </div>
             </div>
           </div>
@@ -971,93 +1017,59 @@ export default async function Page({ params }: PageProps<Params>) {
                     : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
               )}
             >
-              {(() => {
-                const eventPalette = [
-                  {
-                    gradient: 'from-indigo-500 to-violet-600',
-                    text: 'text-indigo-600',
-                    hoverBorder: 'hover:border-indigo-200',
-                  },
-                  {
-                    gradient: 'from-violet-500 to-purple-600',
-                    text: 'text-violet-600',
-                    hoverBorder: 'hover:border-violet-200',
-                  },
-                  {
-                    gradient: 'from-fuchsia-500 to-pink-600',
-                    text: 'text-fuchsia-600',
-                    hoverBorder: 'hover:border-fuchsia-200',
-                  },
-                  {
-                    gradient: 'from-rose-500 to-red-500',
-                    text: 'text-rose-600',
-                    hoverBorder: 'hover:border-rose-200',
-                  },
-                  {
-                    gradient: 'from-amber-500 to-orange-600',
-                    text: 'text-amber-600',
-                    hoverBorder: 'hover:border-amber-200',
-                  },
-                  {
-                    gradient: 'from-emerald-500 to-teal-600',
-                    text: 'text-emerald-600',
-                    hoverBorder: 'hover:border-emerald-200',
-                  },
-                ];
-                return siteData.schedules.map((item, i) => {
-                  const c = eventPalette[i % eventPalette.length];
-                  const d = new Date(item.date);
-                  return (
+              {siteData.schedules.map((item, i) => {
+                const c = EVENT_PALETTE[i % EVENT_PALETTE.length];
+                const d = new Date(item.date);
+                return (
+                  <div
+                    key={i}
+                    className={cn(
+                      'group relative overflow-hidden rounded-2xl border border-gray-100 bg-white transition-colors duration-200',
+                      c.hoverBorder
+                    )}
+                  >
                     <div
-                      key={i}
                       className={cn(
-                        'group relative overflow-hidden rounded-2xl border border-gray-100 bg-white transition-colors duration-200',
-                        c.hoverBorder
+                        'h-1 bg-gradient-to-r transition-all duration-300 group-hover:h-1.5',
+                        c.gradient
                       )}
-                    >
-                      <div
-                        className={cn(
-                          'h-1 bg-gradient-to-r transition-all duration-300 group-hover:h-1.5',
-                          c.gradient
-                        )}
-                      />
-                      <div className="p-4">
-                        <div className="mb-3 flex items-center gap-3">
+                    />
+                    <div className="p-4">
+                      <div className="mb-3 flex items-center gap-3">
+                        <span
+                          className={cn(
+                            'flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br text-base font-extrabold text-white transition-transform duration-200 group-hover:scale-105',
+                            c.gradient
+                          )}
+                        >
+                          {format(d, 'dd')}
+                        </span>
+                        <div>
                           <span
                             className={cn(
-                              'flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br text-base font-extrabold text-white transition-transform duration-200 group-hover:scale-105',
-                              c.gradient
+                              'text-xs font-bold uppercase',
+                              c.text
                             )}
                           >
-                            {format(d, 'dd')}
+                            {format(d, 'MMM')}
                           </span>
-                          <div>
-                            <span
-                              className={cn(
-                                'text-xs font-bold uppercase',
-                                c.text
-                              )}
-                            >
-                              {format(d, 'MMM')}
-                            </span>
-                            <p className="text-[10px] font-medium text-gray-400 uppercase">
-                              {format(d, 'EEE')}
-                            </p>
-                          </div>
-                        </div>
-                        <h3 className="text-sm font-bold text-gray-900">
-                          {item.event}
-                        </h3>
-                        {item.description && (
-                          <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-gray-500">
-                            {item.description}
+                          <p className="text-[10px] font-medium text-gray-400 uppercase">
+                            {format(d, 'EEE')}
                           </p>
-                        )}
+                        </div>
                       </div>
+                      <h3 className="text-sm font-bold text-gray-900">
+                        {item.event}
+                      </h3>
+                      {item.description && (
+                        <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-gray-500">
+                          {item.description}
+                        </p>
+                      )}
                     </div>
-                  );
-                });
-              })()}
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
@@ -1072,34 +1084,11 @@ export default async function Page({ params }: PageProps<Params>) {
               p.zone === currentPuja.zone
           )
           .map((p) => {
-            let distance = Infinity;
-            if (
-              currentPuja.location?.coordinates?.lat &&
-              currentPuja.location?.coordinates?.lng &&
-              p.location?.coordinates?.lat &&
-              p.location?.coordinates?.lng
-            ) {
-              const R = 6371;
-              const dLat =
-                ((p.location.coordinates.lat -
-                  currentPuja.location.coordinates.lat) *
-                  Math.PI) /
-                180;
-              const dLon =
-                ((p.location.coordinates.lng -
-                  currentPuja.location.coordinates.lng) *
-                  Math.PI) /
-                180;
-              const a =
-                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(
-                  (currentPuja.location.coordinates.lat * Math.PI) / 180
-                ) *
-                  Math.cos((p.location.coordinates.lat * Math.PI) / 180) *
-                  Math.sin(dLon / 2) *
-                  Math.sin(dLon / 2);
-              distance = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            }
+            const pCoords = p.location?.coordinates;
+            const distance =
+              coords?.lat && coords?.lng && pCoords?.lat && pCoords?.lng
+                ? haversineKm(coords.lat, coords.lng, pCoords.lat, pCoords.lng)
+                : Infinity;
             return { ...p, distance };
           })
           .sort((a, b) => a.distance - b.distance)
@@ -1124,10 +1113,7 @@ export default async function Page({ params }: PageProps<Params>) {
                   Explore Nearby Pujas
                 </h2>
                 <p className="text-sm text-gray-500">
-                  Other puja committees in{' '}
-                  {currentPuja.zone === 'bhadreswar'
-                    ? 'Bhadreswar'
-                    : 'Chandannagar'}
+                  Other puja committees in {zoneName}
                 </p>
               </div>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -1216,7 +1202,7 @@ export default async function Page({ params }: PageProps<Params>) {
             <div className="flex flex-col gap-3 sm:flex-row">
               <Link
                 rel="prev"
-                href={`/puja/${array?.[0]?.slug}/${array?.[0]?.referenceId}`}
+                href={`/puja/${prevPuja.slug}/${prevPuja.referenceId}`}
                 className="group relative flex flex-1 items-center gap-4 overflow-hidden rounded-2xl border border-gray-100 bg-white px-5 py-4 transition-all hover:border-purple-200 hover:bg-purple-50/50"
               >
                 <div className="absolute top-0 left-0 h-full w-1 bg-gradient-to-b from-purple-400 to-purple-600" />
@@ -1228,13 +1214,13 @@ export default async function Page({ params }: PageProps<Params>) {
                     Previous
                   </div>
                   <div className="truncate text-sm font-semibold text-gray-700">
-                    {array?.[0]?.name}
+                    {prevPuja.name}
                   </div>
                 </div>
               </Link>
               <Link
                 rel="next"
-                href={`/puja/${array?.[1]?.slug}/${array?.[1]?.referenceId}`}
+                href={`/puja/${nextPuja.slug}/${nextPuja.referenceId}`}
                 className="group relative flex flex-1 items-center justify-end gap-4 overflow-hidden rounded-2xl border border-gray-100 bg-white px-5 py-4 text-right transition-all hover:border-purple-200 hover:bg-purple-50/50"
               >
                 <div className="absolute top-0 right-0 h-full w-1 bg-gradient-to-b from-purple-400 to-purple-600" />
@@ -1243,7 +1229,7 @@ export default async function Page({ params }: PageProps<Params>) {
                     Next
                   </div>
                   <div className="truncate text-sm font-semibold text-gray-700">
-                    {array?.[1]?.name}
+                    {nextPuja.name}
                   </div>
                 </div>
                 <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-purple-100 transition-transform group-hover:translate-x-1">
