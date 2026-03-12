@@ -1,3 +1,5 @@
+import type { Metadata } from 'next';
+
 import { metadata as metadataSchema } from '@/app/layout';
 import MainLayout from '@/components/main-layout';
 import Markdown from '@/components/markdown';
@@ -5,7 +7,7 @@ import Section from '@/components/section';
 import type { GlobalSite, SharedAchievement } from '@/types';
 import { getSingle } from '@/utils/fetch';
 import schema from '@/utils/schema';
-import type { Metadata } from 'next';
+
 import { LuCircleCheck } from 'react-icons/lu';
 
 export const metadata: Metadata = {

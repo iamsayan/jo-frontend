@@ -1,10 +1,12 @@
+import type { Metadata } from 'next';
+
 import { metadata as metadataSchema } from '@/app/layout';
 import Contact from '@/components/contact';
 import MainLayout from '@/components/main-layout';
 import Section from '@/components/section';
 import schema from '@/utils/schema';
 import { GoogleMapsEmbed } from '@next/third-parties/google';
-import type { Metadata } from 'next';
+
 export const metadata: Metadata = {
   title: 'Contact Jagadhatri Online - Chandannagar, West Bengal',
   description:

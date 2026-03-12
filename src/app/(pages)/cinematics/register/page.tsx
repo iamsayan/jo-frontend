@@ -1,8 +1,9 @@
+import type { Metadata } from 'next';
+
 import CinematicsPlans from '@/components/cinematics-plans';
 import type { PageProps, Puja, PujaExtended } from '@/types';
 import { getCollection } from '@/utils/fetch';
 import { extendPuja } from '@/utils/functions';
-import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'JO Cinematics Registration',

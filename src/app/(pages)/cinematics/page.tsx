@@ -1,9 +1,11 @@
+import type { Metadata } from 'next';
+import Link from 'next/link';
+
 import { metadata as metadataSchema } from '@/app/layout';
 import MainLayout from '@/components/main-layout';
 import Section from '@/components/section';
 import schema from '@/utils/schema';
-import type { Metadata } from 'next';
-import Link from 'next/link';
+
 import { LuCheck, LuCircleCheck, LuX } from 'react-icons/lu';
 
 export const metadata: Metadata = {

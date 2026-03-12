@@ -1,14 +1,14 @@
-import Providers from '@/app/providers';
-import { rubik } from '@/fonts';
-import type { GlobalSite } from '@/types';
-import { getSingle } from '@/utils/fetch';
-import { GoogleTagManager } from '@next/third-parties/google';
 import type { Metadata, Viewport } from 'next';
 import { headers } from 'next/headers';
 import Script from 'next/script';
 
 import '@/app/globals.scss';
+import Providers from '@/app/providers';
+import { rubik } from '@/fonts';
+import type { GlobalSite } from '@/types';
+import { getSingle } from '@/utils/fetch';
 import '@bprogress/core/css';
+import { GoogleTagManager } from '@next/third-parties/google';
 
 export const revalidate = 604800; // 1 week
 

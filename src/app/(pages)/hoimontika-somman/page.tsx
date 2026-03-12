@@ -1,3 +1,8 @@
+import { createElement } from 'react';
+
+import type { Metadata } from 'next';
+import Link from 'next/link';
+
 import { metadata as metadataSchema } from '@/app/layout';
 import MainLayout from '@/components/main-layout';
 import Section from '@/components/section';
@@ -5,9 +10,7 @@ import Tabs, { TabProps } from '@/components/tabs';
 import type { Award, AwardsCategory, AwardsPosition, Puja } from '@/types';
 import { getCollection } from '@/utils/fetch';
 import schema from '@/utils/schema';
-import type { Metadata } from 'next';
-import Link from 'next/link';
-import { createElement } from 'react';
+
 import {
   LuAward,
   LuHistory,

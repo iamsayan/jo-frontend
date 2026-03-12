@@ -1,5 +1,6 @@
-import logo from '@/public/circle-logo.png';
 import Image from 'next/image';
+
+import logo from '@/public/circle-logo.png';
 
 interface LayoutProps {
   children: React.ReactNode;

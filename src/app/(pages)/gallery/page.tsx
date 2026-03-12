@@ -1,3 +1,6 @@
+import { Metadata } from 'next';
+import Link from 'next/link';
+
 import { metadata as metadataSchema } from '@/app/layout';
 import Gallery from '@/components/gallery';
 import MainLayout from '@/components/main-layout';
@@ -8,8 +11,6 @@ import { getCollection } from '@/utils/fetch';
 import { capitalizeFirst } from '@/utils/functions';
 import schema from '@/utils/schema';
 import imageUrl from '@/utils/transform';
-import { Metadata } from 'next';
-import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Jagadhatri Puja Photo Gallery - Chandannagar, Mankundu & Bhadreswar',

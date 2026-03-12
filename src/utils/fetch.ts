@@ -3,6 +3,7 @@ import type {
   DocumentResponse,
   DocumentResponseCollection,
 } from '@/types/interfaces';
+
 import pluralize from 'pluralize';
 import qs from 'qs';
 

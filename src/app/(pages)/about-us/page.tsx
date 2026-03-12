@@ -1,9 +1,11 @@
+import type { Metadata } from 'next';
+import Image from 'next/image';
+
 import { metadata as metadataSchema } from '@/app/layout';
 import MainLayout from '@/components/main-layout';
 import Section from '@/components/section';
 import schema from '@/utils/schema';
-import type { Metadata } from 'next';
-import Image from 'next/image';
+
 import {
   FaSquareFacebook,
   FaSquareInstagram,

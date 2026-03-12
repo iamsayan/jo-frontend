@@ -1,3 +1,5 @@
+import { Metadata } from 'next';
+
 import { metadata as metadataSchema } from '@/app/layout';
 import Info, { InfoItem } from '@/components/info';
 import MainLayout from '@/components/main-layout';
@@ -8,7 +10,7 @@ import type { Puja, PujaExtended } from '@/types';
 import { getCollection } from '@/utils/fetch';
 import { extendPuja } from '@/utils/functions';
 import schema from '@/utils/schema';
-import { Metadata } from 'next';
+
 import {
   LuAward,
   LuBuilding,

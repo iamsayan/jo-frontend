@@ -1,7 +1,7 @@
 'use client';
 
 import CommandBar from '@/components/command-bar';
-import { SiteDataProvider } from '@/contexts/siteDataContext';
+import { SiteDataProvider } from '@/contexts/site-data-provider';
 import type { GlobalSite } from '@/types';
 import { ProgressProvider } from '@bprogress/next/app';
 

@@ -1,3 +1,6 @@
+import type { Metadata } from 'next';
+import Link from 'next/link';
+
 import { metadata as metadataSchema } from '@/app/layout';
 import Info, { InfoItem } from '@/components/info';
 import MainLayout from '@/components/main-layout';
@@ -19,10 +22,9 @@ import {
   getDateByIndex,
 } from '@/utils/functions';
 import schema, { baseUrl } from '@/utils/schema';
+
 import cx from 'classix';
 import { format } from 'date-fns';
-import type { Metadata } from 'next';
-import Link from 'next/link';
 import {
   LuArrowLeft,
   LuArrowRight,

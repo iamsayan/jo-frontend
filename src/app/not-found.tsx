@@ -1,6 +1,8 @@
+import React from 'react';
+
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import React from 'react';
+
 import { LuArrowLeft, LuArrowRight } from 'react-icons/lu';
 
 export const metadata: Metadata = {

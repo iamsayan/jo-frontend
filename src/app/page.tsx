@@ -1,3 +1,6 @@
+import Image from 'next/image';
+import Link from 'next/link';
+
 import CountdownTimer from '@/components/countdown-timer';
 import GallerySlider from '@/components/gallery-slider';
 import HeroSlider from '@/components/hero-slider';
@@ -14,8 +17,7 @@ import {
   getDateByIndex,
   timeOrigin,
 } from '@/utils/functions';
-import Image from 'next/image';
-import Link from 'next/link';
+
 import { FaFacebook, FaInstagram, FaWhatsapp, FaYoutube } from 'react-icons/fa';
 import type { IconType } from 'react-icons/lib';
 import {

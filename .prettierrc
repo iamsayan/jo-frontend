@@ -1,5 +1,17 @@
 {
     "singleQuote": true,
     "trailingComma": "es5",
-    "plugins": ["prettier-plugin-tailwindcss"]
+    "plugins": [
+        "@trivago/prettier-plugin-sort-imports",
+        "prettier-plugin-tailwindcss"
+    ],
+    "importOrder": [
+        "^react$",
+        "^next(/.*)?$",
+        "next-themes",
+        "@/*",
+        "<THIRD_PARTY_MODULES>"
+    ],
+    "importOrderSeparation": true,
+    "importOrderSortSpecifiers": true
 }

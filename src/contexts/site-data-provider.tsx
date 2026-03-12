@@ -7,25 +7,21 @@ import { createContext, ReactNode, useContext } from 'react';
 export const SiteDataContext = createContext<GlobalSite | null>(null);
 
 // Provider component
-export const SiteDataProvider = ({
+export function SiteDataProvider({
   children,
   siteData,
 }: {
   children: ReactNode;
   siteData: GlobalSite;
-}) => {
-  return (
-    <SiteDataContext.Provider value={siteData}>
-      {children}
-    </SiteDataContext.Provider>
-  );
-};
+}) {
+  return <SiteDataContext value={siteData}>{children}</SiteDataContext>;
+}
 
 // Custom hook to use the siteData context
-export const useSiteData = () => {
+export function useSiteData() {
   const context = useContext(SiteDataContext);
   if (!context) {
     throw new Error('useSiteData must be used within a SiteDataProvider');
   }
   return context;
-};
+}

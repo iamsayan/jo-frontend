@@ -1,7 +1,7 @@
 'use client';
 
 import ScrollTop from '@/components/scroll-top';
-import { useSiteData } from '@/contexts/siteDataContext';
+import { useSiteData } from '@/contexts/site-data-provider';
 import { getDateByIndex } from '@/utils/functions';
 import { format } from 'date-fns';
 import Image from 'next/image';

@@ -1,3 +1,6 @@
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+
 import { metadata as metadataSchema } from '@/app/layout';
 import GalleryPaginate from '@/components/gallery-paginate';
 import MainLayout from '@/components/main-layout';
@@ -6,8 +9,6 @@ import type { Image, PageProps } from '@/types';
 import { getCollection } from '@/utils/fetch';
 import schema from '@/utils/schema';
 import imageUrl from '@/utils/transform';
-import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
 
 interface Params {
   year: string;

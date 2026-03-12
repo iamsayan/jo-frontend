@@ -1,8 +1,9 @@
+import type { Metadata } from 'next';
+
 import { metadata as metadataSchema } from '@/app/layout';
 import MainLayout from '@/components/main-layout';
 import Section from '@/components/section';
 import schema from '@/utils/schema';
-import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'History of Jagadhatri Puja in Chandannagar',

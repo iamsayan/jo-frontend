@@ -1,10 +1,13 @@
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { notFound, permanentRedirect } from 'next/navigation';
+
 import { metadata as metadataSchema } from '@/app/layout';
 import Breadcrumbs from '@/components/breadcrumbs';
-import PujaCountdown from '@/components/puja-countdown';
-
 import LeafletMap from '@/components/leaflet-map';
 import Main from '@/components/main';
 import Markdown from '@/components/markdown';
+import PujaCountdown from '@/components/puja-countdown';
 import PujaGallery from '@/components/puja-gallery';
 import RemoteImage from '@/components/remote-image';
 import ShareBar from '@/components/share-bar';
@@ -27,9 +30,9 @@ import {
 } from '@/utils/functions';
 import schema, { baseUrl } from '@/utils/schema';
 import imageUrl from '@/utils/transform';
-import type { Metadata } from 'next';
-import Link from 'next/link';
-import { notFound, permanentRedirect } from 'next/navigation';
+
+import { format } from 'date-fns';
+import pluralize from 'pluralize';
 import {
   FaFacebook,
   FaGlobe,
@@ -59,8 +62,6 @@ import {
   LuSparkles,
   LuTruck,
 } from 'react-icons/lu';
-import { format } from 'date-fns';
-import pluralize from 'pluralize';
 
 /* ─── Module-scope constants (never re-created) ─── */
 

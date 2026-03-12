@@ -1,3 +1,6 @@
+import type { Metadata } from 'next';
+import Link from 'next/link';
+
 import { metadata as metadataSchema } from '@/app/layout';
 import Info from '@/components/info';
 import MainLayout from '@/components/main-layout';
@@ -6,8 +9,7 @@ import type { GlobalSite } from '@/types';
 import { getSingle } from '@/utils/fetch';
 import { getDateByIndex } from '@/utils/functions';
 import schema from '@/utils/schema';
-import type { Metadata } from 'next';
-import Link from 'next/link';
+
 import { LuCalendar, LuHistory, LuMapPin, LuUsers } from 'react-icons/lu';
 
 export const metadata: Metadata = {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useSiteData } from '@/contexts/siteDataContext';
+import { useSiteData } from '@/contexts/site-data-provider';
 import circleLogo from '@/public/circle-logo.png';
 import logo from '@/public/logo.png';
 import { cn, getDateByIndex } from '@/utils/functions';
