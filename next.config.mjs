@@ -1,14 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  env: {
-    API_URL: process.env.API_URL,
-    API_KEY: process.env.API_KEY,
-    WEBHOOK_SECRET: process.env.WEBHOOK_SECRET,
-    WEB3_FORM_API_KEY: process.env.WEB3_FORM_ACCESS_KEY,
-    GOOGLE_MAP_API_KEY: process.env.GOOGLE_MAP_API_KEY,
-    RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID,
-    RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET,
-  },
   images: {
     qualities: [25, 50, 70, 80, 90, 100],
     formats: ['image/avif', 'image/webp'],
@@ -62,7 +53,7 @@ const nextConfig = {
           },
           {
             key: 'Access-Control-Allow-Origin',
-            value: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+            value: process.env.NEXT_PUBLIC_SITE_URL,
           },
         ],
       },
