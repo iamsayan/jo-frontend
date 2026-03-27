@@ -1,5 +1,7 @@
 'use client';
 
+import { useCallback, useRef } from 'react';
+
 import Gallery from '@/components/gallery';
 import RemoteImage from '@/components/remote-image';
 import { cn } from '@/utils/functions';
@@ -7,10 +9,10 @@ import imageUrl from '@/utils/transform';
 import { AutoScroll } from '@splidejs/splide-extension-auto-scroll';
 import { Grid } from '@splidejs/splide-extension-grid';
 import { Intersection } from '@splidejs/splide-extension-intersection';
+
 import { GalleryItem } from 'lightgallery/lg-utils';
 import type { LightGallery } from 'lightgallery/lightgallery';
 import type { LightGalleryProps } from 'lightgallery/react';
-import { useCallback, useRef } from 'react';
 import { Splide, SplideProps, SplideSlide } from 'react-splide-ts';
 import 'react-splide-ts/css';
 

@@ -1,5 +1,6 @@
-import { cn } from '@/utils/functions';
 import React from 'react';
+
+import { cn } from '@/utils/functions';
 
 export interface InfoItem {
   title: string;

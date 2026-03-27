@@ -1,6 +1,7 @@
+import React, { ReactNode } from 'react';
+
 import { paytoneOne } from '@/fonts';
 import { cn } from '@/utils/functions';
-import React, { ReactNode } from 'react';
 
 interface SectionProps extends React.HTMLAttributes<HTMLDivElement> {
   children: ReactNode;

@@ -1,9 +1,12 @@
 'use client';
 
-import { cn } from '@/utils/functions';
+import React from 'react';
+
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import React from 'react';
+
+import { cn } from '@/utils/functions';
+
 import { LuFolder, LuHouse } from 'react-icons/lu';
 
 interface BreadcrumbsProps {

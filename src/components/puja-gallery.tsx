@@ -1,13 +1,15 @@
 'use client';
 
+import { useCallback, useMemo, useRef, useState } from 'react';
+
 import Gallery from '@/components/gallery';
 import RemoteImage from '@/components/remote-image';
+import type { Image as PujaImage } from '@/types';
 import { cn } from '@/utils/functions';
 import imageUrl from '@/utils/transform';
-import type { Image as PujaImage } from '@/types';
+
 import { GalleryItem } from 'lightgallery/lg-utils';
 import type { LightGallery } from 'lightgallery/lightgallery';
-import { useCallback, useMemo, useRef, useState } from 'react';
 import { LuExpand } from 'react-icons/lu';
 
 interface PujaGalleryProps {

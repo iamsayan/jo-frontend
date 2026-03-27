@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/utils/functions';
+
 import {
   Tab as ReactTab,
   Tabs as ReactTabs,

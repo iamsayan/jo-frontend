@@ -1,8 +1,11 @@
 'use client';
 
-import { cn } from '@/utils/functions';
-import dynamic from 'next/dynamic';
 import React from 'react';
+
+import dynamic from 'next/dynamic';
+
+import { cn } from '@/utils/functions';
+
 import { CountdownRendererFn } from 'react-countdown';
 
 interface CountdownTimerProps {

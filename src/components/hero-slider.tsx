@@ -1,7 +1,8 @@
 'use client';
 
-import RemoteImage from '@/components/remote-image';
 import React, { ReactNode, useEffect, useState } from 'react';
+
+import RemoteImage from '@/components/remote-image';
 
 const images = [
   //{ src: 'static/20241107-042519.jpg', alt: 'Mankundu' },

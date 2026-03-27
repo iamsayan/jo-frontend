@@ -1,9 +1,11 @@
 'use client';
 
-import { cn } from '@/utils/functions';
 import { useState } from 'react';
-import { LuCheck, LuLink, LuShare2 } from 'react-icons/lu';
+
+import { cn } from '@/utils/functions';
+
 import { FaFacebookF, FaWhatsapp, FaXTwitter } from 'react-icons/fa6';
+import { LuCheck, LuLink, LuShare2 } from 'react-icons/lu';
 
 interface ShareBarProps {
   title: string;

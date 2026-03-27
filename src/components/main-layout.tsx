@@ -1,8 +1,9 @@
+import React from 'react';
+
 import Breadcrumbs from '@/components/breadcrumbs';
 import Main from '@/components/main';
 import { paytoneOne } from '@/fonts';
 import bg from '@/public/bg.jpg';
-import React from 'react';
 
 interface LayoutProps {
   children: React.ReactNode;

@@ -1,5 +1,7 @@
-import { cn } from '@/utils/functions';
 import React from 'react';
+
+import { cn } from '@/utils/functions';
+
 import ReactMarkdown from 'react-markdown';
 
 interface MarkdownProps {

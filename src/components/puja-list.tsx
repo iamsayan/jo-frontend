@@ -1,10 +1,14 @@
 'use client';
 
-import RemoteImage from '@/components/remote-image';
-import type { PujaExtended } from '@/types';
+import { useEffect, useState } from 'react';
+
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+
+import RemoteImage from '@/components/remote-image';
+import placeholder from '@/public/circle-logo.png';
+import type { PujaExtended } from '@/types';
+
 import {
   LuAArrowDown,
   LuAArrowUp,
@@ -23,8 +27,6 @@ import {
   LuX,
 } from 'react-icons/lu';
 import { useDebounce } from 'use-debounce';
-
-import placeholder from '@/public/circle-logo.png';
 
 type Filter =
   | 'all'

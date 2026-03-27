@@ -1,13 +1,16 @@
 'use client';
 
+import { type ReactNode, useCallback, useMemo, useRef, useState } from 'react';
+
+import Image, { type ImageProps } from 'next/image';
+
 import placeholderImage from '@/public/circle-logo.png';
 import { cn } from '@/utils/functions';
 import imageUrl, { TransformParams } from '@/utils/transform';
-import Image, { type ImageProps } from 'next/image';
-import { useCallback, useMemo, useRef, useState, type ReactNode } from 'react';
+
 import {
-  useInView,
   type IntersectionOptions,
+  useInView,
 } from 'react-intersection-observer';
 
 type RemoteImageProps = Omit<ImageProps, 'loader' | 'src'> & {

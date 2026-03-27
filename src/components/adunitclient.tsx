@@ -1,7 +1,8 @@
 'use client';
 
-import { usePathname, useSearchParams } from 'next/navigation';
 import React, { ReactNode, useEffect } from 'react';
+
+import { usePathname, useSearchParams } from 'next/navigation';
 
 declare global {
   interface Window {

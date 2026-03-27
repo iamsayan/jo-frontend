@@ -1,7 +1,7 @@
 'use client';
 
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
+import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 
 // Fix default marker icon issue with webpack/next.js
 const defaultIcon = L.icon({

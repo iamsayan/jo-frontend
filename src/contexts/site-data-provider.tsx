@@ -1,7 +1,8 @@
 'use client';
 
+import { ReactNode, createContext, useContext } from 'react';
+
 import type { GlobalSite } from '@/types';
-import { createContext, ReactNode, useContext } from 'react';
 
 // Create the context for siteData
 export const SiteDataContext = createContext<GlobalSite | null>(null);

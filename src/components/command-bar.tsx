@@ -1,9 +1,14 @@
 'use client';
 
+import { Suspense, useEffect, useMemo, useState } from 'react';
+
+import { useSearchParams } from 'next/navigation';
+
 import { searchModels } from '@/app/actions/search';
 import type { Puja, PujaExtended } from '@/types';
 import { extendPuja, sanitizeSearchQuery } from '@/utils/functions';
 import { useRouter } from '@bprogress/next/app';
+
 import {
   Action,
   ActionImpl,
@@ -17,8 +22,6 @@ import {
   useMatches,
   useRegisterActions,
 } from 'kbar';
-import { useSearchParams } from 'next/navigation';
-import { Suspense, useEffect, useMemo, useState } from 'react';
 import {
   LuImage,
   LuInfo,

@@ -1,9 +1,12 @@
 'use client';
 
+import { useState, useTransition } from 'react';
+
+import Image from 'next/image';
+
 import type { SharedVideo } from '@/types';
 import { YouTubeEmbed } from '@next/third-parties/google';
-import Image from 'next/image';
-import { useState, useTransition } from 'react';
+
 import { LuPlay } from 'react-icons/lu';
 
 export default function Videos({ videos }: { videos: SharedVideo[] }) {

@@ -1,15 +1,18 @@
 'use client';
 
+import React, { useEffect, useMemo, useState } from 'react';
+
+import Image from 'next/image';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
 import { useSiteData } from '@/contexts/site-data-provider';
 import circleLogo from '@/public/circle-logo.png';
 import logo from '@/public/logo.png';
 import { cn, getDateByIndex } from '@/utils/functions';
 import { sendGTMEvent } from '@next/third-parties/google';
+
 import { useKBar } from 'kbar';
-import Image from 'next/image';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import React, { useEffect, useMemo, useState } from 'react';
 import { LuAlignLeft, LuGift, LuSearch, LuShoppingBag } from 'react-icons/lu';
 
 interface MenuItem {

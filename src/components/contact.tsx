@@ -1,7 +1,9 @@
 'use client';
 
-import useWeb3Forms from '@web3forms/react';
 import React, { useState } from 'react';
+
+import useWeb3Forms from '@web3forms/react';
+
 import { SubmitHandler, useForm } from 'react-hook-form';
 
 interface IFormInput {

@@ -1,14 +1,17 @@
 'use client';
 
+import { useCallback, useRef } from 'react';
+
+import { useParams, useSearchParams } from 'next/navigation';
+
 import Gallery from '@/components/gallery';
 import RemoteImage from '@/components/remote-image';
 import type { Image } from '@/types';
 import { capitalizeFirst, cn } from '@/utils/functions';
 import imageUrl from '@/utils/transform';
 import { useRouter } from '@bprogress/next/app';
+
 import type { LightGallery } from 'lightgallery/lightgallery';
-import { useParams, useSearchParams } from 'next/navigation';
-import { useCallback, useRef } from 'react';
 import { renderToString } from 'react-dom/server';
 import { LuCamera, LuChevronLeft, LuChevronRight } from 'react-icons/lu';
 import type { ReactPaginateProps } from 'react-paginate';

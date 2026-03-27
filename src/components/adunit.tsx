@@ -1,5 +1,6 @@
-import GoogleAdUnitClient from '@/components/adunitclient';
 import React, { Suspense } from 'react';
+
+import GoogleAdUnitClient from '@/components/adunitclient';
 
 interface GoogleAdUnitProps extends React.HTMLAttributes<HTMLElement> {
   'data-ad-client'?: string;

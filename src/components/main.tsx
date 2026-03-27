@@ -1,5 +1,7 @@
-import { cn } from '@/utils/functions';
 import React, { ReactNode } from 'react';
+
+import { cn } from '@/utils/functions';
+
 import Footer from './footer';
 import NavBar from './navbar';
 

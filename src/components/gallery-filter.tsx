@@ -1,12 +1,14 @@
 'use client';
 
+import { useCallback, useRef, useState } from 'react';
+
 import Gallery from '@/components/gallery';
 import RemoteImage from '@/components/remote-image';
 import type { Image } from '@/types';
 import { capitalizeFirst, cn } from '@/utils/functions';
 import imageUrl from '@/utils/transform';
+
 import type { LightGallery } from 'lightgallery/lightgallery';
-import { useCallback, useRef, useState } from 'react';
 import type { ReactPaginateProps } from 'react-paginate';
 import ReactPaginate from 'react-paginate';
 
