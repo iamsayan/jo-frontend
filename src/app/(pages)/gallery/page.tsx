@@ -6,10 +6,8 @@ import Gallery from '@/components/gallery';
 import MainLayout from '@/components/main-layout';
 import RemoteImage from '@/components/remote-image';
 import Section from '@/components/section';
-import type { Image } from '@/types';
-import { getCollection } from '@/utils/fetch';
-import { capitalizeFirst } from '@/utils/functions';
 import schema from '@/utils/schema';
+import { strapi } from '@/utils/strapi';
 import imageUrl from '@/utils/transform';
 
 export const metadata: Metadata = {
@@ -37,7 +35,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const { data: allImages = [] } = await getCollection<Image>('images', {
+  const { data: rawImages = [] } = await strapi.images.findWithMeta({
     populate: {
       puja: {
         fields: ['name', 'referenceId'],
@@ -54,8 +52,9 @@ export default async function Page() {
     },
     sort: ['updatedAt:desc'],
   });
+  const allImages = rawImages ?? [];
   const availableYears = [
-    ...new Set(allImages.map((img: Image) => img.year)),
+    ...new Set(allImages.map((img) => img.year)),
   ].sort((a: number, b: number) => b - a);
 
   const jsonLd = schema({
@@ -80,7 +79,7 @@ export default async function Page() {
     isPartOf: {
       '@id': `${process.env.NEXT_PUBLIC_SITE_URL}/#website`,
     },
-  } as any);
+  });
 
   return (
     <MainLayout title="Photo Gallery" jsonLd={jsonLd}>
@@ -92,7 +91,7 @@ export default async function Page() {
             slideShowAutoplay={true}
             fullScreen={true}
           >
-            {allImages.slice(0, 12).map((image: Image, index: number) => (
+            {allImages.slice(0, 12).map((image, index: number) => (
               <a
                 href={imageUrl(
                   `${image.year}/${image.puja?.referenceId}/${image.name}`
@@ -100,12 +99,10 @@ export default async function Page() {
                 data-disable-progress={true}
                 key={index}
                 className="group relative aspect-[3/4] cursor-pointer overflow-hidden rounded-lg"
-                data-sub-html={`<h4>${image.puja?.name}</h4><p>By: ${capitalizeFirst(image.uploadedBy)}</p>`}
+                data-sub-html={`<h4>${image.puja?.name}</h4>`}
               >
                 <RemoteImage
-                  src={imageUrl(
-                    `${image.year}/${image.puja?.referenceId}/${image.name}`
-                  )}
+                  src={`${image.year}/${image.puja?.referenceId}/${image.name}`}
                   fill={true}
                   className="pointer-events-none object-cover text-transparent transition-transform duration-500 group-hover:scale-110"
                   quality={70}
@@ -129,7 +126,7 @@ export default async function Page() {
           <div className="fl-gap-2/4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {availableYears.map((year: number) => {
               const yearImages = allImages.filter(
-                (img: Image) => img.year === year
+                (img) => img.year === year
               );
               if (yearImages.length === 0) return null;
               const randomImage =
@@ -142,9 +139,7 @@ export default async function Page() {
                   className="group relative aspect-[3/4] cursor-pointer overflow-hidden rounded-lg md:aspect-square"
                 >
                   <RemoteImage
-                    src={imageUrl(
-                      `${randomImage.year}/${randomImage.puja?.referenceId}/${randomImage.name}`
-                    )}
+                    src={`${randomImage.year}/${randomImage.puja?.referenceId}/${randomImage.name}`}
                     fill={true}
                     className="pointer-events-none object-cover text-transparent transition-transform duration-500 group-hover:scale-110"
                     alt={`Gallery ${year}`}

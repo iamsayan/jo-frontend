@@ -18,29 +18,19 @@ import type {
   PageProps,
   Puja,
   PujaExtended,
-  SharedLink,
 } from '@/types';
-import { getCollection, getSingle } from '@/utils/fetch';
 import {
-  capitalizeFirst,
   cn,
   extendPuja,
   getDateByIndex,
   stripHtmlAndLimit,
 } from '@/utils/functions';
 import schema, { baseUrl } from '@/utils/schema';
+import { strapi } from '@/utils/strapi';
 import imageUrl from '@/utils/transform';
 
 import { format } from 'date-fns';
 import pluralize from 'pluralize';
-import {
-  FaFacebook,
-  FaGlobe,
-  FaInstagram,
-  FaThreads,
-  FaXTwitter,
-  FaYoutube,
-} from 'react-icons/fa6';
 import {
   LuArrowLeft,
   LuArrowRight,
@@ -142,11 +132,11 @@ interface Params {
 }
 
 export async function generateStaticParams() {
-  const { data = [] } = await getCollection<Puja>('pujas', {
+  const pujas = (await strapi.pujas.find({
     pagination: { page: 1, pageSize: 200 },
     sort: ['sortOrder:asc'],
-  });
-  return data.map((item: Puja) => ({
+  })) as Puja[];
+  return pujas.map((item: Puja) => ({
     slug: item.slug,
     id: item.referenceId,
   }));
@@ -156,8 +146,8 @@ export async function generateMetadata({
   params,
 }: PageProps<Params>): Promise<Metadata> {
   const { slug, id } = await params;
-  const { data: pujas = [] } = await getCollection<Puja>('pujas', {
-    populate: ['images', 'links'],
+  const pujas = await strapi.pujas.find({
+    populate: ['images'],
     pagination: { page: 1, pageSize: 200 },
   });
   const currentPuja = pujas.find((item: Puja) => item.referenceId === id);
@@ -184,9 +174,7 @@ export async function generateMetadata({
       })),
     },
     alternates: {
-      canonical:
-        currentPuja?.links?.find((link: SharedLink) => link.title === 'website')
-          ?.url ?? `/puja/${slug}/${id}`,
+      canonical: `/puja/${slug}/${id}`,
     },
   };
 }
@@ -195,15 +183,16 @@ export default async function Page({ params }: PageProps<Params>) {
   const { slug, id } = await params;
   const queryYear = new Date().getFullYear();
 
-  const [{ data: pujasData = [] }, { data: siteData = null }] =
-    await Promise.all([
-      getCollection<Puja>('pujas', {
-        populate: '*',
-        pagination: { page: 1, pageSize: 200 },
-        sort: ['sortOrder:asc'],
-      }),
-      getSingle<GlobalSite>('global', { populate: '*' }),
-    ]);
+  const [rawPujas, rawSite] = await Promise.all([
+    strapi.pujas.find({
+      populate: '*',
+      pagination: { page: 1, pageSize: 200 },
+      sort: ['sortOrder:asc'],
+    }),
+    strapi.global.find({ populate: '*' }),
+  ]);
+  const pujasData = (rawPujas ?? []) as Puja[];
+  const siteData = rawSite as GlobalSite | null;
 
   const pujas: PujaExtended[] = pujasData.map((p) => extendPuja(p, queryYear));
   const currentPuja = pujas.find(
@@ -219,7 +208,9 @@ export default async function Page({ params }: PageProps<Params>) {
       src: path,
       thumb: path,
       alt: currentPuja.name,
-      subHtml: `<p>By: ${capitalizeFirst(item.uploadedBy)}</p>`,
+      subHtml: item.category
+        ? `<p class="text-xs opacity-70">${item.category}</p>`
+        : '',
     };
   });
 
@@ -228,10 +219,8 @@ export default async function Page({ params }: PageProps<Params>) {
   const hasHeroImage = !!heroImage;
   const coords = currentPuja.location?.coordinates;
   const hasCoordinates = !!coords?.lat && !!coords?.lng;
-  const findLink = (type: string) =>
-    currentPuja.links?.find((l: SharedLink) => l.title === type)?.url;
-  const contactEmail = findLink('email');
-  const contactPhone = findLink('phone');
+  const contactEmail = undefined;
+  const contactPhone = undefined;
 
   const placeholderTags = [
     'Jagadhatri Puja',
@@ -299,22 +288,6 @@ export default async function Page({ params }: PageProps<Params>) {
       value: (artistsByType[type] || []).join(', '),
     })),
   ].filter((item) => item.value);
-
-  const socialLinks = [
-    { type: 'facebook', icon: FaFacebook },
-    { type: 'instagram', icon: FaInstagram },
-    { type: 'youtube', icon: FaYoutube },
-    { type: 'x', icon: FaXTwitter },
-    { type: 'threads', icon: FaThreads },
-    { type: 'website', icon: FaGlobe },
-  ]
-    .map((item) => ({
-      ...item,
-      link:
-        currentPuja.links?.find((link: SharedLink) => link.title === item.type)
-          ?.url ?? '#',
-    }))
-    .filter((item) => item.link !== '#');
 
   const schemaData = {
     path: `puja/${currentPuja.slug}/${currentPuja.referenceId}`,
@@ -497,29 +470,6 @@ export default async function Page({ params }: PageProps<Params>) {
                 </div>
               ))}
             </div>
-
-            {/* Social */}
-            {socialLinks.length > 0 && (
-              <div
-                className="flex items-center gap-2.5"
-                role="list"
-                aria-label="Social media links"
-              >
-                {socialLinks.map((item, i) => (
-                  <a
-                    key={i}
-                    href={item.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    role="listitem"
-                    aria-label={`${currentPuja.name} on ${capitalizeFirst(item.type)}`}
-                    className="rounded-full border border-white/10 bg-white/[.06] p-2.5 backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:border-white/20 hover:bg-white/15"
-                  >
-                    <item.icon className="fl-text-sm/base text-white/70 hover:text-white" />
-                  </a>
-                ))}
-              </div>
-            )}
           </div>
         </div>
       </header>
@@ -914,8 +864,8 @@ export default async function Page({ params }: PageProps<Params>) {
               <div className="overflow-hidden rounded-2xl border border-emerald-100/50">
                 {hasCoordinates ? (
                   <LeafletMap
-                    lat={currentPuja.location!.coordinates!.lat}
-                    lng={currentPuja.location!.coordinates!.lng}
+                    lat={currentPuja.location?.coordinates?.lat ?? 0}
+                    lng={currentPuja.location?.coordinates?.lng ?? 0}
                     name={currentPuja.name}
                     address={currentPuja.address}
                     className="h-[320px] w-full md:h-[400px]"
@@ -967,8 +917,8 @@ export default async function Page({ params }: PageProps<Params>) {
                   {hasCoordinates && (
                     <div className="flex items-center gap-2 text-xs text-gray-400">
                       <LuMapPin className="text-emerald-400" />
-                      {currentPuja.location!.coordinates!.lat.toFixed(5)},{' '}
-                      {currentPuja.location!.coordinates!.lng.toFixed(5)}
+                      {currentPuja.location?.coordinates?.lat?.toFixed(5) ?? ''},{' '}
+                      {currentPuja.location?.coordinates?.lng?.toFixed(5) ?? ''}
                     </div>
                   )}
                 </div>

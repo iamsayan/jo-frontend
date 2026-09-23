@@ -4,8 +4,8 @@ import { useCallback, useRef, useState } from 'react';
 
 import Gallery from '@/components/gallery';
 import RemoteImage from '@/components/remote-image';
-import type { Image } from '@/types';
-import { capitalizeFirst, cn } from '@/utils/functions';
+import type { GalleryImage } from '@/types';
+import { cn } from '@/utils/functions';
 import imageUrl from '@/utils/transform';
 
 import type { LightGallery } from 'lightgallery/lightgallery';
@@ -14,7 +14,7 @@ import ReactPaginate from 'react-paginate';
 
 interface GalleryFilterProps {
   className?: string;
-  images: Image[];
+  images: GalleryImage[];
 }
 
 function GalleryFilter({ className, images }: GalleryFilterProps) {
@@ -34,7 +34,7 @@ function GalleryFilter({ className, images }: GalleryFilterProps) {
     selectedYear === 'all'
       ? images.toReversed()
       : images
-          .filter((item: Image) => item.year === parseInt(selectedYear))
+          .filter((item) => item.year === parseInt(selectedYear))
           .toReversed();
   const paginatedImages = filteredImages.slice(itemOffset, endOffset);
   const pageCount = Math.ceil(filteredImages.length / itemsPerPage);
@@ -50,15 +50,17 @@ function GalleryFilter({ className, images }: GalleryFilterProps) {
     }
   }, []);
 
-  const dynamicEl = paginatedImages.map((item: Image) => {
+  const dynamicEl = paginatedImages.map((item) => {
     const imagePath = imageUrl(
-      `${item.year}/${item.reference_id}/${item.name}`
+      `${item.year}/${item.puja?.referenceId}/${item.name}`
     );
     return {
       src: imagePath,
       thumb: imagePath,
       alt: item.puja?.name,
-      subHtml: `<h4>${item.puja?.name}</h4><p>By: ${capitalizeFirst(item.uploadedBy)}</p>`,
+      subHtml: item.puja?.name
+        ? `<h4>${item.puja?.name}</h4>`
+        : `<h4>${item.name}</h4>`,
     };
   });
 
@@ -94,7 +96,7 @@ function GalleryFilter({ className, images }: GalleryFilterProps) {
         dynamicEl={dynamicEl}
         dynamic={true}
       >
-        {paginatedImages.map((item: Image, index: number) => (
+        {paginatedImages.map((item, index: number) => (
           <div
             key={item.documentId ?? index}
             className="group relative aspect-[4/5] cursor-pointer overflow-hidden rounded-2xl"

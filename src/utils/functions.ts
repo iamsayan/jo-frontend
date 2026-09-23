@@ -1,4 +1,4 @@
-import type { Puja, PujaExtended, SharedSchedule } from '@/types';
+import type { Puja, PujaExtended, PujaLocation, SharedSchedule } from '@/types';
 
 import cx, { ClassName } from 'classix';
 import { format, parseISO } from 'date-fns';
@@ -20,18 +20,22 @@ export function extendPuja(puja: Puja, year?: number): PujaExtended {
   const y = getYear(puja.estd, year);
   const cel = getCelebrating(y);
   const zone = puja.zone === 'bhadreswar' ? 'Bhadreswar' : 'Chandannagar';
+  const tags = (puja.tags as string[] | null) ?? [];
+  const location = (puja.location as PujaLocation | null) ?? undefined;
 
   return {
     ...puja,
     year: y,
     celebrating: cel,
-    popular: (puja.tags ?? []).includes('popular'),
-    adi: (puja.tags ?? []).includes('adi'),
+    popular: tags.includes('popular'),
+    adi: tags.includes('adi'),
     jubilee: jubilees.includes(Number(y)),
     preJubilee: preJubilees.includes(Number(y)),
     psZone: zone,
-    address: puja.location?.address || `${zone}, Hooghly, West Bengal`,
+    address: location?.address || `${zone}, Hooghly, West Bengal`,
     ccjpcId: puja.sortOrder + 1,
+    tags,
+    location: location ?? null,
   };
 }
 

@@ -6,9 +6,9 @@ import Info from '@/components/info';
 import MainLayout from '@/components/main-layout';
 import Section from '@/components/section';
 import type { GlobalSite } from '@/types';
-import { getSingle } from '@/utils/fetch';
 import { getDateByIndex } from '@/utils/functions';
 import schema from '@/utils/schema';
+import { strapi } from '@/utils/strapi';
 
 import { LuCalendar, LuHistory, LuMapPin, LuUsers } from 'react-icons/lu';
 
@@ -38,9 +38,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const { data = null } = await getSingle<GlobalSite>('global', {
-    populate: '*',
-  });
+  const data = (await strapi.global.find({ populate: '*' })) as GlobalSite | null;
 
   const uptoYear = getDateByIndex(data?.schedules, 0)?.getFullYear() ?? 0;
   const yearsArray: number[] = [];

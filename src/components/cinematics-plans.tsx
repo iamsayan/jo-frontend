@@ -4,7 +4,7 @@ import { FormEvent, useId, useState } from 'react';
 
 import { submitModel } from '@/app/actions/model';
 import { createRazorpayOrder } from '@/app/actions/razorpay';
-import type { Partnership, PujaExtended } from '@/types';
+import type { PujaExtended } from '@/types';
 import { cn } from '@/utils/functions';
 import { loadRazorpayScript } from '@/utils/load-razorpay';
 
@@ -158,12 +158,6 @@ export default function CinematicsPlans({
   const selectedPujaData =
     pujaData.find((data: PujaExtended) => data.documentId === selectedPuja) ??
     null;
-  const existingData =
-    selectedPujaData?.partnerships?.find(
-      (partnership: Partnership) =>
-        parseInt(String(partnership.year)) === parseInt(formData.year) &&
-        partnership.fullPaid === false
-    ) ?? null;
 
   const planPrice = selectedPlan
     ? (plans.find((p: Plan) => p.id === selectedPlan)?.price ?? 0)
@@ -174,9 +168,7 @@ export default function CinematicsPlans({
     return sum + (addon?.price ?? 0);
   }, 0);
 
-  const total = existingData
-    ? planPrice + addonsPrice - existingData.amount
-    : planPrice + addonsPrice;
+  const total = planPrice + addonsPrice;
 
   const filteredAddons = addons.filter(
     (a) =>
@@ -251,38 +243,21 @@ export default function CinematicsPlans({
           const formResult = await submitModel(
             'partnerships',
             {
-              ...(!existingData
-                ? {
-                    puja: {
-                      set: [selectedPuja],
-                    },
-                  }
-                : {}),
+              puja: {
+                set: [selectedPuja],
+              },
               year: formData.year,
-              amount:
-                parseInt(total.toString()) +
-                (existingData ? parseInt(existingData.amount.toString()) : 0),
+              amount: parseInt(total.toString()),
               email: formData.email,
               name: formData.name,
-              orderId: existingData?.orderId
-                ? existingData.orderId
-                    .split(',')
-                    .concat(response.razorpay_order_id)
-                    .join(',')
-                : response.razorpay_order_id,
-              paymentId: existingData?.paymentId
-                ? existingData.paymentId
-                    .split(',')
-                    .concat(response.razorpay_payment_id)
-                    .join(',')
-                : response.razorpay_payment_id,
+              orderId: response.razorpay_order_id,
+              paymentId: response.razorpay_payment_id,
               phone: formData.phone,
               planName: selectedPlanData?.name,
               planValue: selectedPlanData?.price,
               addons: addonDetails,
               fullPaid: true,
-            },
-            existingData?.documentId
+            }
           );
 
           if (!formResult.success) {

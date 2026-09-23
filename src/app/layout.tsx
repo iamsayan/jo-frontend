@@ -6,7 +6,7 @@ import '@/app/globals.scss';
 import Providers from '@/app/providers';
 import { rubik } from '@/fonts';
 import type { GlobalSite } from '@/types';
-import { getSingle } from '@/utils/fetch';
+import { strapi } from '@/utils/strapi';
 import '@bprogress/core/css';
 import { GoogleTagManager } from '@next/third-parties/google';
 
@@ -130,9 +130,7 @@ interface RootLayoutProps {
 }
 
 export default async function RootLayout({ children }: RootLayoutProps) {
-  const { data: siteData } = await getSingle<GlobalSite>('global', {
-    populate: '*',
-  });
+  const siteData = (await strapi.global.find({ populate: '*' })) as GlobalSite;
   const nonce = (await headers()).get('x-nonce') ?? '';
 
   return (

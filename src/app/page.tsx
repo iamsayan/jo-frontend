@@ -9,7 +9,7 @@ import Section from '@/components/section';
 import Videos from '@/components/videos';
 import { paytoneOne } from '@/fonts';
 import type { GlobalSite, SharedSchedule } from '@/types';
-import { getSingle } from '@/utils/fetch';
+import { strapi } from '@/utils/strapi';
 import {
   buildGoogleCalendarUrl,
   cn,
@@ -76,7 +76,7 @@ interface ShopItem {
 }
 
 export default async function Home() {
-  const { data } = await getSingle<GlobalSite>('global', { populate: '*' });
+  const data = (await strapi.global.find({ populate: '*' })) as GlobalSite | null;
   const year = getDateByIndex(data?.schedules, 0).getFullYear();
   const curYear = new Date().getFullYear();
   const btnYear = curYear > year ? curYear : year;
@@ -408,39 +408,6 @@ export default async function Home() {
             Chandannagar. It will guide people who want directions to go Pandal
             Hopping around the city, looking for the best Pujas in town.
           </p>
-          <div className="relative rounded-2xl border border-yellow-500/20 bg-gradient-to-r from-yellow-500/5 via-yellow-500/10 to-yellow-500/5 px-6 py-8">
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 transform truncate">
-              <span className="inline-block rounded-full bg-yellow-500 px-4 py-1 text-sm font-medium text-white">
-                10 Years of Digital Heritage
-              </span>
-            </div>
-            <div className="flex flex-col items-center gap-4">
-              <p className="text-gray-700 md:text-lg">
-                Since 2016, we've been documenting the grandeur of
-                Chandannagar's Jagadhatri Puja, preserving its rich cultural
-                heritage for future generations. As we celebrate our 10th
-                anniversary in 2025, we remain committed to showcasing the
-                beauty and tradition of this magnificent festival for many more
-                years to come.
-              </p>
-              <div className="flex flex-wrap justify-center gap-4 text-center">
-                <div className="rounded-xl bg-white px-6 py-3 shadow-sm">
-                  <div className="text-2xl font-bold text-yellow-600">2016</div>
-                  <div className="text-sm text-gray-600">Journey Began</div>
-                </div>
-                <div className="rounded-xl bg-white px-6 py-3 shadow-sm">
-                  <div className="text-2xl font-bold text-yellow-600">2025</div>
-                  <div className="text-sm text-gray-600">10th Anniversary</div>
-                </div>
-                <div className="rounded-xl bg-white px-6 py-3 shadow-sm">
-                  <div className="text-2xl font-bold text-yellow-600">
-                    Beyond
-                  </div>
-                  <div className="text-sm text-gray-600">Continuing Legacy</div>
-                </div>
-              </div>
-            </div>
-          </div>
           <div>
             <Link
               href="/achievements"

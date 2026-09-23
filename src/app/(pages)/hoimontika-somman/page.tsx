@@ -7,9 +7,9 @@ import { metadata as metadataSchema } from '@/app/layout';
 import MainLayout from '@/components/main-layout';
 import Section from '@/components/section';
 import Tabs, { TabProps } from '@/components/tabs';
-import type { Award, AwardsCategory, AwardsPosition, Puja } from '@/types';
-import { getCollection } from '@/utils/fetch';
+import type { AwardGetPayload } from '@/types';
 import schema from '@/utils/schema';
+import { strapi } from '@/utils/strapi';
 
 import {
   LuAward,
@@ -61,20 +61,35 @@ const getPositionStyle = (position: string) => {
   }
 };
 
+type AwardPayload = AwardGetPayload<{
+  populate: {
+    categories: {
+      populate: {
+        positions: {
+          populate: ['pujas', 'artist'];
+        };
+      };
+    };
+  };
+}>;
+
 export default async function Page() {
-  const { data: awards = [] } = await getCollection<Award>('awards', {
+  const awards = (await strapi.awards.find({
     sort: ['year:desc'],
-    populate: [
-      'categories',
-      'categories.positions',
-      'categories.positions.pujas',
-      'categories.positions.artist',
-    ],
-  });
+    populate: {
+      categories: {
+        populate: {
+          positions: {
+            populate: ['pujas', 'artist'],
+          },
+        },
+      },
+    },
+  })) as AwardPayload[];
 
   const tabs: TabProps[] = [];
 
-  const tabContent = (award: Award) => {
+  const tabContent = (award: AwardPayload) => {
     return (
       <div className="p-4">
         {award.description && (
@@ -82,7 +97,7 @@ export default async function Page() {
         )}
         {award.categories && award.categories.length > 0 ? (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {award.categories.map((category: AwardsCategory, idx: number) => (
+            {award.categories.map((category, idx: number) => (
               <div
                 key={idx}
                 className="group flex gap-5 rounded-xl border border-neutral-200 bg-gradient-to-br from-white to-neutral-50 transition-all delay-300 duration-300 ease-in-out hover:scale-105 hover:shadow-lg"
@@ -96,7 +111,7 @@ export default async function Page() {
                 <div className="flex flex-col gap-3 py-4 pr-4">
                   {category.positions &&
                     category.positions.map(
-                      (position: AwardsPosition, posIdx: number) => (
+                      (position, posIdx: number) => (
                         <div key={posIdx}>
                           <div
                             className={`flex items-center gap-2 ${getPositionStyle(position.position || '').color} mb-1 font-semibold`}
@@ -110,7 +125,7 @@ export default async function Page() {
                             {position.position || ''}
                           </div>
                           {position.pujas?.map(
-                            (puja: Puja, pujaIdx: number) => (
+                            (puja, pujaIdx: number) => (
                               <div key={pujaIdx} className="pl-6 text-gray-700">
                                 &bull;{' '}
                                 <Link
@@ -142,13 +157,13 @@ export default async function Page() {
     );
   };
 
-  awards.forEach((award: Award) => {
+  awards.forEach((award) => {
     const totalAwards =
-      award.categories?.reduce((total: number, category: AwardsCategory) => {
+      award.categories?.reduce((total: number, category) => {
         return (
           total +
           (category.positions?.reduce(
-            (posTotal: number, position: AwardsPosition) => {
+            (posTotal: number, position) => {
               return (
                 posTotal +
                 (position.pujas?.length || 0) +

@@ -1,15 +1,15 @@
 import type { Puja } from '@/types';
-import { getCollection } from '@/utils/fetch';
+import { strapi } from '@/utils/strapi';
 import type { MetadataRoute } from 'next';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const { data = [] } = await getCollection<Puja>('pujas', {
+  const pujas = (await strapi.pujas.find({
     pagination: {
       page: 1,
       pageSize: 200,
     },
     sort: ['sortOrder:asc'],
-  });
+  })) as Puja[];
 
   const sitemaps: MetadataRoute.Sitemap = [
     {
@@ -116,7 +116,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   });
 
-  data.forEach((element: Puja) => {
+  pujas.forEach((element: Puja) => {
     sitemaps.push({
       url: `${process.env.NEXT_PUBLIC_SITE_URL}/puja/${element.slug}/${element.referenceId}`,
       lastModified: new Date(),

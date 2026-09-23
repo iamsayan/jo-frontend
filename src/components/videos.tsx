@@ -4,7 +4,7 @@ import { useState, useTransition } from 'react';
 
 import Image from 'next/image';
 
-import type { SharedVideo } from '@/types';
+import type { SharedVideo, VideoField } from '@/types';
 import { YouTubeEmbed } from '@next/third-parties/google';
 
 import { LuPlay } from 'react-icons/lu';
@@ -12,7 +12,7 @@ import { LuPlay } from 'react-icons/lu';
 export default function Videos({ videos }: { videos: SharedVideo[] }) {
   const [isPending, startTransition] = useTransition();
   const [videoId, setVideoId] = useState<string>(
-    videos[0]?.video?.providerUid || ''
+    (videos[0]?.video as VideoField | null)?.providerUid || ''
   );
 
   return (
@@ -34,14 +34,17 @@ export default function Videos({ videos }: { videos: SharedVideo[] }) {
               Most played videos this week
             </li>
             {videos.map((info: SharedVideo, index: number) => (
-              <li key={info?.video?.providerUid || index} className="list-row">
+              <li
+                key={(info?.video as VideoField | null)?.providerUid || index}
+                className="list-row"
+              >
                 <div>
                   <Image
                     className="rounded-box size-10 object-cover"
                     alt={`Video ${info.description}`}
                     loading="lazy"
                     fetchPriority="low"
-                    src={`https://i3.ytimg.com/vi/${info?.video?.providerUid}/maxresdefault.jpg`}
+                    src={`https://i3.ytimg.com/vi/${(info?.video as VideoField | null)?.providerUid}/maxresdefault.jpg`}
                     unoptimized={true}
                     width={100}
                     height={56}
@@ -62,7 +65,7 @@ export default function Videos({ videos }: { videos: SharedVideo[] }) {
                   className="btn btn-square btn-ghost"
                   onClick={() =>
                     startTransition(() =>
-                      setVideoId(info?.video?.providerUid || '')
+                      setVideoId((info?.video as VideoField | null)?.providerUid || '')
                     )
                   }
                   disabled={isPending}

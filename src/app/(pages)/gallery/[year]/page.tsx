@@ -5,9 +5,9 @@ import { metadata as metadataSchema } from '@/app/layout';
 import GalleryPaginate from '@/components/gallery-paginate';
 import MainLayout from '@/components/main-layout';
 import Section from '@/components/section';
-import type { Image, PageProps } from '@/types';
-import { getCollection } from '@/utils/fetch';
+import type { PageProps } from '@/types';
 import schema from '@/utils/schema';
+import { strapi } from '@/utils/strapi';
 import imageUrl from '@/utils/transform';
 
 interface Params {
@@ -27,25 +27,23 @@ export async function generateMetadata({
   const { year } = await params;
   const { page } = await searchParams;
 
-  const { data: images = [], meta: metaData } = await getCollection<Image>(
-    'images',
-    {
-      filters: {
-        category: { $in: ['puja', 'procession', 'immersion'] },
-        year: year,
+  const { data: rawImages, meta: metaData } = await strapi.images.findWithMeta({
+    filters: {
+      category: { $in: ['puja', 'procession', 'immersion'] },
+      year: Number(year),
+    },
+    populate: {
+      puja: {
+        fields: ['name', 'referenceId'],
       },
-      populate: {
-        puja: {
-          fields: ['name', 'referenceId'],
-        },
-      },
-      sort: ['updatedAt:desc'],
-      pagination: {
-        start: (Number(page ?? 1) - 1) * itemsPerPage,
-        limit: itemsPerPage,
-      },
-    }
-  );
+    },
+    sort: ['updatedAt:desc'],
+    pagination: {
+      start: (Number(page ?? 1) - 1) * itemsPerPage,
+      limit: itemsPerPage,
+    },
+  });
+  const images = rawImages ?? [];
 
   const pageCount = Math.ceil(
     (metaData?.pagination?.total ?? 0) / itemsPerPage
@@ -68,7 +66,7 @@ export async function generateMetadata({
         currentPage === 0
           ? `/gallery/${year}`
           : `/gallery/${year}?page=${currentPage}`,
-      images: images.slice(0, 3)?.map((item: Image) => {
+      images: images.slice(0, 3)?.map((item) => {
         return {
           url: imageUrl(`${item.year}/${item.puja?.referenceId}/${item.name}`, {
             tquality: 60,
@@ -103,21 +101,19 @@ export default async function Page({
   const { year } = await params;
   const { page } = await searchParams;
 
-  const { data: images = [], meta: metaData } = await getCollection<Image>(
-    'images',
-    {
-      filters: {
-        category: { $in: ['puja', 'procession', 'immersion'] },
-        year: year,
-      },
-      sort: ['updatedAt:desc'],
-      populate: ['puja'],
-      pagination: {
-        start: (Number(page ?? 1) - 1) * itemsPerPage,
-        limit: itemsPerPage,
-      },
-    }
-  );
+  const { data: rawImages, meta: metaData } = await strapi.images.findWithMeta({
+    filters: {
+      category: { $in: ['puja', 'procession', 'immersion'] },
+      year: Number(year),
+    },
+    sort: ['updatedAt:desc'],
+    populate: ['puja'],
+    pagination: {
+      start: (Number(page ?? 1) - 1) * itemsPerPage,
+      limit: itemsPerPage,
+    },
+  });
+  const images = rawImages ?? [];
 
   if (images.length < 1) {
     notFound();

@@ -58,8 +58,8 @@ export default function PujaGallery({
           tquality: 60,
         }),
         alt: pujaName,
-        subHtml: img.uploadedBy
-          ? `<p>By: ${img.uploadedBy}</p>${img.category ? `<p class="text-xs opacity-70">${img.category}</p>` : ''}`
+        subHtml: img.category
+          ? `<p class="text-xs opacity-70">${img.category}</p>`
           : '',
       })),
     [filteredImages, referenceId, pujaName]

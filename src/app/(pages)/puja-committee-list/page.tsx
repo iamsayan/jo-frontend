@@ -7,9 +7,9 @@ import PujaList from '@/components/puja-list';
 import Section from '@/components/section';
 import Tabs, { TabProps } from '@/components/tabs';
 import type { Puja, PujaExtended } from '@/types';
-import { getCollection } from '@/utils/fetch';
 import { extendPuja } from '@/utils/functions';
 import schema from '@/utils/schema';
+import { strapi } from '@/utils/strapi';
 
 import {
   LuAward,
@@ -102,14 +102,14 @@ const getZoneDescription = (zone: PujaExtended['zone']) => {
 };
 
 export default async function Page() {
-  const { data: pujas = [] } = await getCollection<Puja>('pujas', {
+  const pujas = (await strapi.pujas.find({
     populate: ['procession', 'images'],
     pagination: {
       page: 1,
       pageSize: 200,
     },
     sort: ['sortOrder:asc'],
-  });
+  })) as Puja[];
   const data: PujaExtended[] = pujas.map((data: Puja) => extendPuja(data));
   const cgr: PujaExtended[] = data.filter(
     (data: PujaExtended) => data.zone === 'chandannagar'
@@ -145,7 +145,7 @@ export default async function Page() {
       {
         title: 'Adi Pujas',
         description: zone.filter(
-          (data: Puja) => data.tags.includes('adi') ?? false
+          (data: PujaExtended) => data.tags.includes('adi')
         ).length,
         icon: <LuCrown />,
         variant: 'from-purple-500 to-purple-300',

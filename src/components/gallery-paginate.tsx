@@ -6,20 +6,20 @@ import { useParams, useSearchParams } from 'next/navigation';
 
 import Gallery from '@/components/gallery';
 import RemoteImage from '@/components/remote-image';
-import type { Image } from '@/types';
-import { capitalizeFirst, cn } from '@/utils/functions';
+import type { GalleryImage } from '@/types';
+import { cn } from '@/utils/functions';
 import imageUrl from '@/utils/transform';
 import { useRouter } from '@bprogress/next/app';
 
 import type { LightGallery } from 'lightgallery/lightgallery';
 import { renderToString } from 'react-dom/server';
-import { LuCamera, LuChevronLeft, LuChevronRight } from 'react-icons/lu';
+import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
 import type { ReactPaginateProps } from 'react-paginate';
 import ReactPaginate from 'react-paginate';
 
 interface GalleryPaginateProps {
   className?: string;
-  images: Image[];
+  images: GalleryImage[];
   itemsPerPage: number;
   total: number;
 }
@@ -50,24 +50,15 @@ function GalleryPaginate({
     }
   }, []);
 
-  const subHtml = (item: Image) => {
+  const subHtml = (item: GalleryImage) => {
     return (
       <div className="flex flex-col items-center justify-center gap-1.5">
         <div className="text-xl font-bold">{item?.puja?.name}</div>
-        <div className="flex items-center justify-center gap-1.5">
-          <LuCamera className="inline-block size-3.5" />
-          <div className="text-xs">
-            Captured by:{' '}
-            <span className="font-bold">
-              {capitalizeFirst(item?.uploadedBy)}
-            </span>
-          </div>
-        </div>
       </div>
     );
   };
 
-  const dynamicEl = images.map((item: Image, index: number) => {
+  const dynamicEl = images.map((item, index: number) => {
     const imagePath = imageUrl(
       `${item.year}/${item.puja?.referenceId}/${item.name}`
     );
@@ -92,7 +83,7 @@ function GalleryPaginate({
         dynamicEl={dynamicEl}
         dynamic={true}
       >
-        {images.map((item: Image, index: number) => (
+        {images.map((item, index: number) => (
           <div
             key={item.documentId ?? index}
             className="group relative aspect-[4/5] cursor-pointer overflow-hidden rounded-2xl"

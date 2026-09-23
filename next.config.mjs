@@ -1,7 +1,10 @@
+import { withStrapiTypes } from 'strapi-typed-client/next';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  allowedDevOrigins: ['192.168.0.224'],
   images: {
-    qualities: [25, 50, 70, 80, 90, 100],
+    qualities: [25, 40, 50, 70, 75, 80, 90, 100],
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {
@@ -10,6 +13,8 @@ const nextConfig = {
       },
     ],
   },
+  poweredByHeader: false,
+  reactCompiler: true,
   async headers() {
     return [
       {
@@ -96,4 +101,10 @@ const nextConfig = {
     ];
   },
 };
-export default nextConfig;
+
+export default withStrapiTypes({
+  strapiUrl: process.env.API_URL,
+  token: process.env.API_KEY,
+  output: './src/strapi',
+  format: 'ts'
+})(nextConfig);

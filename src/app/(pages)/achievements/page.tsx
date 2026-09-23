@@ -4,9 +4,9 @@ import { metadata as metadataSchema } from '@/app/layout';
 import MainLayout from '@/components/main-layout';
 import Markdown from '@/components/markdown';
 import Section from '@/components/section';
-import type { GlobalSite, SharedAchievement } from '@/types';
-import { getSingle } from '@/utils/fetch';
+import type { SharedAchievement } from '@/types';
 import schema from '@/utils/schema';
+import { strapi } from '@/utils/strapi';
 
 import { LuCircleCheck } from 'react-icons/lu';
 
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const { data } = await getSingle<GlobalSite>('global', { populate: '*' });
+  const data = await strapi.global.find({ populate: '*' });
 
   const jsonLd = schema({
     path: 'achievements',

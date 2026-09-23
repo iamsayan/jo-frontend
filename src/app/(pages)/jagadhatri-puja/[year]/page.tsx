@@ -14,7 +14,6 @@ import type {
   PujaExtended,
   SharedSchedule,
 } from '@/types';
-import { getCollection, getSingle } from '@/utils/fetch';
 import {
   buildGoogleCalendarUrl,
   extendPuja,
@@ -22,6 +21,7 @@ import {
   getDateByIndex,
 } from '@/utils/functions';
 import schema, { baseUrl } from '@/utils/schema';
+import { strapi } from '@/utils/strapi';
 
 import cx from 'classix';
 import { format } from 'date-fns';
@@ -60,7 +60,7 @@ export async function generateMetadata({
 }: PageProps<Params>): Promise<Metadata> {
   const { year } = await params;
   const queryYear = parseInt(year);
-  const { data } = await getSingle<GlobalSite>('global', { populate: '*' });
+  const data = (await strapi.global.find({ populate: '*' })) as GlobalSite | null;
   const displayDate = getDateByIndex(data?.schedules, 0) ?? new Date();
   const dateIsCurrent = queryYear === displayDate.getFullYear();
 
@@ -95,15 +95,16 @@ export default async function Page({ params }: PageProps<Params>) {
   const { year } = await params;
   const queryYear = Number(year);
 
-  const [{ data: pujasData = [] }, { data: siteData = null }] =
-    await Promise.all([
-      getCollection<Puja>('pujas', {
-        populate: '*',
-        pagination: { page: 1, pageSize: 200 },
-        sort: ['sortOrder:asc'],
-      }),
-      getSingle<GlobalSite>('global', { populate: '*' }),
-    ]);
+  const [rawPujas, rawSite] = await Promise.all([
+    strapi.pujas.find({
+      populate: '*',
+      pagination: { page: 1, pageSize: 200 },
+      sort: ['sortOrder:asc'],
+    }),
+    strapi.global.find({ populate: '*' }),
+  ]);
+  const pujasData = (rawPujas ?? []) as Puja[];
+  const siteData = rawSite as GlobalSite | null;
 
   const pujas: PujaExtended[] = pujasData.map((p: Puja) =>
     extendPuja(p, queryYear)

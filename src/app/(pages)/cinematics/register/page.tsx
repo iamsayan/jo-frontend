@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 
 import CinematicsPlans from '@/components/cinematics-plans';
 import type { PageProps, Puja, PujaExtended } from '@/types';
-import { getCollection } from '@/utils/fetch';
 import { extendPuja } from '@/utils/functions';
+import { strapi } from '@/utils/strapi';
 
 export const metadata: Metadata = {
   title: 'JO Cinematics Registration',
@@ -28,14 +28,14 @@ export default async function Page({
 }: PageProps<Record<string, never>, SearchParams>) {
   const { plan } = await searchParams;
 
-  const { data: pujasData = [] } = await getCollection<Puja>('pujas', {
-    populate: ['partnerships'],
+  const pujasData = (await strapi.pujas.find({
+    populate: '*',
     pagination: {
       page: 1,
       pageSize: 200,
     },
     sort: ['sortOrder:asc'],
-  });
+  })) as Puja[];
 
   const pujas: PujaExtended[] = pujasData.map((data: Puja) => extendPuja(data));
   return (
