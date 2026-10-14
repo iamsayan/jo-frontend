@@ -6,7 +6,7 @@ import MainLayout from '@/components/main-layout';
 import PujaList from '@/components/puja-list';
 import Section from '@/components/section';
 import Tabs, { TabProps } from '@/components/tabs';
-import type { Puja, PujaExtended } from '@/types';
+import type { Image, Procession, Puja, PujaExtended } from '@/types';
 import { extendPuja } from '@/utils/functions';
 import schema from '@/utils/schema';
 import { strapi } from '@/utils/strapi';
@@ -102,15 +102,39 @@ const getZoneDescription = (zone: PujaExtended['zone']) => {
 };
 
 export default async function Page() {
-  const pujas = (await strapi.pujas.find({
-    populate: ['procession', 'images'],
-    pagination: {
-      page: 1,
-      pageSize: 200,
-    },
-    sort: ['sortOrder:asc'],
-  })) as Puja[];
-  const data: PujaExtended[] = pujas.map((data: Puja) => extendPuja(data));
+  const [pujas, processions] = await Promise.all([
+    strapi.pujas.find({
+      populate: '*',
+      pagination: {
+        page: 1,
+        pageSize: 200,
+      },
+      sort: ['sortOrder:asc'],
+    }),
+    strapi.processions.find({
+      populate: '*',
+      pagination: {
+        page: 1,
+        pageSize: 200,
+      },
+    }),
+  ]);
+
+  const processionByPujaDocId = new Map<string, Procession>();
+  for (const proc of processions) {
+    const docId = proc.puja?.documentId;
+    if (docId) {
+      processionByPujaDocId.set(docId, proc);
+    }
+  }
+
+  const data: PujaExtended[] = pujas.map((item: Puja) => {
+    const extended = extendPuja(item);
+    return {
+      ...extended,
+      procession: processionByPujaDocId.get(item.documentId) ?? null,
+    };
+  });
   const cgr: PujaExtended[] = data.filter(
     (data: PujaExtended) => data.zone === 'chandannagar'
   );
@@ -144,8 +168,8 @@ export default async function Page() {
       },
       {
         title: 'Adi Pujas',
-        description: zone.filter(
-          (data: PujaExtended) => data.tags.includes('adi')
+        description: zone.filter((data: PujaExtended) =>
+          data.tags.includes('adi')
         ).length,
         icon: <LuCrown />,
         variant: 'from-purple-500 to-purple-300',
@@ -206,75 +230,6 @@ export default async function Page() {
         </div>
         <Info items={items} />
         <PujaList data={zone} />
-        {/* <div className="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
-                    <table className="table text-center table-zebra">
-                        <thead>
-                            <tr className="bg-blue-100 text-gray-700">
-                                <th>Sl. No.</th>
-                                <th className="text-left">Puja Committee Name</th>
-                                <th>Years</th>
-                                <th>Celebrating (in {new Date().getFullYear()})</th>
-                                <th>Details</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {zone.map((item: Puja, index: number) => {
-                                const y = getYear(item.estd);
-                                const cel = getCelebrating(y);
-                                const adi = item.tags.includes('adi');
-                                const popular = item.tags.includes('popular');
-                                const formattedCel = cel.replaceAll(' ', '-').toLowerCase();
-                                const celClass = cx(
-                                    'px-2.5 py-1 text-xs font-medium rounded-md whitespace-nowrap',
-                                    !formattedCel.includes('pre') && formattedCel.includes('jubilee') && 'bg-rose-300/10 text-rose-700',
-                                    formattedCel.includes('pre') && formattedCel.includes('jubilee') && 'bg-blue-300/10 text-blue-500',
-                                );
-                                const rowClass = cx(
-                                    'row',
-                                    !formattedCel.includes('pre') && formattedCel.includes('jubilee') && 'text-rose-500 font-medium',
-                                    formattedCel.includes('pre') && formattedCel.includes('jubilee') && 'text-blue-500 font-medium',
-                                );
-                                return (
-                                    <tr key={index} className={rowClass}>
-                                        <td>{index + 1}</td>
-                                        <td>
-                                            <div className="flex items-center gap-2 whitespace-nowrap">
-                                                <span className="text-left hover:text-green-700 transition-colors">{item.name}</span>
-                                                {(popular || adi) && (
-                                                    <div className="flex gap-1">
-                                                        {popular && (
-                                                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium text-amber-700 bg-amber-100 rounded-md whitespace-nowrap">
-                                                                <LuMedal className="text-amber-500" />
-                                                                Popular
-                                                            </span>
-                                                        )}
-                                                        {adi && (
-                                                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium text-purple-700 bg-purple-100 rounded-md whitespace-nowrap">
-                                                                <LuAward className="text-purple-500" />
-                                                                Adi Puja
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span className="inline-flex items-center justify-center px-2.5 py-1 text-xs font-medium bg-gray-100 rounded-md whitespace-nowrap">
-                                                {y}
-                                            </span>
-                                        </td>
-                                        <td><span className={celClass}>{cel}</span></td>
-                                        <td>
-                                            <Link className="btn btn-ghost btn-xs text-sky-600" href={`/puja/${item.slug}/${item.referenceId}`}>
-                                                View <LuChevronRight />
-                                            </Link>
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
-                </div> */}
       </div>
     );
   };

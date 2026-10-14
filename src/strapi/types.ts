@@ -498,7 +498,6 @@ export interface Procession {
   createdAt: string
   updatedAt: string
   publishedAt: string | null
-  title: string | null
   zone: 'A' | 'B' | 'C' | 'D'
   truckCount: number
   /** @default 0 */
@@ -576,6 +575,8 @@ export interface User {
   confirmed: boolean | null
   /** @default false */
   blocked: boolean | null
+  /** @default "visitor" */
+  pujaAccess: 'admin' | 'editor' | 'visitor'
 }
 
 /** Create input for Artist */
@@ -672,7 +673,6 @@ export interface ImageCreateInput {
     | 'kathamo-puja'
   name: string
   year: number
-  items?: MultiMediaInput
   puja?: RelationInput
   user?: RelationInput
 }
@@ -693,7 +693,6 @@ export interface ImageUpdateInput {
     | 'kathamo-puja'
   name?: string
   year?: number
-  items?: MultiMediaInput
   puja?: RelationInput
   user?: RelationInput
 }
@@ -738,7 +737,6 @@ export interface PartnershipUpdateInput {
 
 /** Create input for Procession */
 export interface ProcessionCreateInput {
-  title?: string | null
   zone: 'A' | 'B' | 'C' | 'D'
   truckCount: number
   /** @default 0 */
@@ -748,7 +746,6 @@ export interface ProcessionCreateInput {
 
 /** Update input for Procession */
 export interface ProcessionUpdateInput {
-  title?: string | null
   zone?: 'A' | 'B' | 'C' | 'D'
   truckCount?: number
   /** @default 0 */
@@ -770,8 +767,8 @@ export interface PujaCreateInput {
   /** @default 0 */
   sortOrder: number
   referenceId: string
+  media?: MultiMediaInput
   artists?: RelationInput
-  procession?: RelationInput
   images?: RelationInput
 }
 
@@ -789,8 +786,8 @@ export interface PujaUpdateInput {
   /** @default 0 */
   sortOrder?: number
   referenceId?: string
+  media?: MultiMediaInput
   artists?: RelationInput
-  procession?: RelationInput
   images?: RelationInput
 }
 
@@ -851,8 +848,10 @@ export interface UserCreateInput {
   confirmed?: boolean | null
   /** @default false */
   blocked?: boolean | null
+  /** @default "visitor" */
+  pujaAccess: 'admin' | 'editor' | 'visitor'
   role?: RelationInput
-  images?: RelationInput
+  puja?: RelationInput
 }
 
 /** Update input for User */
@@ -866,8 +865,10 @@ export interface UserUpdateInput {
   confirmed?: boolean | null
   /** @default false */
   blocked?: boolean | null
+  /** @default "visitor" */
+  pujaAccess?: 'admin' | 'editor' | 'visitor'
   role?: RelationInput
-  images?: RelationInput
+  puja?: RelationInput
 }
 export const PartnershipDefaults = {
   fullPaid: true,
@@ -877,6 +878,7 @@ export const PujaDefaults = { tags: '[]', sortOrder: 0 } as const satisfies Part
 export const UserDefaults = {
   confirmed: false,
   blocked: false,
+  pujaAccess: 'visitor',
 } as const satisfies Partial<UserCreateInput>
 export const SharedAshsParticipantDefaults = {
   voteCount: 0,
@@ -985,7 +987,6 @@ export type ImagePopulateParam = {
         limit?: number
         start?: number
       }
-  items?: true | { fields?: (keyof MediaFile & string)[] }
 }
 export type PartnershipPopulateParam = {
   puja?:
@@ -1022,16 +1023,6 @@ export type PujaPopulateParam = {
         limit?: number
         start?: number
       }
-  procession?:
-    | true
-    | {
-        fields?: _EntityField<Procession>[]
-        populate?: ProcessionPopulateParam | (keyof ProcessionPopulateParam & string)[] | '*'
-        filters?: ProcessionFilters
-        sort?: _SortValue<Procession> | _SortValue<Procession>[]
-        limit?: number
-        start?: number
-      }
   images?:
     | true
     | {
@@ -1042,6 +1033,7 @@ export type PujaPopulateParam = {
         limit?: number
         start?: number
       }
+  media?: true | { fields?: (keyof MediaFile & string)[] }
 }
 export type VirtualTourPopulateParam = {
   puja?:
@@ -1100,13 +1092,13 @@ export type UserPopulateParam = {
         limit?: number
         start?: number
       }
-  images?:
+  puja?:
     | true
     | {
-        fields?: _EntityField<Image>[]
-        populate?: ImagePopulateParam | (keyof ImagePopulateParam & string)[] | '*'
-        filters?: ImageFilters
-        sort?: _SortValue<Image> | _SortValue<Image>[]
+        fields?: _EntityField<Puja>[]
+        populate?: PujaPopulateParam | (keyof PujaPopulateParam & string)[] | '*'
+        filters?: PujaFilters
+        sort?: _SortValue<Puja> | _SortValue<Puja>[]
         limit?: number
         start?: number
       }
@@ -1303,13 +1295,11 @@ export type ImageGetPayload<P extends { populate?: unknown } = {}> = Image &
       ? {
           puja?: Puja | null
           user?: User | null
-          items?: MediaFile[]
         }
       : Pop extends readonly (infer _)[]
         ? {
             puja?: 'puja' extends Pop[number] ? Puja | null : never
             user?: 'user' extends Pop[number] ? User | null : never
-            items?: 'items' extends Pop[number] ? MediaFile[] : never
           }
         : {
             puja?: 'puja' extends keyof Pop
@@ -1329,9 +1319,6 @@ export type ImageGetPayload<P extends { populate?: unknown } = {}> = Image &
                   User,
                   Pop['user']
                 > | null
-              : never
-            items?: 'items' extends keyof Pop
-              ? _ApplyFields<MediaFile, MediaFile, Pop['items']>[]
               : never
           }
     : {})
@@ -1387,14 +1374,14 @@ export type PujaGetPayload<P extends { populate?: unknown } = {}> = Puja &
     ? Pop extends '*' | true
       ? {
           artists?: Artist[]
-          procession?: Procession | null
           images?: Image[]
+          media?: MediaFile[]
         }
       : Pop extends readonly (infer _)[]
         ? {
             artists?: 'artists' extends Pop[number] ? Artist[] : never
-            procession?: 'procession' extends Pop[number] ? Procession | null : never
             images?: 'images' extends Pop[number] ? Image[] : never
+            media?: 'media' extends Pop[number] ? MediaFile[] : never
           }
         : {
             artists?: 'artists' extends keyof Pop
@@ -1406,15 +1393,6 @@ export type PujaGetPayload<P extends { populate?: unknown } = {}> = Puja &
                   Pop['artists']
                 >[]
               : never
-            procession?: 'procession' extends keyof Pop
-              ? _ApplyFields<
-                  Pop['procession'] extends { populate: infer NestedPop }
-                    ? ProcessionGetPayload<{ populate: NestedPop }>
-                    : Procession,
-                  Procession,
-                  Pop['procession']
-                > | null
-              : never
             images?: 'images' extends keyof Pop
               ? _ApplyFields<
                   Pop['images'] extends { populate: infer NestedPop }
@@ -1423,6 +1401,9 @@ export type PujaGetPayload<P extends { populate?: unknown } = {}> = Puja &
                   Image,
                   Pop['images']
                 >[]
+              : never
+            media?: 'media' extends keyof Pop
+              ? _ApplyFields<MediaFile, MediaFile, Pop['media']>[]
               : never
           }
     : {})
@@ -1512,12 +1493,12 @@ export type UserGetPayload<P extends { populate?: unknown } = {}> = User &
     ? Pop extends '*' | true
       ? {
           role?: Role | null
-          images?: Image[]
+          puja?: Puja | null
         }
       : Pop extends readonly (infer _)[]
         ? {
             role?: 'role' extends Pop[number] ? Role | null : never
-            images?: 'images' extends Pop[number] ? Image[] : never
+            puja?: 'puja' extends Pop[number] ? Puja | null : never
           }
         : {
             role?: 'role' extends keyof Pop
@@ -1529,14 +1510,14 @@ export type UserGetPayload<P extends { populate?: unknown } = {}> = User &
                   Pop['role']
                 > | null
               : never
-            images?: 'images' extends keyof Pop
+            puja?: 'puja' extends keyof Pop
               ? _ApplyFields<
-                  Pop['images'] extends { populate: infer NestedPop }
-                    ? ImageGetPayload<{ populate: NestedPop }>
-                    : Image,
-                  Image,
-                  Pop['images']
-                >[]
+                  Pop['puja'] extends { populate: infer NestedPop }
+                    ? PujaGetPayload<{ populate: NestedPop }>
+                    : Puja,
+                  Puja,
+                  Pop['puja']
+                > | null
               : never
           }
     : {})
@@ -1828,7 +1809,6 @@ export interface ImageFilters extends LogicalOperators<ImageFilters> {
     documentId?: string | StringFilterOperators
     [key: string]: any
   }
-  items?: { id?: number | IdFilterOperators; [key: string]: any }
 }
 /** Type-safe filters for Partnership */
 export interface PartnershipFilters extends LogicalOperators<PartnershipFilters> {
@@ -1862,7 +1842,6 @@ export interface ProcessionFilters extends LogicalOperators<ProcessionFilters> {
   createdAt?: string | DateFilterOperators
   updatedAt?: string | DateFilterOperators
   publishedAt?: string | DateFilterOperators
-  title?: string | StringFilterOperators
   zone?: ('A' | 'B' | 'C' | 'D') | StringFilterOperators
   truckCount?: number | NumberFilterOperators
   sortOrder?: number | NumberFilterOperators
@@ -1894,16 +1873,12 @@ export interface PujaFilters extends LogicalOperators<PujaFilters> {
     documentId?: string | StringFilterOperators
     [key: string]: any
   }
-  procession?: {
-    id?: number | IdFilterOperators
-    documentId?: string | StringFilterOperators
-    [key: string]: any
-  }
   images?: {
     id?: number | IdFilterOperators
     documentId?: string | StringFilterOperators
     [key: string]: any
   }
+  media?: { id?: number | IdFilterOperators; [key: string]: any }
 }
 /** Type-safe filters for VirtualTour */
 export interface VirtualTourFilters extends LogicalOperators<VirtualTourFilters> {
@@ -1967,12 +1942,13 @@ export interface UserFilters extends LogicalOperators<UserFilters> {
   provider?: string | StringFilterOperators
   confirmed?: boolean | BooleanFilterOperators
   blocked?: boolean | BooleanFilterOperators
+  pujaAccess?: ('admin' | 'editor' | 'visitor') | StringFilterOperators
   role?: {
     id?: number | IdFilterOperators
     documentId?: string | StringFilterOperators
     [key: string]: any
   }
-  images?: {
+  puja?: {
     id?: number | IdFilterOperators
     documentId?: string | StringFilterOperators
     [key: string]: any
