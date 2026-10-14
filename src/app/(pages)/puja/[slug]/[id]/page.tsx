@@ -16,6 +16,7 @@ import type {
   GlobalSite,
   Image,
   PageProps,
+  Procession,
   Puja,
   PujaExtended,
 } from '@/types';
@@ -183,18 +184,35 @@ export default async function Page({ params }: PageProps<Params>) {
   const { slug, id } = await params;
   const queryYear = new Date().getFullYear();
 
-  const [rawPujas, rawSite] = await Promise.all([
+  const [rawPujas, rawSite, rawProcessions] = await Promise.all([
     strapi.pujas.find({
       populate: '*',
       pagination: { page: 1, pageSize: 200 },
       sort: ['sortOrder:asc'],
     }),
     strapi.global.find({ populate: '*' }),
+    strapi.processions.find({
+      populate: '*',
+      pagination: { page: 1, pageSize: 200 },
+    }),
   ]);
   const pujasData = (rawPujas ?? []) as Puja[];
   const siteData = rawSite as GlobalSite | null;
+  const processions = rawProcessions ?? [];
 
-  const pujas: PujaExtended[] = pujasData.map((p) => extendPuja(p, queryYear));
+  const processionByPujaDocId = new Map<string, Procession>();
+  for (const proc of processions) {
+    const docId = proc.puja?.documentId;
+    if (docId) {
+      processionByPujaDocId.set(docId, proc);
+    }
+  }
+
+  const pujas: PujaExtended[] = pujasData.map((p) => {
+    const extended = extendPuja(p, queryYear);
+    extended.procession = processionByPujaDocId.get(p.documentId) ?? null;
+    return extended;
+  });
   const currentPuja = pujas.find(
     (item: PujaExtended) => item.referenceId === id
   );
