@@ -576,7 +576,7 @@ export interface User {
   /** @default false */
   blocked: boolean | null
   /** @default "visitor" */
-  pujaAccess: 'admin' | 'editor' | 'visitor'
+  access: 'admin' | 'editor' | 'visitor'
 }
 
 /** Create input for Artist */
@@ -849,7 +849,7 @@ export interface UserCreateInput {
   /** @default false */
   blocked?: boolean | null
   /** @default "visitor" */
-  pujaAccess: 'admin' | 'editor' | 'visitor'
+  access: 'admin' | 'editor' | 'visitor'
   role?: RelationInput
   puja?: RelationInput
 }
@@ -866,7 +866,7 @@ export interface UserUpdateInput {
   /** @default false */
   blocked?: boolean | null
   /** @default "visitor" */
-  pujaAccess?: 'admin' | 'editor' | 'visitor'
+  access?: 'admin' | 'editor' | 'visitor'
   role?: RelationInput
   puja?: RelationInput
 }
@@ -878,7 +878,7 @@ export const PujaDefaults = { tags: '[]', sortOrder: 0 } as const satisfies Part
 export const UserDefaults = {
   confirmed: false,
   blocked: false,
-  pujaAccess: 'visitor',
+  access: 'visitor',
 } as const satisfies Partial<UserCreateInput>
 export const SharedAshsParticipantDefaults = {
   voteCount: 0,
@@ -1942,7 +1942,7 @@ export interface UserFilters extends LogicalOperators<UserFilters> {
   provider?: string | StringFilterOperators
   confirmed?: boolean | BooleanFilterOperators
   blocked?: boolean | BooleanFilterOperators
-  pujaAccess?: ('admin' | 'editor' | 'visitor') | StringFilterOperators
+  access?: ('admin' | 'editor' | 'visitor') | StringFilterOperators
   role?: {
     id?: number | IdFilterOperators
     documentId?: string | StringFilterOperators
