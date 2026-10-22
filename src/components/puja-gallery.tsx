@@ -26,7 +26,7 @@ export default function PujaGallery({
   const lightGallery = useRef<LightGallery | null>(null);
 
   const yearGroups = useMemo(() => {
-    const groups: Record<number, PujaImage[]> = {};
+    const groups: Record<string, PujaImage[]> = {};
     images.forEach((img) => {
       if (!groups[img.year]) groups[img.year] = [];
       groups[img.year].push(img);
@@ -37,12 +37,11 @@ export default function PujaGallery({
   const years = useMemo(
     () =>
       Object.keys(yearGroups)
-        .map(Number)
-        .sort((a, b) => b - a),
+        .sort((a, b) => Number(b) - Number(a)),
     [yearGroups]
   );
 
-  const [activeYear, setActiveYear] = useState<number | 'all'>('all');
+  const [activeYear, setActiveYear] = useState<string | 'all'>('all');
 
   const filteredImages = useMemo(() => {
     if (activeYear === 'all') return images;

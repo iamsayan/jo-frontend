@@ -1,6 +1,5 @@
 'use server';
 
-import pluralize from 'pluralize';
 
 import { strapi } from '@/utils/strapi';
 
@@ -29,9 +28,7 @@ export async function searchModels<T>(
       return null;
     }
 
-    const baseTag = pluralize.isPlural(model)
-      ? pluralize.singular(model)
-      : model;
+    const baseTag = model.endsWith('s') ? model.slice(0, -1) : model;
     const searchData = await api.find(
       {
         filters: {

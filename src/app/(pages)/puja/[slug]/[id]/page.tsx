@@ -31,7 +31,6 @@ import { strapi } from '@/utils/strapi';
 import imageUrl from '@/utils/transform';
 
 import { format } from 'date-fns';
-import pluralize from 'pluralize';
 import {
   LuArrowLeft,
   LuArrowRight,
@@ -458,7 +457,10 @@ export default async function Page({ params }: PageProps<Params>) {
                 },
                 {
                   icon: <LuCalendar className="h-5 w-5" />,
-                  val: currentPuja.estd === 0 ? 'N/A' : currentPuja.estd,
+                  val:
+                    Number(currentPuja.estd) === 0
+                      ? 'N/A'
+                      : currentPuja.estd,
                   lbl: 'Established',
                 },
                 {
@@ -526,7 +528,7 @@ export default async function Page({ params }: PageProps<Params>) {
                       icon: <LuTruck className="text-xl" />,
                       gradient: 'from-emerald-500 to-emerald-700',
                       title: 'Participating',
-                      subtitle: `${currentPuja.procession.truckCount} ${pluralize('Vehicle', currentPuja.procession.truckCount)} in Procession`,
+                      subtitle: `${currentPuja.procession.truckCount} Vehicle${currentPuja.procession.truckCount === 1 ? '' : 's'} in Procession`,
                     },
                   ]
                 : []),
@@ -617,7 +619,7 @@ export default async function Page({ params }: PageProps<Params>) {
               Celebrating Culture &amp; Tradition
             </h2>
             <p className="text-sm text-gray-500">
-              {currentPuja.estd === 0
+              {Number(currentPuja.estd) === 0
                 ? 'A Legacy of Tradition'
                 : `Since the year ${currentPuja.estd}`}
             </p>

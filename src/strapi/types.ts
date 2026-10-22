@@ -10,26 +10,44 @@
 export type StrapiID = string | number
 
 /**
+ * Where a connected relation lands in an ordered relation list.
+ */
+export interface RelationPosition {
+  before?: StrapiID | undefined
+  after?: StrapiID | undefined
+  start?: true | undefined
+  end?: true | undefined
+}
+
+/**
+ * Object form of a relation target. Strapi v5 accepts it wherever a plain id is accepted;
+ * `locale` / `status` pick the localized or draft version of the target document.
+ */
+export interface RelationRef {
+  documentId?: string | undefined
+  id?: number | undefined
+  locale?: string | null | undefined
+  status?: 'draft' | 'published' | undefined
+  position?: RelationPosition | undefined
+}
+
+/**
  * Explicit relation operations supported by Strapi v5.
  * See: https://docs.strapi.io/cms/api/rest/relations
  */
 export interface RelationOperations {
-  connect?:
-    | StrapiID[]
-    | {
-        documentId: string
-        position?: { before?: StrapiID; after?: StrapiID; start?: true; end?: true }
-      }[]
-  disconnect?: StrapiID[]
-  set?: StrapiID[]
+  connect?: (StrapiID | RelationRef)[] | undefined
+  disconnect?: (StrapiID | RelationRef)[] | undefined
+  set?: (StrapiID | RelationRef)[] | undefined
 }
 
 /**
  * Input value for a relation field in create/update payloads.
- * Accepts a single id, an array of ids, or the explicit { connect | disconnect | set } form.
+ * Accepts an id or reference, an array of them, or the explicit { connect | disconnect | set } form.
  * Passing a plain id or array is equivalent to 'set' — it overwrites existing relations.
  */
-export type RelationInput = StrapiID | StrapiID[] | RelationOperations | null
+export type RelationInput =
+  StrapiID | RelationRef | (StrapiID | RelationRef)[] | RelationOperations | null
 
 /**
  * Input value for a single media file field. Accepts a documentId (string) or
@@ -256,7 +274,7 @@ export interface AwardsPosition {
 
 export interface SharedAchievement {
   id: number
-  year: number
+  year: string
   title: string
   details: string
 }
@@ -287,104 +305,104 @@ export interface SharedVideo {
 
 /** Create input for AwardsCategory */
 export interface AwardsCategoryCreateInput {
-  id?: number
+  id?: number | undefined
   category: string
-  positions?: AwardsPositionCreateInput[] | null
+  positions?: AwardsPositionCreateInput[] | undefined
 }
 
 /** Update input for AwardsCategory */
 export interface AwardsCategoryUpdateInput {
-  id?: number
-  category?: string
-  positions?: AwardsPositionUpdateInput[] | null
+  id?: number | undefined
+  category?: string | undefined
+  positions?: AwardsPositionUpdateInput[] | undefined
 }
 
 /** Create input for AwardsPosition */
 export interface AwardsPositionCreateInput {
-  id?: number
+  id?: number | undefined
   position: string
-  pujas?: RelationInput
-  artist?: RelationInput
+  pujas?: RelationInput | undefined
+  artist?: RelationInput | undefined
 }
 
 /** Update input for AwardsPosition */
 export interface AwardsPositionUpdateInput {
-  id?: number
-  position?: string
-  pujas?: RelationInput
-  artist?: RelationInput
+  id?: number | undefined
+  position?: string | undefined
+  pujas?: RelationInput | undefined
+  artist?: RelationInput | undefined
 }
 
 /** Create input for SharedAchievement */
 export interface SharedAchievementCreateInput {
-  id?: number
-  year: number
+  id?: number | undefined
+  year: string | number
   title: string
   details: string
 }
 
 /** Update input for SharedAchievement */
 export interface SharedAchievementUpdateInput {
-  id?: number
-  year?: number
-  title?: string
-  details?: string
+  id?: number | undefined
+  year?: string | number | undefined
+  title?: string | undefined
+  details?: string | undefined
 }
 
 /** Create input for SharedAshsParticipant */
 export interface SharedAshsParticipantCreateInput {
-  id?: number
+  id?: number | undefined
   title: string
   details: unknown
   /** @default 0 */
-  voteCount: number
+  voteCount?: number | undefined
   voteDetails: unknown
-  puja?: RelationInput
+  puja?: RelationInput | undefined
 }
 
 /** Update input for SharedAshsParticipant */
 export interface SharedAshsParticipantUpdateInput {
-  id?: number
-  title?: string
-  details?: unknown
+  id?: number | undefined
+  title?: string | undefined
+  details?: unknown | undefined
   /** @default 0 */
-  voteCount?: number
-  voteDetails?: unknown
-  puja?: RelationInput
+  voteCount?: number | undefined
+  voteDetails?: unknown | undefined
+  puja?: RelationInput | undefined
 }
 
 /** Create input for SharedSchedule */
 export interface SharedScheduleCreateInput {
-  id?: number
+  id?: number | undefined
   date: string
   event: string
   description: string
-  timings?: string | null
+  timings?: string | null | undefined
 }
 
 /** Update input for SharedSchedule */
 export interface SharedScheduleUpdateInput {
-  id?: number
-  date?: string
-  event?: string
-  description?: string
-  timings?: string | null
+  id?: number | undefined
+  date?: string | undefined
+  event?: string | undefined
+  description?: string | undefined
+  timings?: string | null | undefined
 }
 
 /** Create input for SharedVideo */
 export interface SharedVideoCreateInput {
-  id?: number
+  id?: number | undefined
   title: string
-  video?: unknown | null
+  video?: unknown | null | undefined
   description: string
 }
 
 /** Update input for SharedVideo */
 export interface SharedVideoUpdateInput {
-  id?: number
-  title?: string
-  video?: unknown | null
-  description?: string
+  id?: number | undefined
+  title?: string | undefined
+  video?: unknown | null | undefined
+  description?: string | undefined
 }
 
 export interface Artist {
@@ -419,7 +437,7 @@ export interface Award {
   createdAt: string
   updatedAt: string
   publishedAt: string | null
-  year: number
+  year: string
   description: string
 }
 
@@ -465,7 +483,7 @@ export interface Image {
     | 'pandal'
     | 'kathamo-puja'
   name: string
-  year: number
+  year: string
 }
 
 export interface Partnership {
@@ -475,8 +493,8 @@ export interface Partnership {
   createdAt: string
   updatedAt: string
   publishedAt: string | null
-  year: number
-  amount: number
+  year: string
+  amount: string
   email: string
   name: string
   orderId: string | null
@@ -484,7 +502,7 @@ export interface Partnership {
   /** @minLength 10 */
   phone: string
   planName: string
-  planValue: number
+  planValue: string
   addons: unknown | null
   note: string | null
   /** @default true */
@@ -513,7 +531,7 @@ export interface Puja {
   publishedAt: string | null
   name: string
   zone: 'chandannagar' | 'bhadreswar'
-  estd: number
+  estd: string
   /** @default "[]" */
   tags: unknown | null
   info: string | null
@@ -532,7 +550,7 @@ export interface VirtualTour {
   createdAt: string
   updatedAt: string
   publishedAt: string | null
-  year: number
+  year: string
   name: string | null
 }
 
@@ -583,48 +601,60 @@ export interface User {
 export interface ArtistCreateInput {
   name: string
   type: 'idol' | 'decoration' | 'light' | 'theme'
-  businessName?: string | null
+  businessName?: string | null | undefined
   /** @maxLength 10 */
-  contact?: string | null
-  email?: string | null
-  pujas?: RelationInput
+  contact?: string | null | undefined
+  email?: string | null | undefined
+  locale?: string | null | undefined
+  pujas?: RelationInput | undefined
+  publishedAt?: string | null | undefined
 }
 
 /** Update input for Artist */
 export interface ArtistUpdateInput {
-  name?: string
-  type?: 'idol' | 'decoration' | 'light' | 'theme'
-  businessName?: string | null
+  name?: string | undefined
+  type?: 'idol' | 'decoration' | 'light' | 'theme' | undefined
+  businessName?: string | null | undefined
   /** @maxLength 10 */
-  contact?: string | null
-  email?: string | null
-  pujas?: RelationInput
+  contact?: string | null | undefined
+  email?: string | null | undefined
+  locale?: string | null | undefined
+  pujas?: RelationInput | undefined
+  publishedAt?: string | null | undefined
 }
 
 /** Create input for AshsEntry */
 export interface AshsEntryCreateInput {
   year: number
-  entries?: SharedAshsParticipantCreateInput[] | null
+  locale?: string | null | undefined
+  entries?: SharedAshsParticipantCreateInput[] | undefined
+  publishedAt?: string | null | undefined
 }
 
 /** Update input for AshsEntry */
 export interface AshsEntryUpdateInput {
-  year?: number
-  entries?: SharedAshsParticipantUpdateInput[] | null
+  year?: number | undefined
+  locale?: string | null | undefined
+  entries?: SharedAshsParticipantUpdateInput[] | undefined
+  publishedAt?: string | null | undefined
 }
 
 /** Create input for Award */
 export interface AwardCreateInput {
-  year: number
+  year: string | number
   description: string
-  categories?: AwardsCategoryCreateInput[] | null
+  locale?: string | null | undefined
+  categories?: AwardsCategoryCreateInput[] | undefined
+  publishedAt?: string | null | undefined
 }
 
 /** Update input for Award */
 export interface AwardUpdateInput {
-  year?: number
-  description?: string
-  categories?: AwardsCategoryUpdateInput[] | null
+  year?: string | number | undefined
+  description?: string | undefined
+  locale?: string | null | undefined
+  categories?: AwardsCategoryUpdateInput[] | undefined
+  publishedAt?: string | null | undefined
 }
 
 /** Create input for Contact */
@@ -632,29 +662,37 @@ export interface ContactCreateInput {
   name: string
   location: unknown
   contact: string
+  locale?: string | null | undefined
+  publishedAt?: string | null | undefined
 }
 
 /** Update input for Contact */
 export interface ContactUpdateInput {
-  name?: string
-  location?: unknown
-  contact?: string
+  name?: string | undefined
+  location?: unknown | undefined
+  contact?: string | undefined
+  locale?: string | null | undefined
+  publishedAt?: string | null | undefined
 }
 
 /** Create input for Global */
 export interface GlobalCreateInput {
-  processionListPublished?: boolean | null
-  schedules?: SharedScheduleCreateInput[] | null
-  videos?: SharedVideoCreateInput[] | null
-  achievements?: SharedAchievementCreateInput[] | null
+  processionListPublished?: boolean | null | undefined
+  locale?: string | null | undefined
+  schedules?: SharedScheduleCreateInput[] | undefined
+  videos?: SharedVideoCreateInput[] | undefined
+  achievements?: SharedAchievementCreateInput[] | undefined
+  publishedAt?: string | null | undefined
 }
 
 /** Update input for Global */
 export interface GlobalUpdateInput {
-  processionListPublished?: boolean | null
-  schedules?: SharedScheduleUpdateInput[] | null
-  videos?: SharedVideoUpdateInput[] | null
-  achievements?: SharedAchievementUpdateInput[] | null
+  processionListPublished?: boolean | null | undefined
+  locale?: string | null | undefined
+  schedules?: SharedScheduleUpdateInput[] | undefined
+  videos?: SharedVideoUpdateInput[] | undefined
+  achievements?: SharedAchievementUpdateInput[] | undefined
+  publishedAt?: string | null | undefined
 }
 
 /** Create input for Image */
@@ -672,9 +710,11 @@ export interface ImageCreateInput {
     | 'pandal'
     | 'kathamo-puja'
   name: string
-  year: number
-  puja?: RelationInput
-  user?: RelationInput
+  year: string | number
+  locale?: string | null | undefined
+  puja?: RelationInput | undefined
+  user?: RelationInput | undefined
+  publishedAt?: string | null | undefined
 }
 
 /** Update input for Image */
@@ -691,48 +731,55 @@ export interface ImageUpdateInput {
     | 'lighting'
     | 'pandal'
     | 'kathamo-puja'
-  name?: string
-  year?: number
-  puja?: RelationInput
-  user?: RelationInput
+    | undefined
+  name?: string | undefined
+  year?: string | number | undefined
+  locale?: string | null | undefined
+  puja?: RelationInput | undefined
+  user?: RelationInput | undefined
+  publishedAt?: string | null | undefined
 }
 
 /** Create input for Partnership */
 export interface PartnershipCreateInput {
-  year: number
-  amount: number
+  year: string | number
+  amount: string | number
   email: string
   name: string
-  orderId?: string | null
-  paymentId?: string | null
+  orderId?: string | null | undefined
+  paymentId?: string | null | undefined
   /** @minLength 10 */
   phone: string
   planName: string
-  planValue: number
-  addons?: unknown | null
-  note?: string | null
+  planValue: string | number
+  addons?: unknown | null | undefined
+  note?: string | null | undefined
   /** @default true */
-  fullPaid?: boolean | null
-  puja?: RelationInput
+  fullPaid?: boolean | null | undefined
+  locale?: string | null | undefined
+  puja?: RelationInput | undefined
+  publishedAt?: string | null | undefined
 }
 
 /** Update input for Partnership */
 export interface PartnershipUpdateInput {
-  year?: number
-  amount?: number
-  email?: string
-  name?: string
-  orderId?: string | null
-  paymentId?: string | null
+  year?: string | number | undefined
+  amount?: string | number | undefined
+  email?: string | undefined
+  name?: string | undefined
+  orderId?: string | null | undefined
+  paymentId?: string | null | undefined
   /** @minLength 10 */
-  phone?: string
-  planName?: string
-  planValue?: number
-  addons?: unknown | null
-  note?: string | null
+  phone?: string | undefined
+  planName?: string | undefined
+  planValue?: string | number | undefined
+  addons?: unknown | null | undefined
+  note?: string | null | undefined
   /** @default true */
-  fullPaid?: boolean | null
-  puja?: RelationInput
+  fullPaid?: boolean | null | undefined
+  locale?: string | null | undefined
+  puja?: RelationInput | undefined
+  publishedAt?: string | null | undefined
 }
 
 /** Create input for Procession */
@@ -740,101 +787,121 @@ export interface ProcessionCreateInput {
   zone: 'A' | 'B' | 'C' | 'D'
   truckCount: number
   /** @default 0 */
-  sortOrder: number
-  puja?: RelationInput
+  sortOrder?: number | undefined
+  locale?: string | null | undefined
+  puja?: RelationInput | undefined
+  publishedAt?: string | null | undefined
 }
 
 /** Update input for Procession */
 export interface ProcessionUpdateInput {
-  zone?: 'A' | 'B' | 'C' | 'D'
-  truckCount?: number
+  zone?: 'A' | 'B' | 'C' | 'D' | undefined
+  truckCount?: number | undefined
   /** @default 0 */
-  sortOrder?: number
-  puja?: RelationInput
+  sortOrder?: number | undefined
+  locale?: string | null | undefined
+  puja?: RelationInput | undefined
+  publishedAt?: string | null | undefined
 }
 
 /** Create input for Puja */
 export interface PujaCreateInput {
   name: string
   zone: 'chandannagar' | 'bhadreswar'
-  estd: number
+  estd: string | number
   /** @default "[]" */
-  tags?: unknown | null
-  info?: string | null
-  location?: unknown | null
-  theme?: string | null
+  tags?: unknown | null | undefined
+  info?: string | null | undefined
+  location?: unknown | null | undefined
+  theme?: string | null | undefined
   slug: string
   /** @default 0 */
-  sortOrder: number
+  sortOrder?: number | undefined
   referenceId: string
-  media?: MultiMediaInput
-  artists?: RelationInput
-  images?: RelationInput
+  locale?: string | null | undefined
+  media?: MultiMediaInput | undefined
+  artists?: RelationInput | undefined
+  images?: RelationInput | undefined
+  publishedAt?: string | null | undefined
 }
 
 /** Update input for Puja */
 export interface PujaUpdateInput {
-  name?: string
-  zone?: 'chandannagar' | 'bhadreswar'
-  estd?: number
+  name?: string | undefined
+  zone?: 'chandannagar' | 'bhadreswar' | undefined
+  estd?: string | number | undefined
   /** @default "[]" */
-  tags?: unknown | null
-  info?: string | null
-  location?: unknown | null
-  theme?: string | null
-  slug?: string
+  tags?: unknown | null | undefined
+  info?: string | null | undefined
+  location?: unknown | null | undefined
+  theme?: string | null | undefined
+  slug?: string | undefined
   /** @default 0 */
-  sortOrder?: number
-  referenceId?: string
-  media?: MultiMediaInput
-  artists?: RelationInput
-  images?: RelationInput
+  sortOrder?: number | undefined
+  referenceId?: string | undefined
+  locale?: string | null | undefined
+  media?: MultiMediaInput | undefined
+  artists?: RelationInput | undefined
+  images?: RelationInput | undefined
+  publishedAt?: string | null | undefined
 }
 
 /** Create input for VirtualTour */
 export interface VirtualTourCreateInput {
-  year: number
-  name?: string | null
-  puja?: RelationInput
+  year: string | number
+  name?: string | null | undefined
+  locale?: string | null | undefined
+  puja?: RelationInput | undefined
+  publishedAt?: string | null | undefined
 }
 
 /** Update input for VirtualTour */
 export interface VirtualTourUpdateInput {
-  year?: number
-  name?: string | null
-  puja?: RelationInput
+  year?: string | number | undefined
+  name?: string | null | undefined
+  locale?: string | null | undefined
+  puja?: RelationInput | undefined
+  publishedAt?: string | null | undefined
 }
 
 /** Create input for Permission */
 export interface PermissionCreateInput {
   action: string
-  role?: RelationInput
+  locale?: string | null | undefined
+  role?: RelationInput | undefined
+  publishedAt?: string | null | undefined
 }
 
 /** Update input for Permission */
 export interface PermissionUpdateInput {
-  action?: string
-  role?: RelationInput
+  action?: string | undefined
+  locale?: string | null | undefined
+  role?: RelationInput | undefined
+  publishedAt?: string | null | undefined
 }
 
 /** Create input for Role */
 export interface RoleCreateInput {
   /** @minLength 3 */
   name: string
-  description?: string | null
-  type?: string | null
-  permissions?: RelationInput
-  users?: RelationInput
+  description?: string | null | undefined
+  type?: string | null | undefined
+  locale?: string | null | undefined
+  permissions?: RelationInput | undefined
+  users?: RelationInput | undefined
+  publishedAt?: string | null | undefined
 }
 
 /** Update input for Role */
 export interface RoleUpdateInput {
   /** @minLength 3 */
-  name?: string
-  description?: string | null
-  type?: string | null
-  permissions?: RelationInput
-  users?: RelationInput
+  name?: string | undefined
+  description?: string | null | undefined
+  type?: string | null | undefined
+  locale?: string | null | undefined
+  permissions?: RelationInput | undefined
+  users?: RelationInput | undefined
+  publishedAt?: string | null | undefined
 }
 
 /** Create input for User */
@@ -843,32 +910,44 @@ export interface UserCreateInput {
   username: string
   /** @minLength 6 */
   email: string
-  provider?: string | null
+  provider?: string | null | undefined
   /** @default false */
-  confirmed?: boolean | null
+  confirmed?: boolean | null | undefined
   /** @default false */
-  blocked?: boolean | null
+  blocked?: boolean | null | undefined
   /** @default "visitor" */
-  access: 'admin' | 'editor' | 'visitor'
-  role?: RelationInput
-  puja?: RelationInput
+  access?: 'admin' | 'editor' | 'visitor' | undefined
+  /** @minLength 6 */
+  password?: string | null | undefined
+  resetPasswordToken?: string | null | undefined
+  confirmationToken?: string | null | undefined
+  locale?: string | null | undefined
+  role?: RelationInput | undefined
+  puja?: RelationInput | undefined
+  publishedAt?: string | null | undefined
 }
 
 /** Update input for User */
 export interface UserUpdateInput {
   /** @minLength 3 */
-  username?: string
+  username?: string | undefined
   /** @minLength 6 */
-  email?: string
-  provider?: string | null
+  email?: string | undefined
+  provider?: string | null | undefined
   /** @default false */
-  confirmed?: boolean | null
+  confirmed?: boolean | null | undefined
   /** @default false */
-  blocked?: boolean | null
+  blocked?: boolean | null | undefined
   /** @default "visitor" */
-  access?: 'admin' | 'editor' | 'visitor'
-  role?: RelationInput
-  puja?: RelationInput
+  access?: 'admin' | 'editor' | 'visitor' | undefined
+  /** @minLength 6 */
+  password?: string | null | undefined
+  resetPasswordToken?: string | null | undefined
+  confirmationToken?: string | null | undefined
+  locale?: string | null | undefined
+  role?: RelationInput | undefined
+  puja?: RelationInput | undefined
+  publishedAt?: string | null | undefined
 }
 export const PartnershipDefaults = {
   fullPaid: true,
@@ -893,12 +972,23 @@ export type AwardsCategoryPopulateParam = {
         fields?: (keyof AwardsPosition & string)[]
         populate?:
           AwardsPositionPopulateParam | (keyof AwardsPositionPopulateParam & string)[] | '*'
+        count?: never
       }
 }
 export type AwardsPositionPopulateParam = {
   pujas?:
     | true
     | {
+        count: true
+        filters?: PujaFilters
+        fields?: never
+        populate?: never
+        sort?: never
+        limit?: never
+        start?: never
+      }
+    | {
+        count?: false
         fields?: _EntityField<Puja>[]
         populate?: PujaPopulateParam | (keyof PujaPopulateParam & string)[] | '*'
         filters?: PujaFilters
@@ -909,6 +999,16 @@ export type AwardsPositionPopulateParam = {
   artist?:
     | true
     | {
+        count: true
+        filters?: ArtistFilters
+        fields?: never
+        populate?: never
+        sort?: never
+        limit?: never
+        start?: never
+      }
+    | {
+        count?: false
         fields?: _EntityField<Artist>[]
         populate?: ArtistPopulateParam | (keyof ArtistPopulateParam & string)[] | '*'
         filters?: ArtistFilters
@@ -921,6 +1021,16 @@ export type SharedAshsParticipantPopulateParam = {
   puja?:
     | true
     | {
+        count: true
+        filters?: PujaFilters
+        fields?: never
+        populate?: never
+        sort?: never
+        limit?: never
+        start?: never
+      }
+    | {
+        count?: false
         fields?: _EntityField<Puja>[]
         populate?: PujaPopulateParam | (keyof PujaPopulateParam & string)[] | '*'
         filters?: PujaFilters
@@ -933,6 +1043,16 @@ export type ArtistPopulateParam = {
   pujas?:
     | true
     | {
+        count: true
+        filters?: PujaFilters
+        fields?: never
+        populate?: never
+        sort?: never
+        limit?: never
+        start?: never
+      }
+    | {
+        count?: false
         fields?: _EntityField<Puja>[]
         populate?: PujaPopulateParam | (keyof PujaPopulateParam & string)[] | '*'
         filters?: PujaFilters
@@ -950,6 +1070,7 @@ export type AshsEntryPopulateParam = {
           | SharedAshsParticipantPopulateParam
           | (keyof SharedAshsParticipantPopulateParam & string)[]
           | '*'
+        count?: never
       }
 }
 export type AwardPopulateParam = {
@@ -959,17 +1080,28 @@ export type AwardPopulateParam = {
         fields?: (keyof AwardsCategory & string)[]
         populate?:
           AwardsCategoryPopulateParam | (keyof AwardsCategoryPopulateParam & string)[] | '*'
+        count?: never
       }
 }
 export type GlobalPopulateParam = {
-  schedules?: true | { fields?: (keyof SharedSchedule & string)[] }
-  videos?: true | { fields?: (keyof SharedVideo & string)[] }
-  achievements?: true | { fields?: (keyof SharedAchievement & string)[] }
+  schedules?: true | { fields?: (keyof SharedSchedule & string)[]; count?: never }
+  videos?: true | { fields?: (keyof SharedVideo & string)[]; count?: never }
+  achievements?: true | { fields?: (keyof SharedAchievement & string)[]; count?: never }
 }
 export type ImagePopulateParam = {
   puja?:
     | true
     | {
+        count: true
+        filters?: PujaFilters
+        fields?: never
+        populate?: never
+        sort?: never
+        limit?: never
+        start?: never
+      }
+    | {
+        count?: false
         fields?: _EntityField<Puja>[]
         populate?: PujaPopulateParam | (keyof PujaPopulateParam & string)[] | '*'
         filters?: PujaFilters
@@ -980,6 +1112,16 @@ export type ImagePopulateParam = {
   user?:
     | true
     | {
+        count: true
+        filters?: UserFilters
+        fields?: never
+        populate?: never
+        sort?: never
+        limit?: never
+        start?: never
+      }
+    | {
+        count?: false
         fields?: _EntityField<User>[]
         populate?: UserPopulateParam | (keyof UserPopulateParam & string)[] | '*'
         filters?: UserFilters
@@ -992,6 +1134,16 @@ export type PartnershipPopulateParam = {
   puja?:
     | true
     | {
+        count: true
+        filters?: PujaFilters
+        fields?: never
+        populate?: never
+        sort?: never
+        limit?: never
+        start?: never
+      }
+    | {
+        count?: false
         fields?: _EntityField<Puja>[]
         populate?: PujaPopulateParam | (keyof PujaPopulateParam & string)[] | '*'
         filters?: PujaFilters
@@ -1004,6 +1156,16 @@ export type ProcessionPopulateParam = {
   puja?:
     | true
     | {
+        count: true
+        filters?: PujaFilters
+        fields?: never
+        populate?: never
+        sort?: never
+        limit?: never
+        start?: never
+      }
+    | {
+        count?: false
         fields?: _EntityField<Puja>[]
         populate?: PujaPopulateParam | (keyof PujaPopulateParam & string)[] | '*'
         filters?: PujaFilters
@@ -1016,6 +1178,16 @@ export type PujaPopulateParam = {
   artists?:
     | true
     | {
+        count: true
+        filters?: ArtistFilters
+        fields?: never
+        populate?: never
+        sort?: never
+        limit?: never
+        start?: never
+      }
+    | {
+        count?: false
         fields?: _EntityField<Artist>[]
         populate?: ArtistPopulateParam | (keyof ArtistPopulateParam & string)[] | '*'
         filters?: ArtistFilters
@@ -1026,6 +1198,16 @@ export type PujaPopulateParam = {
   images?:
     | true
     | {
+        count: true
+        filters?: ImageFilters
+        fields?: never
+        populate?: never
+        sort?: never
+        limit?: never
+        start?: never
+      }
+    | {
+        count?: false
         fields?: _EntityField<Image>[]
         populate?: ImagePopulateParam | (keyof ImagePopulateParam & string)[] | '*'
         filters?: ImageFilters
@@ -1033,12 +1215,22 @@ export type PujaPopulateParam = {
         limit?: number
         start?: number
       }
-  media?: true | { fields?: (keyof MediaFile & string)[] }
+  media?: true | { fields?: (keyof MediaFile & string)[]; count?: never }
 }
 export type VirtualTourPopulateParam = {
   puja?:
     | true
     | {
+        count: true
+        filters?: PujaFilters
+        fields?: never
+        populate?: never
+        sort?: never
+        limit?: never
+        start?: never
+      }
+    | {
+        count?: false
         fields?: _EntityField<Puja>[]
         populate?: PujaPopulateParam | (keyof PujaPopulateParam & string)[] | '*'
         filters?: PujaFilters
@@ -1051,6 +1243,16 @@ export type PermissionPopulateParam = {
   role?:
     | true
     | {
+        count: true
+        filters?: RoleFilters
+        fields?: never
+        populate?: never
+        sort?: never
+        limit?: never
+        start?: never
+      }
+    | {
+        count?: false
         fields?: _EntityField<Role>[]
         populate?: RolePopulateParam | (keyof RolePopulateParam & string)[] | '*'
         filters?: RoleFilters
@@ -1063,6 +1265,16 @@ export type RolePopulateParam = {
   permissions?:
     | true
     | {
+        count: true
+        filters?: PermissionFilters
+        fields?: never
+        populate?: never
+        sort?: never
+        limit?: never
+        start?: never
+      }
+    | {
+        count?: false
         fields?: _EntityField<Permission>[]
         populate?: PermissionPopulateParam | (keyof PermissionPopulateParam & string)[] | '*'
         filters?: PermissionFilters
@@ -1073,6 +1285,16 @@ export type RolePopulateParam = {
   users?:
     | true
     | {
+        count: true
+        filters?: UserFilters
+        fields?: never
+        populate?: never
+        sort?: never
+        limit?: never
+        start?: never
+      }
+    | {
+        count?: false
         fields?: _EntityField<User>[]
         populate?: UserPopulateParam | (keyof UserPopulateParam & string)[] | '*'
         filters?: UserFilters
@@ -1085,6 +1307,16 @@ export type UserPopulateParam = {
   role?:
     | true
     | {
+        count: true
+        filters?: RoleFilters
+        fields?: never
+        populate?: never
+        sort?: never
+        limit?: never
+        start?: never
+      }
+    | {
+        count?: false
         fields?: _EntityField<Role>[]
         populate?: RolePopulateParam | (keyof RolePopulateParam & string)[] | '*'
         filters?: RoleFilters
@@ -1095,6 +1327,16 @@ export type UserPopulateParam = {
   puja?:
     | true
     | {
+        count: true
+        filters?: PujaFilters
+        fields?: never
+        populate?: never
+        sort?: never
+        limit?: never
+        start?: never
+      }
+    | {
+        count?: false
         fields?: _EntityField<Puja>[]
         populate?: PujaPopulateParam | (keyof PujaPopulateParam & string)[] | '*'
         filters?: PujaFilters
@@ -1149,22 +1391,26 @@ export type AwardsPositionGetPayload<P extends { populate?: unknown } = {}> = Aw
           }
         : {
             pujas?: 'pujas' extends keyof Pop
-              ? _ApplyFields<
-                  Pop['pujas'] extends { populate: infer NestedPop }
-                    ? PujaGetPayload<{ populate: NestedPop }>
-                    : Puja,
-                  Puja,
-                  Pop['pujas']
-                >[]
+              ? Pop['pujas'] extends { count: true }
+                ? { count: number }
+                : _ApplyFields<
+                    Pop['pujas'] extends { populate: infer NestedPop }
+                      ? PujaGetPayload<{ populate: NestedPop }>
+                      : Puja,
+                    Puja,
+                    Pop['pujas']
+                  >[]
               : never
             artist?: 'artist' extends keyof Pop
-              ? _ApplyFields<
-                  Pop['artist'] extends { populate: infer NestedPop }
-                    ? ArtistGetPayload<{ populate: NestedPop }>
-                    : Artist,
-                  Artist,
-                  Pop['artist']
-                > | null
+              ? Pop['artist'] extends { count: true }
+                ? { count: number }
+                : _ApplyFields<
+                    Pop['artist'] extends { populate: infer NestedPop }
+                      ? ArtistGetPayload<{ populate: NestedPop }>
+                      : Artist,
+                    Artist,
+                    Pop['artist']
+                  > | null
               : never
           }
     : {})
@@ -1182,13 +1428,15 @@ export type SharedAshsParticipantGetPayload<P extends { populate?: unknown } = {
             }
           : {
               puja?: 'puja' extends keyof Pop
-                ? _ApplyFields<
-                    Pop['puja'] extends { populate: infer NestedPop }
-                      ? PujaGetPayload<{ populate: NestedPop }>
-                      : Puja,
-                    Puja,
-                    Pop['puja']
-                  > | null
+                ? Pop['puja'] extends { count: true }
+                  ? { count: number }
+                  : _ApplyFields<
+                      Pop['puja'] extends { populate: infer NestedPop }
+                        ? PujaGetPayload<{ populate: NestedPop }>
+                        : Puja,
+                      Puja,
+                      Pop['puja']
+                    > | null
                 : never
             }
       : {})
@@ -1205,13 +1453,15 @@ export type ArtistGetPayload<P extends { populate?: unknown } = {}> = Artist &
           }
         : {
             pujas?: 'pujas' extends keyof Pop
-              ? _ApplyFields<
-                  Pop['pujas'] extends { populate: infer NestedPop }
-                    ? PujaGetPayload<{ populate: NestedPop }>
-                    : Puja,
-                  Puja,
-                  Pop['pujas']
-                >[]
+              ? Pop['pujas'] extends { count: true }
+                ? { count: number }
+                : _ApplyFields<
+                    Pop['pujas'] extends { populate: infer NestedPop }
+                      ? PujaGetPayload<{ populate: NestedPop }>
+                      : Puja,
+                    Puja,
+                    Pop['pujas']
+                  >[]
               : never
           }
     : {})
@@ -1303,22 +1553,26 @@ export type ImageGetPayload<P extends { populate?: unknown } = {}> = Image &
           }
         : {
             puja?: 'puja' extends keyof Pop
-              ? _ApplyFields<
-                  Pop['puja'] extends { populate: infer NestedPop }
-                    ? PujaGetPayload<{ populate: NestedPop }>
-                    : Puja,
-                  Puja,
-                  Pop['puja']
-                > | null
+              ? Pop['puja'] extends { count: true }
+                ? { count: number }
+                : _ApplyFields<
+                    Pop['puja'] extends { populate: infer NestedPop }
+                      ? PujaGetPayload<{ populate: NestedPop }>
+                      : Puja,
+                    Puja,
+                    Pop['puja']
+                  > | null
               : never
             user?: 'user' extends keyof Pop
-              ? _ApplyFields<
-                  Pop['user'] extends { populate: infer NestedPop }
-                    ? UserGetPayload<{ populate: NestedPop }>
-                    : User,
-                  User,
-                  Pop['user']
-                > | null
+              ? Pop['user'] extends { count: true }
+                ? { count: number }
+                : _ApplyFields<
+                    Pop['user'] extends { populate: infer NestedPop }
+                      ? UserGetPayload<{ populate: NestedPop }>
+                      : User,
+                    User,
+                    Pop['user']
+                  > | null
               : never
           }
     : {})
@@ -1335,13 +1589,15 @@ export type PartnershipGetPayload<P extends { populate?: unknown } = {}> = Partn
           }
         : {
             puja?: 'puja' extends keyof Pop
-              ? _ApplyFields<
-                  Pop['puja'] extends { populate: infer NestedPop }
-                    ? PujaGetPayload<{ populate: NestedPop }>
-                    : Puja,
-                  Puja,
-                  Pop['puja']
-                > | null
+              ? Pop['puja'] extends { count: true }
+                ? { count: number }
+                : _ApplyFields<
+                    Pop['puja'] extends { populate: infer NestedPop }
+                      ? PujaGetPayload<{ populate: NestedPop }>
+                      : Puja,
+                    Puja,
+                    Pop['puja']
+                  > | null
               : never
           }
     : {})
@@ -1358,13 +1614,15 @@ export type ProcessionGetPayload<P extends { populate?: unknown } = {}> = Proces
           }
         : {
             puja?: 'puja' extends keyof Pop
-              ? _ApplyFields<
-                  Pop['puja'] extends { populate: infer NestedPop }
-                    ? PujaGetPayload<{ populate: NestedPop }>
-                    : Puja,
-                  Puja,
-                  Pop['puja']
-                > | null
+              ? Pop['puja'] extends { count: true }
+                ? { count: number }
+                : _ApplyFields<
+                    Pop['puja'] extends { populate: infer NestedPop }
+                      ? PujaGetPayload<{ populate: NestedPop }>
+                      : Puja,
+                    Puja,
+                    Pop['puja']
+                  > | null
               : never
           }
     : {})
@@ -1385,22 +1643,26 @@ export type PujaGetPayload<P extends { populate?: unknown } = {}> = Puja &
           }
         : {
             artists?: 'artists' extends keyof Pop
-              ? _ApplyFields<
-                  Pop['artists'] extends { populate: infer NestedPop }
-                    ? ArtistGetPayload<{ populate: NestedPop }>
-                    : Artist,
-                  Artist,
-                  Pop['artists']
-                >[]
+              ? Pop['artists'] extends { count: true }
+                ? { count: number }
+                : _ApplyFields<
+                    Pop['artists'] extends { populate: infer NestedPop }
+                      ? ArtistGetPayload<{ populate: NestedPop }>
+                      : Artist,
+                    Artist,
+                    Pop['artists']
+                  >[]
               : never
             images?: 'images' extends keyof Pop
-              ? _ApplyFields<
-                  Pop['images'] extends { populate: infer NestedPop }
-                    ? ImageGetPayload<{ populate: NestedPop }>
-                    : Image,
-                  Image,
-                  Pop['images']
-                >[]
+              ? Pop['images'] extends { count: true }
+                ? { count: number }
+                : _ApplyFields<
+                    Pop['images'] extends { populate: infer NestedPop }
+                      ? ImageGetPayload<{ populate: NestedPop }>
+                      : Image,
+                    Image,
+                    Pop['images']
+                  >[]
               : never
             media?: 'media' extends keyof Pop
               ? _ApplyFields<MediaFile, MediaFile, Pop['media']>[]
@@ -1420,13 +1682,15 @@ export type VirtualTourGetPayload<P extends { populate?: unknown } = {}> = Virtu
           }
         : {
             puja?: 'puja' extends keyof Pop
-              ? _ApplyFields<
-                  Pop['puja'] extends { populate: infer NestedPop }
-                    ? PujaGetPayload<{ populate: NestedPop }>
-                    : Puja,
-                  Puja,
-                  Pop['puja']
-                > | null
+              ? Pop['puja'] extends { count: true }
+                ? { count: number }
+                : _ApplyFields<
+                    Pop['puja'] extends { populate: infer NestedPop }
+                      ? PujaGetPayload<{ populate: NestedPop }>
+                      : Puja,
+                    Puja,
+                    Pop['puja']
+                  > | null
               : never
           }
     : {})
@@ -1443,13 +1707,15 @@ export type PermissionGetPayload<P extends { populate?: unknown } = {}> = Permis
           }
         : {
             role?: 'role' extends keyof Pop
-              ? _ApplyFields<
-                  Pop['role'] extends { populate: infer NestedPop }
-                    ? RoleGetPayload<{ populate: NestedPop }>
-                    : Role,
-                  Role,
-                  Pop['role']
-                > | null
+              ? Pop['role'] extends { count: true }
+                ? { count: number }
+                : _ApplyFields<
+                    Pop['role'] extends { populate: infer NestedPop }
+                      ? RoleGetPayload<{ populate: NestedPop }>
+                      : Role,
+                    Role,
+                    Pop['role']
+                  > | null
               : never
           }
     : {})
@@ -1468,22 +1734,26 @@ export type RoleGetPayload<P extends { populate?: unknown } = {}> = Role &
           }
         : {
             permissions?: 'permissions' extends keyof Pop
-              ? _ApplyFields<
-                  Pop['permissions'] extends { populate: infer NestedPop }
-                    ? PermissionGetPayload<{ populate: NestedPop }>
-                    : Permission,
-                  Permission,
-                  Pop['permissions']
-                >[]
+              ? Pop['permissions'] extends { count: true }
+                ? { count: number }
+                : _ApplyFields<
+                    Pop['permissions'] extends { populate: infer NestedPop }
+                      ? PermissionGetPayload<{ populate: NestedPop }>
+                      : Permission,
+                    Permission,
+                    Pop['permissions']
+                  >[]
               : never
             users?: 'users' extends keyof Pop
-              ? _ApplyFields<
-                  Pop['users'] extends { populate: infer NestedPop }
-                    ? UserGetPayload<{ populate: NestedPop }>
-                    : User,
-                  User,
-                  Pop['users']
-                >[]
+              ? Pop['users'] extends { count: true }
+                ? { count: number }
+                : _ApplyFields<
+                    Pop['users'] extends { populate: infer NestedPop }
+                      ? UserGetPayload<{ populate: NestedPop }>
+                      : User,
+                    User,
+                    Pop['users']
+                  >[]
               : never
           }
     : {})
@@ -1502,22 +1772,26 @@ export type UserGetPayload<P extends { populate?: unknown } = {}> = User &
           }
         : {
             role?: 'role' extends keyof Pop
-              ? _ApplyFields<
-                  Pop['role'] extends { populate: infer NestedPop }
-                    ? RoleGetPayload<{ populate: NestedPop }>
-                    : Role,
-                  Role,
-                  Pop['role']
-                > | null
+              ? Pop['role'] extends { count: true }
+                ? { count: number }
+                : _ApplyFields<
+                    Pop['role'] extends { populate: infer NestedPop }
+                      ? RoleGetPayload<{ populate: NestedPop }>
+                      : Role,
+                    Role,
+                    Pop['role']
+                  > | null
               : never
             puja?: 'puja' extends keyof Pop
-              ? _ApplyFields<
-                  Pop['puja'] extends { populate: infer NestedPop }
-                    ? PujaGetPayload<{ populate: NestedPop }>
-                    : Puja,
-                  Puja,
-                  Pop['puja']
-                > | null
+              ? Pop['puja'] extends { count: true }
+                ? { count: number }
+                : _ApplyFields<
+                    Pop['puja'] extends { populate: infer NestedPop }
+                      ? PujaGetPayload<{ populate: NestedPop }>
+                      : Puja,
+                    Puja,
+                    Pop['puja']
+                  > | null
               : never
           }
     : {})
@@ -1560,6 +1834,21 @@ export interface NumberFilterOperators {
   $notNull?: boolean
 }
 
+/** biginteger filter operators — Strapi reads bigintegers as strings, accepts either */
+export interface BigIntFilterOperators {
+  $eq?: string | number
+  $ne?: string | number
+  $lt?: string | number
+  $lte?: string | number
+  $gt?: string | number
+  $gte?: string | number
+  $in?: (string | number)[]
+  $notIn?: (string | number)[]
+  $between?: [string | number, string | number]
+  $null?: boolean
+  $notNull?: boolean
+}
+
 /** Boolean filter operators */
 export interface BooleanFilterOperators {
   $eq?: boolean
@@ -1598,8 +1887,9 @@ export type RelationFilter<T> = {
   id?: number | IdFilterOperators
   documentId?: string | StringFilterOperators
 } & {
+  // A related biginteger reads as string, but its filters take numbers too
   [K in keyof T]?: T[K] extends string
-    ? string | StringFilterOperators
+    ? string | number | StringFilterOperators | BigIntFilterOperators
     : T[K] extends number
       ? number | NumberFilterOperators
       : T[K] extends boolean
@@ -1681,7 +1971,7 @@ export interface AwardsPositionFilters extends LogicalOperators<AwardsPositionFi
 /** Type-safe filters for the SharedAchievement component */
 export interface SharedAchievementFilters extends LogicalOperators<SharedAchievementFilters> {
   id?: number | IdFilterOperators
-  year?: number | NumberFilterOperators
+  year?: string | number | BigIntFilterOperators
   title?: string | StringFilterOperators
   details?: string | StringFilterOperators
 }
@@ -1748,7 +2038,7 @@ export interface AwardFilters extends LogicalOperators<AwardFilters> {
   createdAt?: string | DateFilterOperators
   updatedAt?: string | DateFilterOperators
   publishedAt?: string | DateFilterOperators
-  year?: number | NumberFilterOperators
+  year?: string | number | BigIntFilterOperators
   description?: string | StringFilterOperators
   categories?: AwardsCategoryFilters
 }
@@ -1798,7 +2088,7 @@ export interface ImageFilters extends LogicalOperators<ImageFilters> {
       )
     | StringFilterOperators
   name?: string | StringFilterOperators
-  year?: number | NumberFilterOperators
+  year?: string | number | BigIntFilterOperators
   puja?: {
     id?: number | IdFilterOperators
     documentId?: string | StringFilterOperators
@@ -1817,15 +2107,15 @@ export interface PartnershipFilters extends LogicalOperators<PartnershipFilters>
   createdAt?: string | DateFilterOperators
   updatedAt?: string | DateFilterOperators
   publishedAt?: string | DateFilterOperators
-  year?: number | NumberFilterOperators
-  amount?: number | NumberFilterOperators
+  year?: string | number | BigIntFilterOperators
+  amount?: string | number | BigIntFilterOperators
   email?: string | StringFilterOperators
   name?: string | StringFilterOperators
   orderId?: string | StringFilterOperators
   paymentId?: string | StringFilterOperators
   phone?: string | StringFilterOperators
   planName?: string | StringFilterOperators
-  planValue?: number | NumberFilterOperators
+  planValue?: string | number | BigIntFilterOperators
   addons?: any
   note?: string | StringFilterOperators
   fullPaid?: boolean | BooleanFilterOperators
@@ -1860,7 +2150,7 @@ export interface PujaFilters extends LogicalOperators<PujaFilters> {
   publishedAt?: string | DateFilterOperators
   name?: string | StringFilterOperators
   zone?: ('chandannagar' | 'bhadreswar') | StringFilterOperators
-  estd?: number | NumberFilterOperators
+  estd?: string | number | BigIntFilterOperators
   tags?: any
   info?: string | StringFilterOperators
   location?: any
@@ -1887,7 +2177,7 @@ export interface VirtualTourFilters extends LogicalOperators<VirtualTourFilters>
   createdAt?: string | DateFilterOperators
   updatedAt?: string | DateFilterOperators
   publishedAt?: string | DateFilterOperators
-  year?: number | NumberFilterOperators
+  year?: string | number | BigIntFilterOperators
   name?: string | StringFilterOperators
   puja?: {
     id?: number | IdFilterOperators

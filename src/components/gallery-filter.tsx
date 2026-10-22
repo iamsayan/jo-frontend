@@ -27,14 +27,14 @@ function GalleryFilter({ className, images }: GalleryFilterProps) {
   const endOffset = itemOffset + itemsPerPage;
 
   const years = Array.from(
-    new Set<number>(images.map((item: { year: number }) => item.year))
-  ).sort((a, b) => b - a);
+    new Set<string>(images.map((item) => item.year))
+  ).sort((a, b) => Number(b) - Number(a));
   const filterableItems = ['all', ...years];
   const filteredImages =
     selectedYear === 'all'
       ? images.toReversed()
       : images
-          .filter((item) => item.year === parseInt(selectedYear))
+          .filter((item) => item.year === selectedYear)
           .toReversed();
   const paginatedImages = filteredImages.slice(itemOffset, endOffset);
   const pageCount = Math.ceil(filteredImages.length / itemsPerPage);

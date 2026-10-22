@@ -2,8 +2,9 @@
 // Auto-generated Strapi API client
 // Do not edit manually
 export const SCHEMA_HASH = '247e17d0f5229f01be93d91348469e6a24809e8344dd9da189e2e99f99ab79cf'
-export const GENERATOR_VERSION = '2.2.1'
+export const GENERATOR_VERSION = '2.3.1'
 export const AUTH_MODE: 'legacy' | 'refresh' = 'refresh'
+export const VALIDATION = 'none'
 import type {
   Artist,
   ArtistGetPayload,
